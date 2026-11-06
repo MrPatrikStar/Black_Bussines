@@ -3,213 +3,233 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BLACK BUSSINES</title>
 <style>
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  background: #101318;
-  color: white;
-  font-family: Arial, sans-serif;
-}
-header {
-  padding: 22px;
-  text-align: center;
-  background: #191f29;
-  border-bottom: 1px solid #343d4c;
-}
-h1 { color: #e5b94b; margin: 0; }
-.subtitle { color: #9ba6b7; margin-top: 7px; }
-main { padding: 18px; max-width: 600px; margin: auto; }
-.card {
-  background: #1b222d;
-  border: 1px solid #343d4c;
-  border-radius: 14px;
-  padding: 18px;
-  margin-bottom: 15px;
-}
-.stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-.stat {
-  background: #252e3b;
-  padding: 14px;
-  border-radius: 10px;
-}
-.value {
-  color: #e5b94b;
-  font-size: 23px;
-  font-weight: bold;
-  margin-top: 6px;
-}
-button {
-  width: 100%;
-  padding: 16px;
-  border: 0;
-  border-radius: 10px;
-  background: #d5a83d;
-  color: #171717;
-  font-size: 17px;
-  font-weight: bold;
-  margin-top: 10px;
-}
-button:active { transform: scale(.98); }
-.progress {
-  background: #343d4c;
-  height: 10px;
-  border-radius: 10px;
-  overflow: hidden;
-  margin-top: 10px;
-}
-#energyBar {
-  height: 100%;
-  width: 100%;
-  background: #45bd78;
-}
-.muted { color: #9ba6b7; }
+*{box-sizing:border-box}
+body{margin:0;background:#10151d;color:#fff;font-family:Arial,sans-serif;padding-bottom:85px}
+header{background:#1b2430;padding:20px;text-align:center;border-bottom:1px solid #354152}
+h1{color:#e7b84c;margin:0;font-size:25px}
+header p{color:#aab5c5;margin:7px 0 0;font-size:13px}
+main{max-width:650px;margin:auto;padding:15px}
+.card{background:#1b2430;border:1px solid #344052;border-radius:15px;padding:17px;margin-bottom:14px}
+h2{font-size:19px;margin:0 0 14px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.stat{background:#273343;padding:13px;border-radius:10px}
+.stat small{color:#aab5c5}
+.value{font-size:22px;color:#e7b84c;font-weight:bold;margin-top:6px}
+button{background:#d9aa3e;color:#171717;border:0;border-radius:10px;padding:14px;font-size:15px;font-weight:bold;width:100%;margin-top:9px}
+button:disabled{opacity:.45}
+.secondary{background:#34465c;color:white}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#19222e;display:grid;grid-template-columns:repeat(5,1fr);padding:8px 2px;border-top:1px solid #354152}
+.nav button{background:transparent;color:#cbd4e0;margin:0;padding:8px 2px;font-size:11px}
+.nav button.active{color:#e7b84c}
+.nav span{display:block;font-size:20px;margin-bottom:4px}
+.page{display:none}
+.page.active{display:block}
+.bar{height:10px;background:#354152;border-radius:20px;overflow:hidden;margin-top:8px}
+.fill{height:100%;background:#42bd7b;width:100%}
+.muted{color:#aab5c5;font-size:13px}
+.item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #354152}
+.item button{width:auto;min-width:95px;margin:0;padding:10px}
 </style>
 </head>
 <body>
+
 <header>
-  <h1>BLACK BUSSINES</h1>
-  <div class="subtitle">Твоя история начинается здесь</div>
+<h1>BLACK BUSSINES</h1>
+<p>Построй свою экономическую империю</p>
 </header>
 
 <main>
-  <div class="card">
-    <h2>👤 Новый игрок</h2>
-    <p class="muted">Профессия: Шахтёр</p>
-    <div class="stats">
-      <div class="stat">
-        <div class="muted">Уровень</div>
-        <div class="value" id="level">1</div>
-      </div>
-      <div class="stat">
-        <div class="muted">Монеты</div>
-        <div class="value" id="coins">0</div>
-      </div>
-      <div class="stat">
-        <div class="muted">Опыт</div>
-        <div class="value" id="xp">0</div>
-      </div>
-      <div class="stat">
-        <div class="muted">Уголь</div>
-        <div class="value" id="coal">0</div>
-      </div>
-    </div>
-  </div>
 
-  <div class="card">
-    <h2>⛏️ Шахта</h2>
-    <p>Добывай уголь, получай монеты и развивай персонажа.</p>
-    <p>Энергия: <b id="energy">100</b>/100</p>
-    <div class="progress">
-      <div id="energyBar"></div>
-    </div>
-    <button onclick="mine()">⛏️ Добывать уголь</button>
-    <button onclick="rest()">🛌 Отдохнуть (+20 энергии)</button>
-  </div>
+<section id="work" class="page active">
+<div class="card">
+<h2>👤 Твой персонаж</h2>
+<div class="stats">
+<div class="stat"><small>Уровень</small><div class="value" id="level">1</div></div>
+<div class="stat"><small>Монеты</small><div class="value" id="coins">0</div></div>
+<div class="stat"><small>Опыт</small><div class="value" id="xp">0</div></div>
+<div class="stat"><small>Уголь</small><div class="value" id="coal">0</div></div>
+</div>
+<p class="muted">Опыт до следующего уровня</p>
+<div class="bar"><div class="fill" id="xpBar"></div></div>
+</div>
 
-  <div class="card">
-    <h2>📊 Развитие</h2>
-    <p class="muted">Опыт до следующего уровня:</p>
-    <b id="nextXP">100</b>
-  </div>
+<div class="card">
+<h2>⛏️ Шахта</h2>
+<p>Профессия: Шахтёр</p>
+<p>Энергия: <b id="energy">100</b>/100</p>
+<div class="bar"><div class="fill" id="energyBar"></div></div>
+<button onclick="mine()">⛏️ Добывать уголь</button>
+<button class="secondary" onclick="rest()">🛌 Отдохнуть (+20 энергии)</button>
+</div>
+</section>
+
+<section id="business" class="page">
+<div class="card">
+<h2>🏢 Твой бизнес</h2>
+<p class="muted">Покупай предприятия и развивай свою империю.</p>
+<p>Пассивный доход: <b id="income">0</b> монет/час</p>
+<div id="businessList"></div>
+</div>
+</section>
+
+<section id="shop" class="page">
+<div class="card">
+<h2>🛒 Магазин</h2>
+<div class="item"><div>🧤 Рабочие перчатки<br><small>+5% к добыче</small></div><button onclick="buyItem(500,'gloves')">500 монет</button></div>
+<div class="item"><div>🎒 Рюкзак<br><small>+10 к энергии</small></div><button onclick="buyItem(1000,'bag')">1000 монет</button></div>
+<div class="item"><div>⛏️ Улучшенная кирка<br><small>+1 дополнительный уголь</small></div><button onclick="buyItem(2000,'pickaxe')">2000 монет</button></div>
+<p class="muted">Предметы пока представлены демонстрационными покупками за игровую валюту.</p>
+</div>
+</section>
+
+<section id="inventory" class="page">
+<div class="card">
+<h2>🎒 Инвентарь</h2>
+<div id="inventoryList">Пока предметов нет.</div>
+</div>
+</section>
+
+<section id="profile" class="page">
+<div class="card">
+<h2>👤 Профиль игрока</h2>
+<div class="stat"><small>Имя игрока</small><div class="value">Новичок</div></div>
+<div class="stats" style="margin-top:10px">
+<div class="stat"><small>Уровень</small><div class="value" id="profileLevel">1</div></div>
+<div class="stat"><small>Всего угля</small><div class="value" id="profileCoal">0</div></div>
+</div>
+<p class="muted">Твоя карьера только начинается!</p>
+</div>
+</section>
+
 </main>
 
+<nav class="nav">
+<button class="active" onclick="showPage('work',this)"><span>⛏️</span>Работа</button>
+<button onclick="showPage('business',this)"><span>🏢</span>Бизнес</button>
+<button onclick="showPage('shop',this)"><span>🛒</span>Магазин</button>
+<button onclick="showPage('inventory',this)"><span>🎒</span>Инвентарь</button>
+<button onclick="showPage('profile',this)"><span>👤</span>Профиль</button>
+</nav>
+
 <script>
+const SAVE_KEY="black_bussines_save_v1";
+let coins=0,coal=0,xp=0,level=1,energy=100;
+let businesses={},inventory=[];
+const offers=[
+{name:"Ларёк",price:5000,income:100},
+{name:"Продуктовый магазин",price:20000,income:350},
+{name:"Автомойка",price:50000,income:800}
+];
 
-const SAVE_KEY = "black_bussines_save_v1";
-
-let coins = 0;
-let coal = 0;
-let xp = 0;
-let level = 1;
-let energy = 100;
-
-function xpNeeded() {
-  let n = level - 1;
-  return 100 + 40 * n + 10 * n * n;
+function xpNeeded(){
+let n=level-1;
+return 100+40*n+10*n*n;
 }
 
-function saveGame() {
-  const data = {
-    coins,
-    coal,
-    xp,
-    level,
-    energy
-  };
-
-  localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+function saveGame(){
+localStorage.setItem(SAVE_KEY,JSON.stringify({
+coins,coal,xp,level,energy,businesses,inventory
+}));
 }
 
-function loadGame() {
-  try {
-    const saved = localStorage.getItem(SAVE_KEY);
-
-    if (!saved) return;
-
-    const data = JSON.parse(saved);
-
-    if (!data || typeof data !== "object") return;
-
-    coins = Math.max(0, Number(data.coins) || 0);
-    coal = Math.max(0, Number(data.coal) || 0);
-    xp = Math.max(0, Number(data.xp) || 0);
-    level = Math.max(1, Math.floor(Number(data.level) || 1));
-    energy = Math.min(100, Math.max(0, Number(data.energy) || 0));
-  } catch (error) {
-    console.log("Ошибка загрузки сохранения");
-  }
+function loadGame(){
+try{
+let d=JSON.parse(localStorage.getItem(SAVE_KEY));
+if(!d)return;
+coins=Math.max(0,Number(d.coins)||0);
+coal=Math.max(0,Number(d.coal)||0);
+xp=Math.max(0,Number(d.xp)||0);
+level=Math.max(1,Math.floor(Number(d.level)||1));
+energy=Math.min(100,Math.max(0,Number(d.energy)||0));
+businesses=d.businesses||{};
+inventory=Array.isArray(d.inventory)?d.inventory:[];
+}catch(e){console.log("Save error")}
 }
 
-function update() {
-  document.getElementById("coins").textContent = coins;
-  document.getElementById("coal").textContent = coal;
-  document.getElementById("xp").textContent = xp;
-  document.getElementById("level").textContent = level;
-  document.getElementById("energy").textContent = energy;
-  document.getElementById("energyBar").style.width = energy + "%";
-  document.getElementById("nextXP").textContent = xpNeeded();
-
-  saveGame();
+function update(){
+document.getElementById("coins").textContent=coins;
+document.getElementById("coal").textContent=coal;
+document.getElementById("xp").textContent=xp;
+document.getElementById("level").textContent=level;
+document.getElementById("energy").textContent=energy;
+document.getElementById("profileLevel").textContent=level;
+document.getElementById("profileCoal").textContent=coal;
+document.getElementById("energyBar").style.width=energy+"%";
+document.getElementById("xpBar").style.width=(xp/xpNeeded()*100)+"%";
+document.getElementById("income").textContent=getIncome();
+renderBusinesses();
+renderInventory();
+saveGame();
 }
 
-function mine() {
-  if (energy < 1) {
-    alert("Недостаточно энергии! Отдохни.");
-    return;
-  }
-
-  energy--;
-  coal++;
-  coins++;
-
-  if (Math.random() < 0.1) {
-    xp += 5;
-  }
-
-  while (xp >= xpNeeded()) {
-    xp -= xpNeeded();
-    level++;
-    alert("Новый уровень: " + level);
-  }
-
-  update();
+function mine(){
+if(energy<1){alert("Недостаточно энергии! Отдохни.");return}
+energy--;
+let extra=inventory.includes("pickaxe")?1:0;
+coal+=1+extra;
+coins+=1+extra;
+if(Math.random()<0.1)xp+=5;
+while(xp>=xpNeeded()){
+xp-=xpNeeded();level++;
+alert("Поздравляем! Уровень "+level);
+}
+update();
 }
 
-function rest() {
-  energy = Math.min(100, energy + 20);
-  update();
+function rest(){
+energy=Math.min(100,energy+20);
+update();
+}
+
+function showPage(id,button){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+button.classList.add("active");
+}
+
+function getIncome(){
+return offers.reduce((sum,b)=>sum+(businesses[b.name]?b.income:0),0);
+}
+
+function renderBusinesses(){
+document.getElementById("businessList").innerHTML=offers.map(b=>{
+let owned=!!businesses[b.name];
+return `<div class="item"><div><b>${b.name}</b><br><small>${b.income} монет/час</small></div>
+<button ${owned?"disabled":""} onclick="buyBusiness('${b.name}')">${owned?"Куплено":b.price+" монет"}</button></div>`;
+}).join("");
+}
+
+function buyBusiness(name){
+let b=offers.find(x=>x.name===name);
+if(!b||businesses[name]||coins<b.price){alert("Недостаточно монет!");return}
+coins-=b.price;
+businesses[name]=true;
+update();
+}
+
+function buyItem(price,item){
+if(inventory.includes(item)){alert("Уже куплено!");return}
+if(coins<price){alert("Недостаточно монет!");return}
+coins-=price;
+inventory.push(item);
+update();
+}
+
+function renderInventory(){
+let names={gloves:"🧤 Рабочие перчатки",bag:"🎒 Рюкзак",pickaxe:"⛏️ Улучшенная кирка"};
+document.getElementById("inventoryList").innerHTML=inventory.length?
+inventory.map(x=>"<div class='item'>"+(names[x]||x)+"</div>").join(""):"Пока предметов нет.";
 }
 
 loadGame();
 update();
-
 </script>
 </body>
 </html>
+
+
+
