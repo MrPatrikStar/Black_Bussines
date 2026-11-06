@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLACK BUSSINES</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #101318;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+header {
+  padding: 22px;
+  text-align: center;
+  background: #191f29;
+  border-bottom: 1px solid #343d4c;
+}
+h1 { color: #e5b94b; margin: 0; }
+.subtitle { color: #9ba6b7; margin-top: 7px; }
+main { padding: 18px; max-width: 600px; margin: auto; }
+.card {
+  background: #1b222d;
+  border: 1px solid #343d4c;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 15px;
+}
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.stat {
+  background: #252e3b;
+  padding: 14px;
+  border-radius: 10px;
+}
+.value {
+  color: #e5b94b;
+  font-size: 23px;
+  font-weight: bold;
+  margin-top: 6px;
+}
+button {
+  width: 100%;
+  padding: 16px;
+  border: 0;
+  border-radius: 10px;
+  background: #d5a83d;
+  color: #171717;
+  font-size: 17px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+button:active { transform: scale(.98); }
+.progress {
+  background: #343d4c;
+  height: 10px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+#energyBar {
+  height: 100%;
+  width: 100%;
+  background: #45bd78;
+}
+.muted { color: #9ba6b7; }
+</style>
+</head>
+<body>
+<header>
+  <h1>BLACK BUSSINES</h1>
+  <div class="subtitle">Твоя история начинается здесь</div>
+</header>
+
+<main>
+  <div class="card">
+    <h2>👤 Новый игрок</h2>
+    <p class="muted">Профессия: Шахтёр</p>
+    <div class="stats">
+      <div class="stat">
+        <div class="muted">Уровень</div>
+        <div class="value" id="level">1</div>
+      </div>
+      <div class="stat">
+        <div class="muted">Монеты</div>
+        <div class="value" id="coins">0</div>
+      </div>
+      <div class="stat">
+        <div class="muted">Опыт</div>
+        <div class="value" id="xp">0</div>
+      </div>
+      <div class="stat">
+        <div class="muted">Уголь</div>
+        <div class="value" id="coal">0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>⛏️ Шахта</h2>
+    <p>Добывай уголь, получай монеты и развивай персонажа.</p>
+    <p>Энергия: <b id="energy">100</b>/100</p>
+    <div class="progress">
+      <div id="energyBar"></div>
+    </div>
+    <button onclick="mine()">⛏️ Добывать уголь</button>
+    <button onclick="rest()">🛌 Отдохнуть (+20 энергии)</button>
+  </div>
+
+  <div class="card">
+    <h2>📊 Развитие</h2>
+    <p class="muted">Опыт до следующего уровня:</p>
+    <b id="nextXP">100</b>
+  </div>
+</main>
+
+<script>
+let coins = 0;
+let coal = 0;
+let xp = 0;
+let level = 1;
+let energy = 100;
+
+function xpNeeded() {
+  let n = level - 1;
+  return 100 + 40*n + 10*n*n;
+}
+
+function update() {
+  document.getElementById("coins").textContent = coins;
+  document.getElementById("coal").textContent = coal;
+  document.getElementById("xp").textContent = xp;
+  document.getElementById("level").textContent = level;
+  document.getElementById("energy").textContent = energy;
+  document.getElementById("energyBar").style.width = energy + "%";
+  document.getElementById("nextXP").textContent = xpNeeded();
+}
+
+function mine() {
+  if (energy < 1) {
+    alert("Недостаточно энергии! Отдохни.");
+    return;
+  }
+  energy--;
+  coal++;
+  coins++;
+  if (Math.random() < 0.1) xp += 5;
+
+  while (xp >= xpNeeded()) {
+    xp -= xpNeeded();
+    level++;
+    alert("Поздравляем! Новый уровень: " + level);
+  }
+  update();
+}
+
+function rest() {
+  energy = Math.min(100, energy + 20);
+  update();
+}
+
+update();
+</script>
+</body>
+</html>
