@@ -423,7 +423,15 @@ update();
 
 setInterval(update, 10000);
 </script>
-</body>
+<script>
+const SUPABASE_URL = 'https://lcutewtfifmrqmpzjjth.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_Pw418XOzxvsbT8A_YDdMqQ_OdL4EUvG';
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+</script></body>
 </html>
 
 
