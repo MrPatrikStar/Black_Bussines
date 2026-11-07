@@ -462,8 +462,44 @@ const { data: stateData, error: stateError } =
   }
 
   console.log("Профиль загружен с сервера:", stateData.player);
-  console.log("Игрок авторизован:", data.player);
-  return data.player;
+console.log("Игрок авторизован:", data.player);
+
+await saveGameToServer();
+
+return data.player;
+}
+  async function saveGameToServer() {
+  const tg = window.Telegram?.WebApp;
+
+  if (!tg || !tg.initData) {
+    console.log("Нет авторизации Telegram");
+    return;
+  }
+
+  const gameData = {
+    initData: tg.initData,
+    coins,
+    coal,
+    xp,
+    level,
+    energy,
+    businesses,
+    inventory,
+    lastIncomeAt,
+    incomeRemainder
+  };
+
+  const { data, error } = await supabaseClient.functions.invoke(
+    "save-game",
+    { body: gameData }
+  );
+
+  if (error) {
+    console.error("Ошибка сохранения на сервер:", error);
+    return;
+  }
+
+  console.log("Прогресс отправлен на сервер:", data);
 }
   loginWithTelegram()
 </script></body>
