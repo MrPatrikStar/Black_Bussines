@@ -433,6 +433,30 @@ const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_ANON_KEY
 );
+  async function loginWithTelegram() {
+  const tg = window.Telegram?.WebApp;
+
+  if (!tg || !tg.initData) {
+    console.warn("Откройте игру через Telegram");
+    return;
+  }
+
+  tg.ready();
+
+  const { data, error } = await supabaseClient.functions.invoke(
+    "telegram-auth",
+    { body: { initData: tg.initData } }
+  );
+
+  if (error) {
+    console.error("Ошибка авторизации:", error);
+    return;
+  }
+
+  console.log("Игрок авторизован:", data.player);
+  return data.player;
+}
+  loginWithTelegram()
 </script></body>
 </html>
 
