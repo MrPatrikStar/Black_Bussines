@@ -208,7 +208,6 @@ function saveGame() {
 
   localStorage.setItem(SAVE_KEY, JSON.stringify(data));
 }
-
 function loadGame() {
   try {
     let saved = localStorage.getItem(SAVE_KEY);
@@ -232,7 +231,6 @@ function loadGame() {
     console.log("Ошибка загрузки сохранения");
   }
 }
-
 function update() {
   accrueIncome();
 
