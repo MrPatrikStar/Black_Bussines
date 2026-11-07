@@ -452,7 +452,18 @@ const supabaseClient = window.supabase.createClient(
     console.error("Ошибка авторизации:", error);
     return;
   }
+const { data: stateData, error: stateError } =
+    await supabaseClient.functions.invoke(
+      "game-state",
+      { body: { initData: tg.initData } }
+    );
 
+  if (stateError) {
+    console.error("Ошибка загрузки профиля:", stateError);
+    return data.player;
+  }
+
+  console.log("Профиль загружен с сервера:", stateData.player);
   console.log("Игрок авторизован:", data.player);
   return data.player;
 }
