@@ -83,7 +83,6 @@ button:disabled{opacity:.5}
   </div>
 </section>
 
-  
 <section id="inventory" class="page">
   <div class="card">
     <h2>🎒 Инвентарь</h2>
@@ -299,10 +298,8 @@ async function gameAction(action,target=null){
   }catch(error){
     console.error("Game action error:", error);
 
-    // Сначала получаем исходный текст ошибки.
     let rawMessage = error?.message || "";
 
-    // Supabase может хранить ответ Edge Function внутри error.context.
     try{
       const response = error?.context;
       if(response && typeof response.clone === "function"){
@@ -312,7 +309,6 @@ async function gameAction(action,target=null){
           try{
             const responseData = JSON.parse(responseText);
 
-            // Поддерживаем обычный и вложенный формат ответа.
             rawMessage =
               responseData?.error?.message ||
               responseData?.error ||
@@ -332,14 +328,18 @@ async function gameAction(action,target=null){
       console.error("Не удалось прочитать ответ сервера:", readError);
     }
 
-    // Переводим ошибки независимо от регистра и дополнительных деталей.
     const normalizedMessage = String(rawMessage).toLowerCase();
 
     let friendlyMessage = "Не удалось выполнить действие. Попробуй ещё раз.";
 
     if(
       normalizedMessage.includes("not enough coins") ||
-      normalizedMessage.includes("недостаточно монет")
+      normalizedMessage.includes("not enough funds") ||
+      normalizedMessage.includes("insufficient funds") ||
+      normalizedMessage.includes("not enough money") ||
+      normalizedMessage.includes("insufficient coins") ||
+      normalizedMessage.includes("недостаточно монет") ||
+      normalizedMessage.includes("недостаточно средств")
     ){
       friendlyMessage = "Недостаточно монет";
     }else if(
