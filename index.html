@@ -2,7 +2,8 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080d13">
 <title>BLACK BUSSINES</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -11,25 +12,53 @@
 <style>
 *{box-sizing:border-box}
 :root{
-  --bg:#090e16;--panel:#141e2b;--border:#29394c;
-  --gold:#e8b957;--muted:#91a2b7;
+  --bg:#080d13;
+  --panel:#141d28;
+  --border:#293747;
+  --gold:#e9b653;
+  --muted:#94a4b7;
 }
-body{margin:0;background:var(--bg);color:#fff;font-family:Arial,sans-serif;padding-bottom:90px}
-header{padding:18px 17px;background:rgba(15,23,35,.96);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
+body{
+  margin:0;background:var(--bg);color:#fff;
+  font-family:Arial,sans-serif;padding-bottom:90px;
+}
+header{
+  padding:16px 17px;background:rgba(10,16,24,.96);
+  border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;
+  position:sticky;top:0;z-index:20;backdrop-filter:blur(12px)
+}
 .logo{font-size:19px;font-weight:900;letter-spacing:1.5px}
 .logo span{color:var(--gold)}
-.header-level{background:#25364b;border:1px solid #3b5069;padding:7px 12px;border-radius:9px;font-size:12px}
-main{padding:15px;max-width:650px;margin:auto}
+.header-level{
+  background:#25364b;border:1px solid #3b5069;
+  padding:7px 12px;border-radius:9px;font-size:12px
+}
+main{padding:15px;max-width:700px;margin:auto}
 .page{display:none;animation:appear .25s ease}
 .page.active{display:block}
 @keyframes appear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.hero{position:relative;overflow:hidden;min-height:210px;padding:23px;border-radius:19px;background:linear-gradient(110deg,rgba(5,12,22,.98),rgba(15,38,60,.82)),radial-gradient(circle at 80% 20%,#315a78,#101925);border:1px solid #34475d;margin-bottom:15px}
-.hero:after{content:"";position:absolute;width:190px;height:190px;right:-55px;bottom:-80px;border:1px solid rgba(255,255,255,.13);border-radius:50%;box-shadow:0 0 0 20px rgba(255,255,255,.025),0 0 0 40px rgba(255,255,255,.02)}
+
+.hero{
+  position:relative;overflow:hidden;min-height:190px;padding:23px;
+  border-radius:19px;
+  background:linear-gradient(110deg,rgba(5,12,22,.98),rgba(15,38,60,.82)),
+  radial-gradient(circle at 80% 20%,#315a78,#101925);
+  border:1px solid #34475d;margin-bottom:15px
+}
+.hero:after{
+  content:"";position:absolute;width:190px;height:190px;
+  right:-55px;bottom:-80px;border:1px solid rgba(255,255,255,.13);
+  border-radius:50%;box-shadow:0 0 0 20px rgba(255,255,255,.025),0 0 0 40px rgba(255,255,255,.02)
+}
 .hero-label{color:var(--gold);font-size:11px;font-weight:bold;letter-spacing:2px;margin-bottom:12px}
-.hero h1{font-size:27px;margin:0 0 9px;max-width:250px}
-.hero p{color:#aab9ca;font-size:13px;line-height:1.5;max-width:260px}
-.hero-button{margin-top:12px;position:relative;z-index:2}
-.card{background:linear-gradient(145deg,#182536,#111b28);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:14px}
+.hero h1{font-size:27px;margin:0 0 9px;max-width:280px}
+.hero p{color:#aab9ca;font-size:13px;line-height:1.5;max-width:290px}
+.card{
+  background:linear-gradient(145deg,#182536,#111b28);
+  border:1px solid var(--border);border-radius:16px;
+  padding:16px;margin-bottom:14px
+}
 .card-title{font-size:16px;font-weight:bold;margin:0 0 14px}
 .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .stat-box{background:#0e1723;border:1px solid #25364a;border-radius:12px;padding:13px}
@@ -38,16 +67,25 @@ main{padding:15px;max-width:650px;margin:auto}
 .stat{display:flex;justify-content:space-between;margin:11px 0;font-size:14px}
 .small{color:var(--muted);font-size:12px;line-height:1.5}
 .bar{height:8px;background:#293747;border-radius:10px;overflow:hidden;margin:8px 0 13px}
-.fill{height:100%;width:0%;background:linear-gradient(90deg,#2478df,#55b6ff);border-radius:10px;transition:width .4s ease}
+.fill{height:100%;width:0%;background:linear-gradient(90deg,#2478df,#55b6ff);border-radius:10px;transition:width .4s}
 .energy-fill{background:linear-gradient(90deg,#20a66a,#7be5a5)}
-button{border:0;border-radius:11px;padding:13px 15px;background:linear-gradient(135deg,#2878df,#1758ad);color:white;font-weight:bold;font-size:14px;cursor:pointer;transition:transform .15s,filter .15s}
+button{
+  border:0;border-radius:11px;padding:13px 15px;
+  background:linear-gradient(135deg,#2878df,#1758ad);
+  color:white;font-weight:bold;font-size:14px;cursor:pointer;
+  transition:transform .15s,filter .15s
+}
 button:active{transform:scale(.97);filter:brightness(1.2)}
-button:disabled{opacity:.5}
+button:disabled{opacity:.5;cursor:default}
 .action{width:100%;margin-top:10px}
 .secondary{background:#26374a;border:1px solid #3a5069}
 .gold-button{background:linear-gradient(135deg,#d7a844,#a87920);color:#15110a}
 .menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:15px}
-.menu-tile{text-align:left;min-height:105px;padding:15px;background:linear-gradient(145deg,#1b2b3e,#111b28);border:1px solid #2c4057;border-radius:15px;color:white}
+.menu-tile{
+  text-align:left;min-height:105px;padding:15px;
+  background:linear-gradient(145deg,#1b2b3e,#111b28);
+  border:1px solid #2c4057;border-radius:15px;color:white
+}
 .tile-icon{font-size:25px;display:block;margin-bottom:12px}
 .tile-name{display:block;font-size:14px;font-weight:bold}
 .tile-description{display:block;color:var(--muted);font-size:11px;margin-top:5px}
@@ -58,53 +96,264 @@ button:disabled{opacity:.5}
 .error{color:#ff8585;font-size:13px;margin:12px 0;min-height:18px}
 .status{color:#91d7a4;font-size:12px}
 .character-card{display:flex;align-items:center;gap:15px}
-.character-avatar{width:75px;height:75px;flex-shrink:0;border-radius:18px;background:linear-gradient(145deg,#344c65,#152437);border:1px solid #52677f;display:flex;align-items:center;justify-content:center;font-size:36px}
-.nav{position:fixed;bottom:0;left:0;right:0;background:rgba(13,21,32,.97);border-top:1px solid #29394c;display:flex;justify-content:space-around;padding:9px 3px calc(9px + env(safe-area-inset-bottom));z-index:20;backdrop-filter:blur(12px)}
-.nav button{flex:1;min-width:0;background:transparent;color:#8192a7;padding:7px 2px;font-size:10px;border-radius:8px;white-space:nowrap}
-.nav button.active{color:#68adff;background:#1c3048}
+.character-avatar{
+  width:75px;height:75px;flex-shrink:0;border-radius:18px;
+  background:linear-gradient(145deg,#344c65,#152437);
+  border:1px solid #52677f;display:flex;align-items:center;
+  justify-content:center;font-size:36px
+}
+.nav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:rgba(13,21,32,.97);border-top:1px solid #29394c;
+  display:flex;justify-content:space-around;
+  padding:9px 3px calc(9px + env(safe-area-inset-bottom));
+  z-index:30;backdrop-filter:blur(12px)
+}
+.nav button{
+  background:transparent;color:#8192a7;padding:7px 4px;
+  font-size:10px;border-radius:8px;min-width:55px
+}
+.nav button.active{color:#e9b653;background:#302b20}
 .nav-icon{display:block;font-size:19px;margin-bottom:4px}
-@media(max-width:380px){.nav button{font-size:9px;padding:6px 1px}.nav-icon{font-size:17px}}
+
+/* =====================================
+   НОВАЯ ИГРОВАЯ ШАХТА
+   ===================================== */
+
 .mine-scene{
-  position:relative;height:270px;overflow:hidden;border-radius:17px;
-  border:1px solid #405064;margin-bottom:14px;
+  position:relative;width:100%;height:390px;overflow:hidden;
+  border-radius:18px;border:1px solid #4b5863;margin-bottom:14px;
+  isolation:isolate;
   background:
-    radial-gradient(ellipse at 70% 45%,rgba(224,156,67,.22),transparent 28%),
-    linear-gradient(180deg,#172333 0%,#26303a 48%,#101820 100%);
+    radial-gradient(ellipse at 50% 25%,rgba(201,139,69,.22),transparent 45%),
+    linear-gradient(180deg,#18212b 0%,#27313a 42%,#171d23 75%,#0d1218 100%);
+  box-shadow:inset 0 0 65px #05090e,0 12px 35px #0008
 }
 .mine-scene:before{
-  content:"";position:absolute;inset:0;
-  background:linear-gradient(90deg,transparent 48%,rgba(0,0,0,.3)),
-  repeating-linear-gradient(90deg,transparent 0 55px,rgba(5,10,15,.8) 57px 64px,transparent 66px 105px);
-  opacity:.7;
+  content:"";position:absolute;inset:0;z-index:-1;
+  background:
+    radial-gradient(ellipse at 50% 0%,transparent 20%,rgba(0,0,0,.55) 78%),
+    linear-gradient(90deg,rgba(0,0,0,.5),transparent 25%,transparent 75%,rgba(0,0,0,.5));
 }
-.mine-tunnel{position:absolute;inset:0;border:13px solid #39414a;border-bottom:25px solid #303943;border-radius:48% 48% 0 0 / 35% 35% 0 0;opacity:.75}
-.mine-lamp{position:absolute;top:37px;left:50%;width:12px;height:12px;border-radius:50%;background:#ffd889;box-shadow:0 0 15px 7px rgba(255,190,91,.55),0 0 65px 25px rgba(255,174,65,.16);animation:lampGlow 2s infinite alternate}
-@keyframes lampGlow{from{opacity:.7}to{opacity:1}}
-.mine-rocks{position:absolute;right:15px;bottom:28px;font-size:57px;filter:brightness(.65)}
-.mine-cart{position:absolute;left:17px;bottom:17px;font-size:38px;filter:brightness(.8)}
-.mine-rails{position:absolute;left:0;right:0;bottom:13px;height:5px;background:#65717b;box-shadow:0 10px 0 #414c56}
-.miner{position:absolute;left:47%;bottom:29px;width:85px;height:145px;transform-origin:bottom center;z-index:3}
-.miner-body{position:absolute;left:23px;bottom:0;width:43px;height:75px;background:linear-gradient(90deg,#263b50,#45627c,#263b50);border:2px solid #182b3d;border-radius:13px 13px 5px 5px}
-.miner-head{position:absolute;left:29px;bottom:75px;width:34px;height:37px;border-radius:13px;background:#c58e69;border:2px solid #815a43}
-.miner-helmet{position:absolute;left:25px;bottom:104px;width:42px;height:17px;border-radius:17px 17px 5px 5px;background:#d9a83d;border-bottom:4px solid #956c23;z-index:2}
-.miner-helmet:after{content:"";position:absolute;left:17px;top:4px;width:8px;height:7px;border-radius:50%;background:#fff0a7;box-shadow:0 0 12px 5px #ffc85c}
-.miner-arm{position:absolute;left:8px;bottom:47px;width:39px;height:13px;background:#c58e69;border-radius:10px;transform:rotate(-25deg);transform-origin:right center}
-.miner-pickaxe{position:absolute;left:-5px;bottom:75px;width:65px;height:7px;border-radius:5px;background:#946b43;transform:rotate(-35deg);transform-origin:right center}
-.miner-pickaxe:after{content:"";position:absolute;right:-5px;top:-7px;width:27px;height:9px;border-radius:5px;background:#aeb9c3;transform:rotate(25deg)}
-.miner-leg{position:absolute;bottom:-7px;left:26px;width:14px;height:27px;background:#24364a;border-radius:5px}
-.miner-leg.second{left:49px}
-.mine-scene.mining .miner{animation:minerSwing .55s ease-in-out 3}
-.mine-scene.mining .miner-pickaxe{animation:pickaxeSwing .55s ease-in-out 3}
-@keyframes minerSwing{0%,100%{transform:rotate(0)}45%{transform:rotate(-9deg) translateY(3px)}70%{transform:rotate(5deg)}}
-@keyframes pickaxeSwing{0%,100%{transform:rotate(-35deg)}45%,65%{transform:rotate(35deg)}}
-.mine-particles{position:absolute;left:68%;bottom:92px;z-index:4;pointer-events:none}
-.mine-particle{position:absolute;width:7px;height:7px;border-radius:2px;background:#d4a46a;animation:particleFly .8s ease-out forwards}
-@keyframes particleFly{from{opacity:1;transform:translate(0,0) scale(1)}to{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.3)}}
-.mine-result{position:absolute;top:25px;left:50%;transform:translateX(-50%);z-index:5;color:#ffe0a0;font-size:14px;font-weight:bold;text-shadow:0 2px 8px #000;opacity:0;white-space:nowrap;pointer-events:none}
+.mine-scene:after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:115px;
+  background:linear-gradient(180deg,transparent,#111820 30%,#090e13);
+  z-index:0;pointer-events:none
+}
+.mine-caption{
+  position:absolute;top:13px;left:13px;z-index:10;
+  color:#e5c58a;font-size:10px;letter-spacing:1.8px;font-weight:bold;
+  text-shadow:0 2px 5px #000
+}
+.mine-depth{
+  position:absolute;right:13px;top:13px;z-index:10;
+  color:#b5c1cc;font-size:10px;letter-spacing:1px
+}
+
+/* Каменные стены */
+.mine-wall{
+  position:absolute;inset:0;z-index:0;opacity:.75;
+  background:
+    radial-gradient(ellipse at 10% 20%,#56606a 0 2%,transparent 12%),
+    radial-gradient(ellipse at 90% 28%,#48515a 0 3%,transparent 13%),
+    radial-gradient(ellipse at 25% 68%,#343e47 0 3%,transparent 13%),
+    radial-gradient(ellipse at 78% 65%,#303943 0 4%,transparent 15%),
+    repeating-linear-gradient(165deg,transparent 0 34px,rgba(0,0,0,.13) 35px 38px,transparent 40px 67px);
+}
+.mine-arch{
+  position:absolute;left:5%;right:5%;top:48px;height:255px;
+  border:12px solid #3b4248;border-bottom:0;
+  border-radius:50% 50% 0 0 / 30% 30% 0 0;
+  box-shadow:inset 0 12px 18px #080b0f,0 0 0 3px #171d23;
+  opacity:.9;z-index:1
+}
+.mine-arch:before{
+  content:"";position:absolute;left:8%;right:8%;top:12px;height:220px;
+  border:3px solid rgba(124,132,136,.24);
+  border-bottom:0;border-radius:50% 50% 0 0 / 30% 30% 0 0
+}
+
+/* Крепления тоннеля */
+.mine-support{
+  position:absolute;top:62px;width:13px;height:235px;
+  background:linear-gradient(90deg,#29221c,#76583a,#392a20);
+  border:1px solid #1c1916;z-index:2;
+  box-shadow:3px 0 8px #0008
+}
+.mine-support.left{left:12%}
+.mine-support.right{right:12%}
+.mine-beam{
+  position:absolute;top:60px;left:11%;right:11%;height:14px;
+  background:linear-gradient(#806344,#3a2c20);
+  border:1px solid #241c16;z-index:2;border-radius:3px
+}
+.mine-support:after{
+  content:"";position:absolute;top:40%;left:-5px;width:21px;height:5px;
+  background:#9a805f;transform:rotate(-12deg)
+}
+
+/* Каменные выступы */
+.mine-stalagmite{
+  position:absolute;z-index:2;bottom:92px;width:0;height:0;
+  border-left:17px solid transparent;border-right:17px solid transparent;
+  border-bottom:75px solid #39434a;filter:drop-shadow(4px 5px 3px #0008)
+}
+.mine-stalagmite.one{left:3%;transform:scale(.8)}
+.mine-stalagmite.two{right:3%;transform:scale(1.1)}
+.mine-stalactite{
+  position:absolute;z-index:2;top:70px;width:0;height:0;
+  border-left:12px solid transparent;border-right:12px solid transparent;
+  border-top:48px solid #414a50;filter:drop-shadow(2px 4px 3px #0008)
+}
+.mine-stalactite.one{left:27%}
+.mine-stalactite.two{right:27%;transform:scale(.7)}
+
+/* Светильники */
+.mine-lamp{
+  position:absolute;top:78px;left:50%;width:10px;height:10px;
+  border-radius:50%;background:#ffe2a1;z-index:4;
+  box-shadow:0 0 12px 6px #ffc36a,0 0 55px 28px #e99c4533;
+  animation:lampFlicker 2.8s infinite alternate
+}
+.mine-light{
+  position:absolute;top:80px;left:50%;width:180px;height:180px;
+  transform:translateX(-50%);z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse,#e4a64b20,transparent 70%)
+}
+@keyframes lampFlicker{0%,100%{opacity:1}45%{opacity:.75}52%{opacity:.95}70%{opacity:.8}}
+
+/* Рельсы и вагонетка */
+.mine-ground{
+  position:absolute;bottom:0;left:0;right:0;height:120px;z-index:2;
+  background:linear-gradient(180deg,#242b30,#11171d 75%)
+}
+.mine-rail{
+  position:absolute;bottom:27px;left:-10%;width:120%;height:5px;
+  background:linear-gradient(90deg,#525b62,#c0a77e,#515b63);
+  transform:perspective(130px) rotateX(18deg);z-index:4;
+  box-shadow:0 8px 0 #343d44
+}
+.mine-sleeper{
+  position:absolute;bottom:16px;left:0;right:0;height:25px;z-index:3;
+  background:repeating-linear-gradient(90deg,transparent 0 22px,#493b2d 23px 30px,transparent 31px 48px)
+}
+.mine-cart{
+  position:absolute;bottom:42px;left:8%;z-index:5;
+  width:76px;height:48px;border:4px solid #4b555d;
+  border-top:0;border-radius:4px 4px 13px 13px;
+  background:linear-gradient(145deg,#414b53,#171e24);
+  box-shadow:inset 0 9px 12px #0008,0 5px 8px #0008
+}
+.mine-cart:before{
+  content:"";position:absolute;left:-5px;right:-5px;top:-8px;height:9px;
+  background:linear-gradient(#9aa2a6,#41494e);border-radius:3px
+}
+.mine-cart:after{
+  content:"";position:absolute;bottom:-11px;left:9px;width:11px;height:11px;
+  border-radius:50%;background:#161a1d;border:3px solid #77818a;
+  box-shadow:37px 0 0 -3px #161a1d,37px 0 0 0 #77818a
+}
+.cart-coal{position:absolute;bottom:83px;left:15%;font-size:23px;z-index:6;filter:brightness(.7)}
+
+/* Залежи угля */
+.coal-field{position:absolute;inset:0;z-index:8;pointer-events:none}
+.coal-node{
+  position:absolute;pointer-events:auto;display:flex;
+  align-items:center;justify-content:center;
+  width:62px;height:58px;padding:0;border:0;
+  background:transparent;border-radius:50%;cursor:pointer;
+  filter:drop-shadow(0 5px 5px #0009);
+  animation:coalAppear .35s ease-out both;
+  z-index:8
+}
+.coal-node:before{
+  content:"";position:absolute;inset:7px;border-radius:48% 42% 50% 38%;
+  background:radial-gradient(circle at 35% 25%,#727b80 0 5%,#343b40 22%,#171d22 65%,#090d11);
+  border:2px solid #69737a;box-shadow:inset 0 0 9px #000,0 0 0 2px #171d22
+}
+.coal-node:after{
+  content:"";position:absolute;width:15px;height:9px;
+  top:17px;left:21px;background:#9ba2a3;
+  border-radius:50%;transform:rotate(-28deg);opacity:.5;
+  box-shadow:13px 13px 0 -3px #879196,-8px 12px 0 -4px #a6a9a5
+}
+.coal-node .coal-spark{
+  position:absolute;width:6px;height:6px;border-radius:50%;
+  background:#e9b65b;box-shadow:0 0 10px 4px #e9a747;
+  right:12px;top:11px;z-index:2
+}
+.coal-node.size-small{transform:scale(.72)}
+.coal-node.size-large{transform:scale(1.25)}
+.coal-node.variant-2:before{
+  background:radial-gradient(circle at 35% 25%,#858b8c 0 5%,#41474a 22%,#20262b 65%,#090d11);
+  border-color:#818b8e
+}
+.coal-node.variant-3:before{
+  background:radial-gradient(circle at 35% 25%,#554d43 0 5%,#39312a 22%,#191817 65%,#090d11);
+  border-color:#8d7557
+}
+.coal-node:active{filter:brightness(1.5) drop-shadow(0 0 10px #e9b653)}
+@keyframes coalAppear{
+  from{opacity:0;scale:.3}
+  to{opacity:1;scale:1}
+}
+.coal-node.mined{animation:coalDisappear .3s ease forwards;pointer-events:none}
+@keyframes coalDisappear{to{opacity:0;scale:.15;rotate:35deg}}
+
+/* Подсказки и эффекты добычи */
+.mine-hint{
+  position:absolute;bottom:112px;left:50%;transform:translateX(-50%);
+  z-index:10;background:#090e13c9;border:1px solid #ffffff22;
+  color:#e9d5b2;border-radius:20px;padding:7px 12px;
+  font-size:10px;white-space:nowrap;pointer-events:none
+}
+.mine-particles{position:absolute;z-index:12;pointer-events:none}
+.mine-particle{
+  position:absolute;width:7px;height:7px;border-radius:2px;
+  background:#c3a078;animation:particleFly .7s ease-out forwards
+}
+@keyframes particleFly{
+  from{opacity:1;transform:translate(0,0) scale(1)}
+  to{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.2)}
+}
+.mine-result{
+  position:absolute;top:45px;left:50%;transform:translateX(-50%);
+  z-index:15;color:#ffe0a0;font-size:14px;font-weight:bold;
+  text-shadow:0 2px 8px #000;opacity:0;white-space:nowrap;pointer-events:none
+}
 .mine-result.show{animation:resultPop 1.2s ease forwards}
-@keyframes resultPop{0%{opacity:0;transform:translate(-50%,12px)}20%{opacity:1;transform:translate(-50%,0)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-25px)}}
-.mine-caption{position:absolute;left:13px;top:13px;z-index:5;color:#d9e4ee;font-size:10px;letter-spacing:1.5px;font-weight:bold;text-shadow:0 2px 5px #000}
-@media(min-width:500px){main{padding:22px}.hero{min-height:230px}}
+@keyframes resultPop{
+  0%{opacity:0;transform:translate(-50%,12px)}
+  20%,75%{opacity:1;transform:translate(-50%,0)}
+  100%{opacity:0;transform:translate(-50%,-25px)}
+}
+.mine-scene.mining .mine-lamp{animation:lampFlicker .2s infinite alternate}
+.mine-scene.mining{filter:brightness(1.08)}
+.mine-scene.mining .mine-light{opacity:1;filter:brightness(1.7)}
+
+/* Нижняя панель шахты */
+.mine-status{
+  display:flex;justify-content:space-between;gap:8px;
+  margin:0 0 12px;padding:11px 13px;
+  background:#111a24;border:1px solid #2b3948;border-radius:12px;
+  color:#aab8c6;font-size:11px
+}
+.mine-status b{color:#e9bd6c}
+.mine-action-note{margin-top:9px;text-align:center;color:#8292a4;font-size:11px}
+
+@media(min-width:500px){
+  main{padding:22px}
+  .hero{min-height:210px}
+  .mine-scene{height:430px}
+}
+@media(max-width:380px){
+  .mine-scene{height:350px}
+  .mine-cart{left:5%;transform:scale(.85);transform-origin:bottom left}
+  .coal-node{width:55px;height:52px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
 </style>
 </head>
 
@@ -115,12 +364,13 @@ button:disabled{opacity:.5}
 </header>
 
 <main>
+
 <section id="home" class="page active">
   <div class="hero">
     <div class="hero-label">ТВОЯ ИСТОРИЯ НАЧИНАЕТСЯ ЗДЕСЬ</div>
     <h1>Построй свою империю</h1>
     <p>Работай, развивай бизнес, покупай имущество и стань влиятельным человеком города.</p>
-    <button class="gold-button hero-button" onclick="showPage('work')">Начать играть →</button>
+    <button class="gold-button" onclick="showPage('work')">Начать играть →</button>
   </div>
 
   <div class="card">
@@ -155,27 +405,41 @@ button:disabled{opacity:.5}
 
 <section id="work" class="page">
   <div class="hero">
-    <div class="hero-label">РАБОЧАЯ ЗОНА</div>
+    <div class="hero-label">РАБОЧАЯ ЗОНА · ЛОКАЦИЯ 01</div>
     <h1>Угольная шахта</h1>
-    <p>Твоя первая работа. Добывай ресурсы и развивайся.</p>
+    <p>Исследуй тоннель, находи залежи угля и добывай ресурсы для развития своей империи.</p>
+  </div>
+
+  <div class="mine-status">
+    <span>⛏ Залежей найдено: <b id="coalCount">0</b></span>
+    <span>Уровень шахты: <b>01</b></span>
   </div>
 
   <div class="mine-scene" id="mineScene">
-    <div class="mine-caption">ШАХТА · УРОВЕНЬ 1</div>
-    <div class="mine-tunnel"></div>
+    <div class="mine-wall"></div>
+    <div class="mine-arch"></div>
+    <div class="mine-beam"></div>
+    <div class="mine-support left"></div>
+    <div class="mine-support right"></div>
+    <div class="mine-stalactite one"></div>
+    <div class="mine-stalactite two"></div>
+    <div class="mine-stalagmite one"></div>
+    <div class="mine-stalagmite two"></div>
+    <div class="mine-light"></div>
     <div class="mine-lamp"></div>
-    <div class="mine-rocks">🪨</div>
-    <div class="mine-rails"></div>
-    <div class="mine-cart">🛒</div>
-    <div class="miner" id="miner">
-      <div class="miner-helmet"></div>
-      <div class="miner-head"></div>
-      <div class="miner-body"></div>
-      <div class="miner-arm"></div>
-      <div class="miner-pickaxe"></div>
-      <div class="miner-leg"></div>
-      <div class="miner-leg second"></div>
-    </div>
+
+    <div class="mine-caption">BLACK BUSSINES · MINE 01</div>
+    <div class="mine-depth">ГЛУБИНА 120 М</div>
+
+    <div class="coal-field" id="coalField"></div>
+
+    <div class="mine-ground"></div>
+    <div class="mine-sleeper"></div>
+    <div class="mine-rail"></div>
+    <div class="cart-coal">⚫⚫</div>
+    <div class="mine-cart"></div>
+
+    <div class="mine-hint" id="mineHint">Нажми на залежь угля, чтобы добыть её</div>
     <div class="mine-particles" id="mineParticles"></div>
     <div class="mine-result" id="mineResult"></div>
   </div>
@@ -189,10 +453,11 @@ button:disabled{opacity:.5}
   </div>
 
   <div class="card">
-    <div class="card-title">⛏ Добыча угля</div>
-    <p class="small">Нажми кнопку, чтобы шахтёр начал работать. За добычу начисляются ресурсы по правилам игры.</p>
+    <div class="card-title">⛏ Управление добычей</div>
+    <p class="small">Выбирай появившиеся залежи прямо в шахте. Каждая успешная добыча обрабатывается сервером.</p>
     <button class="action" id="mineButton" onclick="gameAction('mine')">⛏ Добывать уголь</button>
     <button class="action secondary" onclick="gameAction('rest')">⚡ Отдохнуть (+20 энергии)</button>
+    <div class="mine-action-note">Новые залежи появляются в разных частях тоннеля.</div>
   </div>
 </section>
 
@@ -218,9 +483,7 @@ button:disabled{opacity:.5}
 
 <section id="profile" class="page">
   <div class="hero"><div class="hero-label">ЛИЧНОЕ ДЕЛО</div><h1>Профиль игрока</h1><p>Информация о твоём персонаже и игровом прогрессе.</p></div>
-  <div class="card">
-    <div class="character-card"><div class="character-avatar">👨</div><div><b id="profileName">Игрок</b><p class="small">Игрок BLACK BUSSINES</p></div></div>
-  </div>
+  <div class="card"><div class="character-card"><div class="character-avatar">👨</div><div><b id="profileName">Игрок</b><p class="small">Игрок BLACK BUSSINES</p></div></div></div>
   <div class="card">
     <div class="card-title">Статистика</div>
     <div class="stat"><span>Уровень</span><b id="profileLevel">—</b></div>
@@ -239,13 +502,17 @@ button:disabled{opacity:.5}
   <button data-page="work" onclick="showPage('work')"><span class="nav-icon">⛏</span>Работа</button>
   <button data-page="business" onclick="showPage('business')"><span class="nav-icon">🏢</span>Бизнес</button>
   <button data-page="shop" onclick="showPage('shop')"><span class="nav-icon">🛒</span>Магазин</button>
-  <button data-page="inventory" onclick="showPage('inventory')"><span class="nav-icon">🎒</span>Инвентарь</button>
   <button data-page="profile" onclick="showPage('profile')"><span class="nav-icon">👤</span>Профиль</button>
 </nav>
 
 <script>
+/* =========================================
+   SUPABASE И TELEGRAM — СОХРАНЕНЫ
+   ========================================= */
+
 const SUPABASE_URL="https://lcutewtfifmrqmpzjjth.supabase.co";
 const SUPABASE_ANON_KEY="sb_publishable_Pw418XOzxvsbT8A_YDdMqQ_OdL4EUvG";
+
 const sbClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 const tg=window.Telegram?.WebApp;
 
@@ -264,55 +531,201 @@ const itemNames={
   pickaxe:"Улучшенная кирка"
 };
 
+/* =========================================
+   НАВИГАЦИЯ
+   ========================================= */
+
 function showPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+
   const page=document.getElementById(id);
   if(page)page.classList.add("active");
+
   const navButton=document.querySelector('.nav button[data-page="'+id+'"]');
   if(navButton)navButton.classList.add("active");
+
   showMessage("");
   window.scrollTo({top:0,behavior:"smooth"});
+
+  if(id==="work")ensureCoalNodes();
 }
 
 function showMessage(text){
   document.getElementById("message").textContent=text||"";
 }
 
+/* =========================================
+   ДИНАМИЧЕСКАЯ СИСТЕМА УГОЛЬНЫХ ЗАЛЕЖЕЙ
+   ========================================= */
+
+// Координаты подготовлены так, чтобы залежи не перекрывали друг друга.
+// Каждая позиция — отдельное место появления ресурса.
+const coalSlots=[
+  {x:8,y:39},
+  {x:25,y:53},
+  {x:43,y:35},
+  {x:63,y:53},
+  {x:82,y:37},
+  {x:15,y:66},
+  {x:48,y:65},
+  {x:76,y:67}
+];
+
+let activeCoalNodes=[];
+let coalSpawnTimer=null;
+let coalNodeId=0;
+const MAX_COAL_NODES=3;
+
+function ensureCoalNodes(){
+  const field=document.getElementById("coalField");
+  if(!field)return;
+
+  if(activeCoalNodes.length===0){
+    spawnCoalNodes();
+  }
+}
+
+function spawnCoalNodes(){
+  if(!document.getElementById("work").classList.contains("active"))return;
+
+  const field=document.getElementById("coalField");
+  if(!field)return;
+
+  const freeSlots=coalSlots.filter(slot=>
+    !activeCoalNodes.some(node=>node.slot===slot)
+  );
+
+  // Перемешиваем свободные точки появления
+  for(let i=freeSlots.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [freeSlots[i],freeSlots[j]]=[freeSlots[j],freeSlots[i]];
+  }
+
+  const amount=Math.min(
+    MAX_COAL_NODES-activeCoalNodes.length,
+    freeSlots.length
+  );
+
+  for(let i=0;i<amount;i++){
+    createCoalNode(freeSlots[i]);
+  }
+
+  updateCoalCount();
+}
+
+function createCoalNode(slot){
+  const field=document.getElementById("coalField");
+  if(!field)return;
+
+  const node=document.createElement("button");
+  const id=++coalNodeId;
+
+  const sizeRoll=Math.random();
+  const sizeClass=sizeRoll<.25?"size-small":sizeRoll>.78?"size-large":"";
+  const variant="variant-"+(1+Math.floor(Math.random()*3));
+
+  node.type="button";
+  node.className="coal-node "+sizeClass+" "+variant;
+  node.dataset.nodeId=String(id);
+  node.setAttribute("aria-label","Добыть залежь угля");
+
+  node.style.left=slot.x+"%";
+  node.style.top=slot.y+"%";
+
+  const spark=document.createElement("span");
+  spark.className="coal-spark";
+  node.appendChild(spark);
+
+  node.onclick=()=>mineCoalNode(node);
+
+  field.appendChild(node);
+
+  activeCoalNodes.push({id,slot,element:node});
+  updateCoalCount();
+}
+
+function updateCoalCount(){
+  const counter=document.getElementById("coalCount");
+  if(counter)counter.textContent=activeCoalNodes.length;
+}
+
+async function mineCoalNode(node){
+  if(actionBusy||!player)return;
+  if(!node||!node.isConnected)return;
+
+  const nodeId=Number(node.dataset.nodeId);
+  const record=activeCoalNodes.find(item=>item.id===nodeId);
+  if(!record)return;
+
+  const success=await gameAction("mine");
+
+  if(success){
+    node.classList.add("mined");
+
+    activeCoalNodes=activeCoalNodes.filter(item=>item.id!==nodeId);
+    updateCoalCount();
+
+    setTimeout(()=>{
+      if(node.parentNode)node.remove();
+      spawnCoalNodes();
+    },350);
+
+    showMineResult("⛏ Залежь добыта!");
+  }
+}
+
+function showMineResult(text){
+  const result=document.getElementById("mineResult");
+  if(!result)return;
+
+  result.textContent=text;
+  result.classList.remove("show");
+  void result.offsetWidth;
+  result.classList.add("show");
+}
+
 function startMiningAnimation(){
   const scene=document.getElementById("mineScene");
   const particles=document.getElementById("mineParticles");
+  if(!scene||!particles)return;
+
   scene.classList.remove("mining");
   void scene.offsetWidth;
   scene.classList.add("mining");
+
   particles.innerHTML="";
 
-  for(let i=0;i<9;i++){
+  for(let i=0;i<12;i++){
     const particle=document.createElement("span");
     particle.className="mine-particle";
-    particle.style.setProperty("--dx",(Math.random()*90-45)+"px");
-    particle.style.setProperty("--dy",(Math.random()*-75-10)+"px");
+
+    particle.style.left=(35+Math.random()*30)+"%";
+    particle.style.top=(35+Math.random()*25)+"%";
+    particle.style.setProperty("--dx",(Math.random()*100-50)+"px");
+    particle.style.setProperty("--dy",(Math.random()*-90-10)+"px");
     particle.style.animationDelay=(Math.random()*.2)+"s";
+
     particles.appendChild(particle);
   }
 }
 
 function finishMiningAnimation(success){
   const scene=document.getElementById("mineScene");
-  const result=document.getElementById("mineResult");
-  scene.classList.remove("mining");
+  if(scene)scene.classList.remove("mining");
 
-  if(success){
-    result.textContent="✓ Добыча завершена";
-    result.classList.remove("show");
-    void result.offsetWidth;
-    result.classList.add("show");
-  }
+  if(success)showMineResult("✓ Добыча завершена");
 }
+
+/* =========================================
+   ОБРАБОТКА ДАННЫХ ИГРОКА
+   ========================================= */
 
 function getValue(obj,names,fallback){
   for(const name of names){
-    if(obj&&obj[name]!==undefined&&obj[name]!==null)return obj[name];
+    if(obj&&obj[name]!==undefined&&obj[name]!==null){
+      return obj[name];
+    }
   }
   return fallback;
 }
@@ -321,10 +734,13 @@ function normalizeBusinesses(value){
   if(Array.isArray(value)){
     const result={};
     value.forEach(b=>{
-      if(b&&b.business_type)result[b.business_type]=Number(b.level||1);
+      if(b&&b.business_type){
+        result[b.business_type]=Number(b.level||1);
+      }
     });
     return result;
   }
+
   if(value&&typeof value==="object"){
     const result={};
     for(const key of Object.keys(value)){
@@ -333,6 +749,7 @@ function normalizeBusinesses(value){
     }
     return result;
   }
+
   return {};
 }
 
@@ -341,16 +758,22 @@ function normalizeInventory(value){
     const result={};
     value.forEach(item=>{
       const code=typeof item==="string"?item:item.item_code;
-      if(code)result[code]=Number(item.quantity||1);
+      if(code){
+        result[code]=Number(item.quantity||1);
+      }
     });
     return result;
   }
+
   if(value&&typeof value==="object")return value;
   return {};
 }
 
 function applyPlayer(data){
-  if(!data||typeof data!=="object")throw new Error("Пустой профиль");
+  if(!data||typeof data!=="object"){
+    throw new Error("Пустой профиль");
+  }
+
   player={
     coins:Number(getValue(data,["coins","coin"],0)),
     coal:Number(getValue(data,["coal"],0)),
@@ -360,6 +783,7 @@ function applyPlayer(data){
     businesses:normalizeBusinesses(data.businesses),
     inventory:normalizeInventory(data.inventory)
   };
+
   render();
 }
 
@@ -376,6 +800,10 @@ function getIncome(){
   return total;
 }
 
+/* =========================================
+   ОБНОВЛЕНИЕ ИНТЕРФЕЙСА
+   ========================================= */
+
 function render(){
   if(!player)return;
 
@@ -387,11 +815,14 @@ function render(){
   document.getElementById("coal").textContent=coal;
   document.getElementById("xp").textContent=player.xp;
   document.getElementById("energy").textContent=player.energy+"/100";
+
   document.getElementById("headerLevel").textContent=player.level;
   document.getElementById("homeLevel").textContent=player.level;
+
   document.getElementById("workCoins").textContent=coins;
   document.getElementById("workCoal").textContent=coal;
   document.getElementById("workEnergy").textContent=player.energy+"/100";
+
   document.getElementById("profileLevel").textContent=player.level;
   document.getElementById("profileCoal").textContent=coal;
   document.getElementById("profileXp").textContent=player.xp;
@@ -399,8 +830,10 @@ function render(){
 
   document.getElementById("xpBar").style.width=
     Math.min(100,player.xp/xpNeeded()*100)+"%";
+
   document.getElementById("energyBar").style.width=
-    Math.min(100,player.energy)+"%";
+    Math.min(100,Math.max(0,player.energy))+"%";
+
   document.getElementById("income").textContent=
     getIncome().toLocaleString("ru-RU")+" монет";
 
@@ -428,7 +861,10 @@ function renderBusinesses(){
 
     const button=document.createElement("button");
     button.textContent=level?"Улучшить":"Купить";
-    button.onclick=()=>gameAction(level?"upgrade_business":"buy_business",b.name);
+    button.onclick=()=>gameAction(
+      level?"upgrade_business":"buy_business",
+      b.name
+    );
 
     div.append(title,info,button);
     box.appendChild(div);
@@ -438,6 +874,7 @@ function renderBusinesses(){
 function renderInventory(){
   const box=document.getElementById("inventoryList");
   box.innerHTML="";
+
   let hasItems=false;
 
   Object.entries(player.inventory).forEach(([code,quantity])=>{
@@ -453,21 +890,30 @@ function renderInventory(){
   if(!hasItems)box.textContent="Инвентарь пока пуст.";
 }
 
+/* =========================================
+   ИГРОВЫЕ ДЕЙСТВИЯ — SUPABASE
+   Контракт game--action сохранён
+   ========================================= */
+
 async function gameAction(action,target=null){
-  if(actionBusy||!player)return;
+  if(actionBusy||!player)return false;
 
   actionBusy=true;
 
-  if(action==="mine"){
-    startMiningAnimation();
-  }
+  if(action==="mine")startMiningAnimation();
 
   showMessage("Выполняется действие...");
+
   document.querySelectorAll("button").forEach(b=>b.disabled=true);
+
+  let success=false;
 
   try{
     const initData=tg?.initData;
-    if(!initData)throw new Error("Открой игру через Telegram.");
+
+    if(!initData){
+      throw new Error("Открой игру через Telegram.");
+    }
 
     const {data,error}=await sbClient.functions.invoke("game--action",{
       body:{initData,action,target}
@@ -480,6 +926,7 @@ async function gameAction(action,target=null){
     }
 
     applyPlayer(data.player);
+    success=true;
 
     if(action==="mine"){
       finishMiningAnimation(true);
@@ -494,6 +941,7 @@ async function gameAction(action,target=null){
 
     try{
       const response=error?.context;
+
       if(response&&typeof response.clone==="function"){
         const responseText=await response.clone().text();
 
@@ -560,9 +1008,7 @@ async function gameAction(action,target=null){
       friendlyMessage="Открой игру через Telegram";
     }
 
-    if(action==="mine"){
-      finishMiningAnimation(false);
-    }
+    if(action==="mine")finishMiningAnimation(false);
 
     showMessage(friendlyMessage);
 
@@ -570,7 +1016,13 @@ async function gameAction(action,target=null){
     actionBusy=false;
     document.querySelectorAll("button").forEach(b=>b.disabled=false);
   }
+
+  return success;
 }
+
+/* =========================================
+   АВТОРИЗАЦИЯ И ЗАГРУЗКА ИГРЫ
+   ========================================= */
 
 async function startGame(){
   try{
@@ -578,40 +1030,50 @@ async function startGame(){
     tg?.expand();
 
     const initData=tg?.initData;
-    if(!initData)throw new Error("Открой мини-приложение через Telegram.");
+
+    if(!initData){
+      throw new Error("Открой мини-приложение через Telegram.");
+    }
 
     document.getElementById("connectionStatus").textContent="Авторизация...";
 
-    const {data:authData,error:authError}=await sbClient.functions.invoke(
-      "telegram-auth",{body:{initData}}
-    );
+    const {data:authData,error:authError}=
+      await sbClient.functions.invoke("telegram-auth",{body:{initData}});
 
     if(authError)throw authError;
     if(authData?.error)throw new Error(authData.error);
 
     document.getElementById("connectionStatus").textContent="Загрузка профиля...";
 
-    const {data:stateData,error:stateError}=await sbClient.functions.invoke(
-      "game-state",{body:{initData}}
-    );
+    const {data:stateData,error:stateError}=
+      await sbClient.functions.invoke("game-state",{body:{initData}});
 
     if(stateError)throw stateError;
     if(stateData?.error)throw new Error(stateData.error);
 
-    const serverPlayer=stateData?.player||stateData?.data?.player;
-    if(!serverPlayer)throw new Error("Не удалось получить профиль игрока.");
+    const serverPlayer=
+      stateData?.player||
+      stateData?.data?.player;
+
+    if(!serverPlayer){
+      throw new Error("Не удалось получить профиль игрока.");
+    }
 
     applyPlayer(serverPlayer);
 
     const user=tg?.initDataUnsafe?.user;
+
     if(user){
       const name=user.first_name||"Игрок";
-      document.getElementById("profileName").textContent=name;
       document.getElementById("homePlayerName").textContent=name;
+      document.getElementById("profileName").textContent=name;
     }
 
     document.getElementById("connectionStatus").textContent="Подключено к серверу";
     showMessage("");
+
+    // Подготавливаем залежи для шахты.
+    // Они появятся при первом открытии раздела «Работа».
 
   }catch(error){
     console.error(error);
