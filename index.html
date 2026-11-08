@@ -116,7 +116,7 @@ button:disabled{opacity:.5}
 const SUPABASE_URL = "https://lcutewtfifmrqmpzjjth.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_Pw418XOzxvsbT8A_YDdMqQ_OdL4EUvG";
 
-const supabase = window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const sbClient = window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 const tg = window.Telegram?.WebApp;
 
 let player = null;
@@ -285,7 +285,7 @@ async function gameAction(action,target=null){
     const initData=tg?.initData;
     if(!initData) throw new Error("Открой игру через Telegram.");
 
-    const {data,error}=await supabase.functions.invoke("game-action",{
+    const {data,error}=await sbClient.functions.invoke("game-action",{
       body:{initData,action,target}
     });
 
@@ -315,7 +315,7 @@ async function startGame(){
 
     document.getElementById("connectionStatus").textContent="Авторизация...";
 
-    const {data:authData,error:authError}=await supabase.functions.invoke(
+    const {data:authData,error:authError}=await sbClient.functions.invoke(
       "telegram-auth",{body:{initData}}
     );
     if(authError) throw authError;
@@ -323,7 +323,7 @@ async function startGame(){
 
     document.getElementById("connectionStatus").textContent="Загрузка профиля...";
 
-    const {data:stateData,error:stateError}=await supabase.functions.invoke(
+    const {data:stateData,error:stateError}=await sbClient.functions.invoke(
       "game-state",{body:{initData}}
     );
     if(stateError) throw stateError;
