@@ -4,118 +4,660 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BLACK BUSSINES</title>
+
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#10151d;color:#fff;font-family:Arial,sans-serif;padding-bottom:85px}
-header{background:#1b2430;padding:20px;text-align:center;font-size:22px;font-weight:bold}
-main{padding:15px}
-.page{display:none}
+
+:root{
+  --bg:#090e16;
+  --panel:#141e2b;
+  --panel2:#1b2939;
+  --border:#29394c;
+  --blue:#3185ef;
+  --gold:#e8b957;
+  --muted:#91a2b7;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:#fff;
+  font-family:Arial,sans-serif;
+  padding-bottom:90px;
+}
+
+header{
+  padding:18px 17px;
+  background:rgba(15,23,35,.96);
+  border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+
+.logo{
+  font-size:19px;
+  font-weight:900;
+  letter-spacing:1.5px;
+}
+
+.logo span{color:var(--gold)}
+
+.header-level{
+  background:#25364b;
+  border:1px solid #3b5069;
+  padding:7px 12px;
+  border-radius:9px;
+  font-size:12px;
+}
+
+main{padding:15px;max-width:650px;margin:auto}
+
+.page{display:none;animation:appear .25s ease}
 .page.active{display:block}
-.card{background:#1b2430;border-radius:14px;padding:16px;margin-bottom:14px}
-h2{margin-top:0}
-.stat{display:flex;justify-content:space-between;margin:10px 0}
-button{border:0;border-radius:10px;padding:13px;background:#2878df;color:white;font-weight:bold;font-size:15px;cursor:pointer}
+
+@keyframes appear{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.hero{
+  position:relative;
+  overflow:hidden;
+  min-height:210px;
+  padding:23px;
+  border-radius:19px;
+  background:
+    linear-gradient(110deg,rgba(5,12,22,.98),rgba(15,38,60,.82)),
+    radial-gradient(circle at 80% 20%,#315a78,#101925);
+  border:1px solid #34475d;
+  margin-bottom:15px;
+}
+
+.hero:after{
+  content:"";
+  position:absolute;
+  width:190px;
+  height:190px;
+  right:-55px;
+  bottom:-80px;
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:50%;
+  box-shadow:0 0 0 20px rgba(255,255,255,.025),
+             0 0 0 40px rgba(255,255,255,.02);
+}
+
+.hero-label{
+  color:var(--gold);
+  font-size:11px;
+  font-weight:bold;
+  letter-spacing:2px;
+  margin-bottom:12px;
+}
+
+.hero h1{
+  font-size:27px;
+  margin:0 0 9px;
+  max-width:250px;
+}
+
+.hero p{
+  color:#aab9ca;
+  font-size:13px;
+  line-height:1.5;
+  max-width:260px;
+}
+
+.hero-button{
+  margin-top:12px;
+  position:relative;
+  z-index:2;
+}
+
+.card{
+  background:linear-gradient(145deg,#182536,#111b28);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:14px;
+}
+
+.card-title{
+  font-size:16px;
+  font-weight:bold;
+  margin:0 0 14px;
+}
+
+.stats-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.stat-box{
+  background:#0e1723;
+  border:1px solid #25364a;
+  border-radius:12px;
+  padding:13px;
+}
+
+.stat-box span{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  margin-bottom:7px;
+}
+
+.stat-box b{font-size:18px}
+
+.stat{
+  display:flex;
+  justify-content:space-between;
+  margin:11px 0;
+  font-size:14px;
+}
+
+.small{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.5;
+}
+
+.bar{
+  height:8px;
+  background:#293747;
+  border-radius:10px;
+  overflow:hidden;
+  margin:8px 0 13px;
+}
+
+.fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#2478df,#55b6ff);
+  border-radius:10px;
+  transition:width .4s ease;
+}
+
+.energy-fill{
+  background:linear-gradient(90deg,#20a66a,#7be5a5);
+}
+
+button{
+  border:0;
+  border-radius:11px;
+  padding:13px 15px;
+  background:linear-gradient(135deg,#2878df,#1758ad);
+  color:white;
+  font-weight:bold;
+  font-size:14px;
+  cursor:pointer;
+  transition:transform .15s,filter .15s;
+}
+
+button:active{
+  transform:scale(.97);
+  filter:brightness(1.2);
+}
+
 button:disabled{opacity:.5}
+
 .action{width:100%;margin-top:10px}
-.nav{position:fixed;bottom:0;left:0;right:0;background:#1b2430;display:flex;justify-content:space-around;padding:10px 3px}
-.nav button{background:transparent;padding:8px 5px;font-size:12px}
-.nav button.active{color:#58a6ff}
-.bar{height:10px;background:#303b49;border-radius:10px;overflow:hidden;margin:8px 0}
-.fill{height:100%;background:#27ae60;width:0%}
-.small{color:#aab6c5;font-size:13px}
-.item{border-bottom:1px solid #303b49;padding:12px 0}
+
+.secondary{
+  background:#26374a;
+  border:1px solid #3a5069;
+}
+
+.gold-button{
+  background:linear-gradient(135deg,#d7a844,#a87920);
+  color:#15110a;
+}
+
+.menu-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:11px;
+  margin-bottom:15px;
+}
+
+.menu-tile{
+  text-align:left;
+  min-height:105px;
+  padding:15px;
+  background:linear-gradient(145deg,#1b2b3e,#111b28);
+  border:1px solid #2c4057;
+  border-radius:15px;
+  color:white;
+}
+
+.tile-icon{
+  font-size:25px;
+  display:block;
+  margin-bottom:12px;
+}
+
+.tile-name{
+  display:block;
+  font-size:14px;
+  font-weight:bold;
+}
+
+.tile-description{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  margin-top:5px;
+}
+
+.section-heading{
+  font-size:18px;
+  font-weight:bold;
+  margin:20px 0 12px;
+}
+
+.item{
+  border-bottom:1px solid #29394c;
+  padding:13px 0;
+}
+
 .item:last-child{border:0}
-.error{color:#ff7777;margin:12px 0}
-.status{color:#9bd6a5;font-size:13px}
+
+.item p{margin:7px 0}
+
+.error{
+  color:#ff8585;
+  font-size:13px;
+  margin:12px 0;
+  min-height:18px;
+}
+
+.status{
+  color:#91d7a4;
+  font-size:12px;
+}
+
+.character-card{
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+
+.character-avatar{
+  width:75px;
+  height:75px;
+  flex-shrink:0;
+  border-radius:18px;
+  background:linear-gradient(145deg,#344c65,#152437);
+  border:1px solid #52677f;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:36px;
+}
+
+.nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:rgba(13,21,32,.97);
+  border-top:1px solid #29394c;
+  display:flex;
+  justify-content:space-around;
+  padding:9px 3px calc(9px + env(safe-area-inset-bottom));
+  z-index:20;
+  backdrop-filter:blur(12px);
+}
+
+.nav button{
+  background:transparent;
+  color:#8192a7;
+  padding:7px 4px;
+  font-size:10px;
+  border-radius:8px;
+  min-width:55px;
+}
+
+.nav button.active{
+  color:#68adff;
+  background:#1c3048;
+}
+
+.nav-icon{
+  display:block;
+  font-size:19px;
+  margin-bottom:4px;
+}
+
+@media(min-width:500px){
+  main{padding:22px}
+  .hero{min-height:230px}
+}
 </style>
 </head>
+
 <body>
 
-<header>BLACK BUSSINES</header>
+<header>
+  <div class="logo">BLACK <span>BUSSINES</span></div>
+  <div class="header-level">LVL <b id="headerLevel">—</b></div>
+</header>
 
 <main>
-<section id="work" class="page active">
+
+<!-- ГЛАВНАЯ -->
+
+<section id="home" class="page active">
+
+  <div class="hero">
+    <div class="hero-label">ТВОЯ ИСТОРИЯ НАЧИНАЕТСЯ ЗДЕСЬ</div>
+    <h1>Построй свою империю</h1>
+    <p>Работай, развивай бизнес, покупай имущество и стань влиятельным человеком города.</p>
+    <button class="gold-button hero-button" onclick="showPage('work')">
+      Начать играть →
+    </button>
+  </div>
+
   <div class="card">
-    <div class="stat"><span>Уровень</span><b id="level">—</b></div>
-    <div class="stat"><span>Монеты</span><b id="coins">—</b></div>
-    <div class="stat"><span>Уголь</span><b id="coal">—</b></div>
-    <div class="stat"><span>Опыт</span><b id="xp">—</b></div>
+    <div class="card-title">Мои показатели</div>
+
+    <div class="stats-grid">
+      <div class="stat-box">
+        <span>💰 Монеты</span>
+        <b id="coins">—</b>
+      </div>
+
+      <div class="stat-box">
+        <span>⛏ Уголь</span>
+        <b id="coal">—</b>
+      </div>
+
+      <div class="stat-box">
+        <span>⭐ Уровень</span>
+        <b id="level">—</b>
+      </div>
+
+      <div class="stat-box">
+        <span>⚡ Энергия</span>
+        <b id="energy">—</b>
+      </div>
+    </div>
+
+    <div class="small" style="margin-top:15px">Прогресс опыта</div>
     <div class="bar"><div class="fill" id="xpBar"></div></div>
-    <div class="stat"><span>Энергия</span><b id="energy">—</b></div>
-    <div class="bar"><div class="fill" id="energyBar"></div></div>
+    <div class="small">Опыт: <b id="xp">—</b></div>
   </div>
+
+  <div class="section-heading">Игровое меню</div>
+
+  <div class="menu-grid">
+
+    <button class="menu-tile" onclick="showPage('work')">
+      <span class="tile-icon">⛏</span>
+      <span class="tile-name">Работа</span>
+      <span class="tile-description">Профессии и заработок</span>
+    </button>
+
+    <button class="menu-tile" onclick="showPage('business')">
+      <span class="tile-icon">🏢</span>
+      <span class="tile-name">Бизнес</span>
+      <span class="tile-description">Мои предприятия</span>
+    </button>
+
+    <button class="menu-tile" onclick="showPage('shop')">
+      <span class="tile-icon">🛒</span>
+      <span class="tile-name">Магазин</span>
+      <span class="tile-description">Предметы и улучшения</span>
+    </button>
+
+    <button class="menu-tile" onclick="showPage('inventory')">
+      <span class="tile-icon">🎒</span>
+      <span class="tile-name">Инвентарь</span>
+      <span class="tile-description">Мои предметы</span>
+    </button>
+
+  </div>
+
   <div class="card">
-    <h2>⛏ Работа в шахте</h2>
-    <p class="small">Добывай уголь и получай монеты и опыт.</p>
-    <button class="action" onclick="gameAction('mine')">Добывать уголь</button>
-    <button class="action" onclick="gameAction('rest')">Отдохнуть (+20 энергии)</button>
+    <div class="card-title">👤 Мой персонаж</div>
+    <div class="character-card">
+      <div class="character-avatar">👨</div>
+      <div>
+        <b id="homePlayerName">Игрок</b>
+        <p class="small">Уровень <span id="homeLevel">—</span></p>
+        <button class="secondary" onclick="showPage('profile')">Открыть профиль</button>
+      </div>
+    </div>
   </div>
+
 </section>
+
+
+<!-- РАБОТА -->
+
+<section id="work" class="page">
+
+  <div class="hero">
+    <div class="hero-label">РАБОЧАЯ ЗОНА</div>
+    <h1>Шахта</h1>
+    <p>Начни свой путь с добычи угля. Зарабатывай монеты и получай опыт.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Твои ресурсы</div>
+
+    <div class="stat">
+      <span>💰 Монеты</span>
+      <b id="workCoins">—</b>
+    </div>
+
+    <div class="stat">
+      <span>⛏ Уголь</span>
+      <b id="workCoal">—</b>
+    </div>
+
+    <div class="stat">
+      <span>⚡ Энергия</span>
+      <b id="workEnergy">—</b>
+    </div>
+
+    <div class="bar">
+      <div class="fill energy-fill" id="energyBar"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⛏ Работа в шахте</div>
+    <p class="small">Добывай уголь и получай монеты и опыт.</p>
+
+    <button class="action" onclick="gameAction('mine')">
+      Добывать уголь
+    </button>
+
+    <button class="action secondary" onclick="gameAction('rest')">
+      Отдохнуть (+20 энергии)
+    </button>
+  </div>
+
+</section>
+
+
+<!-- БИЗНЕС -->
 
 <section id="business" class="page">
+
+  <div class="hero">
+    <div class="hero-label">МОЯ ИМПЕРИЯ</div>
+    <h1>Мой бизнес</h1>
+    <p>Покупай предприятия и развивай собственное дело.</p>
+  </div>
+
   <div class="card">
-    <h2>🏪 Мой бизнес</h2>
-    <div class="stat"><span>Доход в час</span><b id="income">0</b></div>
+    <div class="card-title">Пассивный доход</div>
+    <div class="stat">
+      <span>Доход в час</span>
+      <b id="income">0</b>
+    </div>
     <div id="businessList"></div>
   </div>
+
 </section>
 
+
+<!-- МАГАЗИН -->
+
 <section id="shop" class="page">
+
+  <div class="hero">
+    <div class="hero-label">ТОРГОВАЯ ПЛОЩАДКА</div>
+    <h1>Магазин</h1>
+    <p>Приобретай предметы, которые помогут тебе в развитии.</p>
+  </div>
+
   <div class="card">
-    <h2>🛒 Магазин</h2>
+    <div class="card-title">Предметы</div>
+
     <div class="item">
-      <b>Рабочие перчатки</b>
+      <b>🧤 Рабочие перчатки</b>
       <p class="small">Стоимость: 500 монет</p>
       <button onclick="gameAction('buy_item','gloves')">Купить</button>
     </div>
+
     <div class="item">
-      <b>Рюкзак</b>
+      <b>🎒 Рюкзак</b>
       <p class="small">Стоимость: 1000 монет</p>
       <button onclick="gameAction('buy_item','bag')">Купить</button>
     </div>
+
     <div class="item">
-      <b>Улучшенная кирка</b>
+      <b>⛏ Улучшенная кирка</b>
       <p class="small">Стоимость: 2000 монет</p>
       <button onclick="gameAction('buy_item','pickaxe')">Купить</button>
     </div>
   </div>
+
 </section>
+
+
+<!-- ИНВЕНТАРЬ -->
 
 <section id="inventory" class="page">
+
+  <div class="hero">
+    <div class="hero-label">ЛИЧНЫЕ ВЕЩИ</div>
+    <h1>Инвентарь</h1>
+    <p>Здесь хранятся все приобретённые предметы.</p>
+  </div>
+
   <div class="card">
-    <h2>🎒 Инвентарь</h2>
+    <div class="card-title">🎒 Мои предметы</div>
     <div id="inventoryList"></div>
   </div>
+
 </section>
 
+
+<!-- ПРОФИЛЬ -->
+
 <section id="profile" class="page">
+
+  <div class="hero">
+    <div class="hero-label">ЛИЧНОЕ ДЕЛО</div>
+    <h1>Профиль игрока</h1>
+    <p>Информация о твоём персонаже и игровом прогрессе.</p>
+  </div>
+
   <div class="card">
-    <h2>👤 Профиль</h2>
-    <div class="stat"><span>Игрок</span><b id="profileName">Игрок</b></div>
-    <div class="stat"><span>Уровень</span><b id="profileLevel">—</b></div>
-    <div class="stat"><span>Уголь</span><b id="profileCoal">—</b></div>
+    <div class="character-card">
+      <div class="character-avatar">👨</div>
+      <div>
+        <b id="profileName">Игрок</b>
+        <p class="small">Игрок BLACK BUSSINES</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Статистика</div>
+
+    <div class="stat">
+      <span>Уровень</span>
+      <b id="profileLevel">—</b>
+    </div>
+
+    <div class="stat">
+      <span>Уголь</span>
+      <b id="profileCoal">—</b>
+    </div>
+
+    <div class="stat">
+      <span>Опыт</span>
+      <b id="profileXp">—</b>
+    </div>
+
+    <div class="stat">
+      <span>Монеты</span>
+      <b id="profileCoins">—</b>
+    </div>
+
     <p class="status" id="connectionStatus">Подключение...</p>
   </div>
+
 </section>
 
 <div id="message" class="error"></div>
+
 </main>
 
+
+<!-- НИЖНЕЕ МЕНЮ -->
+
 <nav class="nav">
-  <button class="active" onclick="showPage('work',this)">⛏ Работа</button>
-  <button onclick="showPage('business',this)">🏪 Бизнес</button>
-  <button onclick="showPage('shop',this)">🛒 Магазин</button>
-  <button onclick="showPage('inventory',this)">🎒 Вещи</button>
-  <button onclick="showPage('profile',this)">👤 Профиль</button>
+
+  <button class="active" data-page="home" onclick="showPage('home')">
+    <span class="nav-icon">🏠</span>
+    Главная
+  </button>
+
+  <button data-page="work" onclick="showPage('work')">
+    <span class="nav-icon">⛏</span>
+    Работа
+  </button>
+
+  <button data-page="business" onclick="showPage('business')">
+    <span class="nav-icon">🏢</span>
+    Бизнес
+  </button>
+
+  <button data-page="shop" onclick="showPage('shop')">
+    <span class="nav-icon">🛒</span>
+    Магазин
+  </button>
+
+  <button data-page="profile" onclick="showPage('profile')">
+    <span class="nav-icon">👤</span>
+    Профиль
+  </button>
+
 </nav>
+
 
 <script>
 const SUPABASE_URL = "https://lcutewtfifmrqmpzjjth.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_Pw418XOzxvsbT8A_YDdMqQ_OdL4EUvG";
 
-const sbClient = window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const sbClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
 const tg = window.Telegram?.WebApp;
 
 let player = null;
@@ -133,61 +675,115 @@ const itemNames = {
   pickaxe:"Улучшенная кирка"
 };
 
-function showPage(id,button){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  button.classList.add("active");
 
-  // Очищаем старое сообщение при переходе между разделами.
+function showPage(id){
+
+  document.querySelectorAll(".page").forEach(p=>{
+    p.classList.remove("active");
+  });
+
+  document.querySelectorAll(".nav button").forEach(b=>{
+    b.classList.remove("active");
+  });
+
+  const page=document.getElementById(id);
+
+  if(page){
+    page.classList.add("active");
+  }
+
+  const navButton=document.querySelector(
+    '.nav button[data-page="'+id+'"]'
+  );
+
+  if(navButton){
+    navButton.classList.add("active");
+  }
+
   showMessage("");
+
+  window.scrollTo({top:0,behavior:"smooth"});
 }
+
 
 function showMessage(text){
   document.getElementById("message").textContent=text||"";
 }
 
+
 function getValue(obj,names,fallback){
   for(const name of names){
-    if(obj && obj[name]!==undefined && obj[name]!==null) return obj[name];
+    if(obj && obj[name]!==undefined && obj[name]!==null){
+      return obj[name];
+    }
   }
   return fallback;
 }
 
+
 function normalizeBusinesses(value){
+
   if(Array.isArray(value)){
     const result={};
+
     value.forEach(b=>{
-      if(b && b.business_type) result[b.business_type]=Number(b.level||1);
+      if(b && b.business_type){
+        result[b.business_type]=Number(b.level||1);
+      }
     });
+
     return result;
   }
+
   if(value && typeof value==="object"){
     const result={};
+
     for(const key of Object.keys(value)){
       const entry=value[key];
-      result[key]=Number(typeof entry==="object"?entry.level||1:entry);
+
+      result[key]=Number(
+        typeof entry==="object"?entry.level||1:entry
+      );
     }
+
     return result;
   }
+
   return {};
 }
+
 
 function normalizeInventory(value){
+
   if(Array.isArray(value)){
     const result={};
+
     value.forEach(item=>{
-      const code=typeof item==="string"?item:item.item_code;
-      if(code) result[code]=Number(item.quantity||1);
+      const code=typeof item==="string"
+        ?item
+        :item.item_code;
+
+      if(code){
+        result[code]=Number(item.quantity||1);
+      }
     });
+
     return result;
   }
-  if(value && typeof value==="object") return value;
+
+  if(value && typeof value==="object"){
+    return value;
+  }
+
   return {};
 }
 
+
 function applyPlayer(data){
-  if(!data || typeof data!=="object") throw new Error("Пустой профиль");
+
+  if(!data || typeof data!=="object"){
+    throw new Error("Пустой профиль");
+  }
 
   player={
     coins:Number(getValue(data,["coins","coin"],0)),
@@ -198,45 +794,79 @@ function applyPlayer(data){
     businesses:normalizeBusinesses(data.businesses),
     inventory:normalizeInventory(data.inventory)
   };
+
   render();
 }
+
 
 function xpNeeded(){
   const n=player.level;
   return 100+40*n+10*n*n;
 }
 
+
 function getIncome(){
+
   let total=0;
+
   businessOffers.forEach(b=>{
     total+=(player.businesses[b.name]||0)*b.income;
   });
+
   return total;
 }
 
+
 function render(){
+
   if(!player) return;
 
+  const coins=player.coins.toLocaleString("ru-RU");
+  const coal=player.coal.toLocaleString("ru-RU");
+
   document.getElementById("level").textContent=player.level;
-  document.getElementById("coins").textContent=player.coins.toLocaleString("ru-RU");
-  document.getElementById("coal").textContent=player.coal.toLocaleString("ru-RU");
+  document.getElementById("coins").textContent=coins;
+  document.getElementById("coal").textContent=coal;
   document.getElementById("xp").textContent=player.xp;
   document.getElementById("energy").textContent=player.energy+"/100";
-  document.getElementById("xpBar").style.width=Math.min(100,player.xp/xpNeeded()*100)+"%";
-  document.getElementById("energyBar").style.width=Math.min(100,player.energy)+"%";
-  document.getElementById("income").textContent=getIncome().toLocaleString("ru-RU")+" монет";
+
+  document.getElementById("headerLevel").textContent=player.level;
+
+  document.getElementById("homeLevel").textContent=player.level;
+
+  document.getElementById("workCoins").textContent=coins;
+  document.getElementById("workCoal").textContent=coal;
+  document.getElementById("workEnergy").textContent=player.energy+"/100";
+
   document.getElementById("profileLevel").textContent=player.level;
-  document.getElementById("profileCoal").textContent=player.coal.toLocaleString("ru-RU");
+  document.getElementById("profileCoal").textContent=coal;
+  document.getElementById("profileXp").textContent=player.xp;
+  document.getElementById("profileCoins").textContent=coins;
+
+  document.getElementById("xpBar").style.width=
+    Math.min(100,player.xp/xpNeeded()*100)+"%";
+
+  document.getElementById("energyBar").style.width=
+    Math.min(100,player.energy)+"%";
+
+  document.getElementById("income").textContent=
+    getIncome().toLocaleString("ru-RU")+" монет";
+
   renderBusinesses();
   renderInventory();
 }
 
+
 function renderBusinesses(){
+
   const box=document.getElementById("businessList");
+
   box.innerHTML="";
 
   businessOffers.forEach(b=>{
+
     const level=player.businesses[b.name]||0;
+
     const div=document.createElement("div");
     div.className="item";
 
@@ -245,191 +875,305 @@ function renderBusinesses(){
 
     const info=document.createElement("p");
     info.className="small";
+
     info.textContent=level
       ?"Уровень "+level+" · Доход: "+(b.income*level)+" монет/час"
       :"Стоимость: "+b.price+" монет · Доход: "+b.income+" монет/час";
 
     const button=document.createElement("button");
+
     button.textContent=level?"Улучшить":"Купить";
-    button.onclick=()=>gameAction(level?"upgrade_business":"buy_business",b.name);
+
+    button.onclick=()=>gameAction(
+      level?"upgrade_business":"buy_business",
+      b.name
+    );
 
     div.append(title,info,button);
+
     box.appendChild(div);
   });
 }
 
+
 function renderInventory(){
+
   const box=document.getElementById("inventoryList");
+
   box.innerHTML="";
+
   let hasItems=false;
 
   Object.entries(player.inventory).forEach(([code,quantity])=>{
+
     if(Number(quantity)>0 && itemNames[code]){
+
       hasItems=true;
+
       const div=document.createElement("div");
       div.className="item";
+
       div.textContent=itemNames[code]+" × "+quantity;
+
       box.appendChild(div);
     }
   });
 
-  if(!hasItems) box.textContent="Инвентарь пока пуст.";
-}
-
-async function gameAction(action,target=null){
-  if(actionBusy || !player) return;
-  actionBusy=true;
-  showMessage("Выполняется действие...");
-
-  document.querySelectorAll("button").forEach(b=>b.disabled=true);
-
-  try{
-    const initData=tg?.initData;
-    if(!initData) throw new Error("Открой игру через Telegram.");
-
-    const {data,error}=await sbClient.functions.invoke("game--action",{
-      body:{initData,action,target}
-    });
-
-    if(error) throw error;
-    if(!data || !data.success || !data.player){
-      throw new Error(data?.error||"Не удалось выполнить действие");
-    }
-
-    applyPlayer(data.player);
-    showMessage("Готово!");
-  }catch(error){
-    console.error("Game action error:", error);
-
-    let rawMessage = error?.message || "";
-
-    try{
-      const response = error?.context;
-      if(response && typeof response.clone === "function"){
-        const responseText = await response.clone().text();
-
-        if(responseText){
-          try{
-            const responseData = JSON.parse(responseText);
-
-            rawMessage =
-              responseData?.error?.message ||
-              responseData?.error ||
-              responseData?.message ||
-              responseData?.details ||
-              rawMessage;
-
-            if(typeof rawMessage !== "string"){
-              rawMessage = JSON.stringify(rawMessage);
-            }
-          }catch(parseError){
-            rawMessage = responseText || rawMessage;
-          }
-        }
-      }
-    }catch(readError){
-      console.error("Не удалось прочитать ответ сервера:", readError);
-    }
-
-    const normalizedMessage = String(rawMessage).toLowerCase();
-
-    let friendlyMessage = "Не удалось выполнить действие. Попробуй ещё раз.";
-
-    if(
-      normalizedMessage.includes("not enough coins") ||
-      normalizedMessage.includes("not enough funds") ||
-      normalizedMessage.includes("insufficient funds") ||
-      normalizedMessage.includes("not enough money") ||
-      normalizedMessage.includes("insufficient coins") ||
-      normalizedMessage.includes("недостаточно монет") ||
-      normalizedMessage.includes("недостаточно средств")
-    ){
-      friendlyMessage = "Недостаточно монет";
-    }else if(
-      normalizedMessage.includes("not enough energy") ||
-      normalizedMessage.includes("недостаточно энергии")
-    ){
-      friendlyMessage = "Недостаточно энергии";
-    }else if(
-      normalizedMessage.includes("item already purchased") ||
-      normalizedMessage.includes("этот предмет уже куплен")
-    ){
-      friendlyMessage = "Этот предмет уже куплен";
-    }else if(
-      normalizedMessage.includes("business already purchased") ||
-      normalizedMessage.includes("этот бизнес уже приобрет")
-    ){
-      friendlyMessage = "Этот бизнес уже приобретён";
-    }else if(
-      normalizedMessage.includes("upgrade unavailable") ||
-      normalizedMessage.includes("улучшение сейчас недоступно")
-    ){
-      friendlyMessage = "Улучшение сейчас недоступно";
-    }else if(
-      normalizedMessage.includes("invalid item")
-    ){
-      friendlyMessage = "Такого предмета нет в магазине";
-    }else if(
-      normalizedMessage.includes("invalid business")
-    ){
-      friendlyMessage = "Неизвестный бизнес";
-    }else if(
-      normalizedMessage.includes("открой игру через telegram")
-    ){
-      friendlyMessage = "Открой игру через Telegram";
-    }
-
-    showMessage(friendlyMessage);
-  }finally{
-    actionBusy=false;
-    document.querySelectorAll("button").forEach(b=>b.disabled=false);
+  if(!hasItems){
+    box.textContent="Инвентарь пока пуст.";
   }
 }
 
-async function startGame(){
+
+async function gameAction(action,target=null){
+
+  if(actionBusy || !player) return;
+
+  actionBusy=true;
+
+  showMessage("Выполняется действие...");
+
+  document.querySelectorAll("button").forEach(b=>{
+    b.disabled=true;
+  });
+
   try{
+
+    const initData=tg?.initData;
+
+    if(!initData){
+      throw new Error("Открой игру через Telegram.");
+    }
+
+    const {data,error}=await sbClient.functions.invoke(
+      "game--action",
+      {
+        body:{initData,action,target}
+      }
+    );
+
+    if(error) throw error;
+
+    if(!data || !data.success || !data.player){
+      throw new Error(
+        data?.error||"Не удалось выполнить действие"
+      );
+    }
+
+    applyPlayer(data.player);
+
+    showMessage("Готово!");
+
+  }catch(error){
+
+    console.error("Game action error:",error);
+
+    let rawMessage=error?.message||"";
+
+    try{
+
+      const response=error?.context;
+
+      if(response && typeof response.clone==="function"){
+
+        const responseText=await response.clone().text();
+
+        if(responseText){
+
+          try{
+
+            const responseData=JSON.parse(responseText);
+
+            rawMessage=
+              responseData?.error?.message||
+              responseData?.error||
+              responseData?.message||
+              responseData?.details||
+              rawMessage;
+
+            if(typeof rawMessage!=="string"){
+              rawMessage=JSON.stringify(rawMessage);
+            }
+
+          }catch(parseError){
+
+            rawMessage=responseText||rawMessage;
+          }
+        }
+      }
+
+    }catch(readError){
+
+      console.error(
+        "Не удалось прочитать ответ сервера:",
+        readError
+      );
+    }
+
+    const normalizedMessage=String(rawMessage).toLowerCase();
+
+    let friendlyMessage=
+      "Не удалось выполнить действие. Попробуй ещё раз.";
+
+    if(
+      normalizedMessage.includes("not enough coins")||
+      normalizedMessage.includes("not enough funds")||
+      normalizedMessage.includes("insufficient funds")||
+      normalizedMessage.includes("not enough money")||
+      normalizedMessage.includes("insufficient coins")||
+      normalizedMessage.includes("недостаточно монет")||
+      normalizedMessage.includes("недостаточно средств")
+    ){
+
+      friendlyMessage="Недостаточно монет";
+
+    }else if(
+      normalizedMessage.includes("not enough energy")||
+      normalizedMessage.includes("недостаточно энергии")
+    ){
+
+      friendlyMessage="Недостаточно энергии";
+
+    }else if(
+      normalizedMessage.includes("item already purchased")||
+      normalizedMessage.includes("этот предмет уже куплен")
+    ){
+
+      friendlyMessage="Этот предмет уже куплен";
+
+    }else if(
+      normalizedMessage.includes("business already purchased")||
+      normalizedMessage.includes("этот бизнес уже приобрет")
+    ){
+
+      friendlyMessage="Этот бизнес уже приобретён";
+
+    }else if(
+      normalizedMessage.includes("upgrade unavailable")||
+      normalizedMessage.includes("улучшение сейчас недоступно")
+    ){
+
+      friendlyMessage="Улучшение сейчас недоступно";
+
+    }else if(
+      normalizedMessage.includes("invalid item")
+    ){
+
+      friendlyMessage="Такого предмета нет в магазине";
+
+    }else if(
+      normalizedMessage.includes("invalid business")
+    ){
+
+      friendlyMessage="Неизвестный бизнес";
+
+    }else if(
+      normalizedMessage.includes("открой игру через telegram")
+    ){
+
+      friendlyMessage="Открой игру через Telegram";
+    }
+
+    showMessage(friendlyMessage);
+
+  }finally{
+
+    actionBusy=false;
+
+    document.querySelectorAll("button").forEach(b=>{
+      b.disabled=false;
+    });
+  }
+}
+
+
+async function startGame(){
+
+  try{
+
     tg?.ready();
     tg?.expand();
 
     const initData=tg?.initData;
-    if(!initData) throw new Error("Открой мини-приложение через Telegram.");
 
-    document.getElementById("connectionStatus").textContent="Авторизация...";
+    if(!initData){
+      throw new Error(
+        "Открой мини-приложение через Telegram."
+      );
+    }
 
-    const {data:authData,error:authError}=await sbClient.functions.invoke(
-      "telegram-auth",{body:{initData}}
-    );
+    document.getElementById("connectionStatus").textContent=
+      "Авторизация...";
+
+    const {data:authData,error:authError}=
+      await sbClient.functions.invoke(
+        "telegram-auth",
+        {body:{initData}}
+      );
+
     if(authError) throw authError;
-    if(authData?.error) throw new Error(authData.error);
 
-    document.getElementById("connectionStatus").textContent="Загрузка профиля...";
+    if(authData?.error){
+      throw new Error(authData.error);
+    }
 
-    const {data:stateData,error:stateError}=await sbClient.functions.invoke(
-      "game-state",{body:{initData}}
-    );
+    document.getElementById("connectionStatus").textContent=
+      "Загрузка профиля...";
+
+    const {data:stateData,error:stateError}=
+      await sbClient.functions.invoke(
+        "game-state",
+        {body:{initData}}
+      );
+
     if(stateError) throw stateError;
-    if(stateData?.error) throw new Error(stateData.error);
 
-    const serverPlayer=stateData?.player||stateData?.data?.player;
-    if(!serverPlayer) throw new Error("Не удалось получить профиль игрока.");
+    if(stateData?.error){
+      throw new Error(stateData.error);
+    }
+
+    const serverPlayer=
+      stateData?.player||stateData?.data?.player;
+
+    if(!serverPlayer){
+      throw new Error(
+        "Не удалось получить профиль игрока."
+      );
+    }
 
     applyPlayer(serverPlayer);
 
     const user=tg?.initDataUnsafe?.user;
+
     if(user){
-      document.getElementById("profileName").textContent=user.first_name||"Игрок";
+
+      const name=user.first_name||"Игрок";
+
+      document.getElementById("profileName").textContent=name;
+      document.getElementById("homePlayerName").textContent=name;
     }
 
-    document.getElementById("connectionStatus").textContent="Подключено к серверу";
+    document.getElementById("connectionStatus").textContent=
+      "Подключено к серверу";
+
     showMessage("");
+
   }catch(error){
+
     console.error(error);
-    document.getElementById("connectionStatus").textContent="Ошибка подключения";
-    showMessage(error.message||"Не удалось загрузить игру");
+
+    document.getElementById("connectionStatus").textContent=
+      "Ошибка подключения";
+
+    showMessage(
+      error.message||"Не удалось загрузить игру"
+    );
   }
 }
 
+
 startGame();
 </script>
+
 </body>
 </html>
