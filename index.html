@@ -138,6 +138,9 @@ function showPage(id,button){
   document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
   document.getElementById(id).classList.add("active");
   button.classList.add("active");
+
+  // Очищаем старое сообщение при переходе между разделами.
+  showMessage("");
 }
 
 function showMessage(text){
