@@ -336,7 +336,8 @@ async function gameAction(action,target=null){
       "Invalid business": "Неизвестный бизнес"
     };
 
-    message = friendlyMessages[message] || message;
+    message = friendlyMessages[message?.trim()] || 
+          (message?.includes("Not enough coins") ? "Недостаточно монет" : message);
     showMessage(message);
   }finally{
     actionBusy=false;
