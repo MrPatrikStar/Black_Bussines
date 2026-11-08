@@ -298,9 +298,10 @@ async function gameAction(action,target=null){
   }catch(error){
     console.error("Game action error:", error);
 
-    let message = error?.message || "Не удалось связаться с сервером";
+    // Сначала получаем исходный текст ошибки.
+    let rawMessage = error?.message || "";
 
-    // Читаем ответ сервера, чтобы показать понятную причину ошибки.
+    // Supabase может хранить ответ Edge Function внутри error.context.
     try{
       const response = error?.context;
       if(response && typeof response.clone === "function"){
@@ -309,13 +310,20 @@ async function gameAction(action,target=null){
         if(responseText){
           try{
             const responseData = JSON.parse(responseText);
-            if(responseData?.error){
-              message = responseData.error;
-            }else if(responseData?.message){
-              message = responseData.message;
+
+            // Поддерживаем обычный и вложенный формат ответа.
+            rawMessage =
+              responseData?.error?.message ||
+              responseData?.error ||
+              responseData?.message ||
+              responseData?.details ||
+              rawMessage;
+
+            if(typeof rawMessage !== "string"){
+              rawMessage = JSON.stringify(rawMessage);
             }
           }catch(parseError){
-            message = responseText;
+            rawMessage = responseText || rawMessage;
           }
         }
       }
@@ -323,22 +331,51 @@ async function gameAction(action,target=null){
       console.error("Не удалось прочитать ответ сервера:", readError);
     }
 
-    // Переводим известные ошибки на русский язык.
-    const friendlyMessages = {
-      "Not enough coins": "Недостаточно монет",
-      "Недостаточно монет": "Недостаточно монет",
-      "Not enough energy": "Недостаточно энергии",
-      "Недостаточно энергии": "Недостаточно энергии",
-      "Item already purchased": "Этот предмет уже куплен",
-      "Business already purchased": "Этот бизнес уже приобретён",
-      "Upgrade unavailable": "Улучшение сейчас недоступно",
-      "Invalid item": "Такого предмета нет в магазине",
-      "Invalid business": "Неизвестный бизнес"
-    };
+    // Переводим ошибки независимо от регистра и дополнительных деталей.
+    const normalizedMessage = String(rawMessage).toLowerCase();
 
-    message = friendlyMessages[message?.trim()] || 
-          (message?.includes("Not enough coins") ? "Недостаточно монет" : message);
-    showMessage(message);
+    let friendlyMessage = "Не удалось выполнить действие. Попробуй ещё раз.";
+
+    if(
+      normalizedMessage.includes("not enough coins") ||
+      normalizedMessage.includes("недостаточно монет")
+    ){
+      friendlyMessage = "Недостаточно монет";
+    }else if(
+      normalizedMessage.includes("not enough energy") ||
+      normalizedMessage.includes("недостаточно энергии")
+    ){
+      friendlyMessage = "Недостаточно энергии";
+    }else if(
+      normalizedMessage.includes("item already purchased") ||
+      normalizedMessage.includes("этот предмет уже куплен")
+    ){
+      friendlyMessage = "Этот предмет уже куплен";
+    }else if(
+      normalizedMessage.includes("business already purchased") ||
+      normalizedMessage.includes("этот бизнес уже приобрет")
+    ){
+      friendlyMessage = "Этот бизнес уже приобретён";
+    }else if(
+      normalizedMessage.includes("upgrade unavailable") ||
+      normalizedMessage.includes("улучшение сейчас недоступно")
+    ){
+      friendlyMessage = "Улучшение сейчас недоступно";
+    }else if(
+      normalizedMessage.includes("invalid item")
+    ){
+      friendlyMessage = "Такого предмета нет в магазине";
+    }else if(
+      normalizedMessage.includes("invalid business")
+    ){
+      friendlyMessage = "Неизвестный бизнес";
+    }else if(
+      normalizedMessage.includes("открой игру через telegram")
+    ){
+      friendlyMessage = "Открой игру через Telegram";
+    }
+
+    showMessage(friendlyMessage);
   }finally{
     actionBusy=false;
     document.querySelectorAll("button").forEach(b=>b.disabled=false);
