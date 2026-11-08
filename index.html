@@ -285,7 +285,7 @@ async function gameAction(action,target=null){
     const initData=tg?.initData;
     if(!initData) throw new Error("Открой игру через Telegram.");
 
-    const {data,error}=await sbClient.functions.invoke("game-action",{
+    const {data,error}=await sbClient.functions.invoke("game--action",{
       body:{initData,action,target}
     });
 
