@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -297,21 +296,47 @@ async function gameAction(action,target=null){
     applyPlayer(data.player);
     showMessage("Готово!");
   }catch(error){
-    console.error(error);
+    console.error("Game action error:", error);
 
-    let message = error.message || "Не удалось связаться с сервером";
+    let message = error?.message || "Не удалось связаться с сервером";
 
-    if(error.context && typeof error.context.json === "function"){
-      try{
-        const responseData = await error.context.json();
-        if(responseData?.error){
-          message = responseData.error;
+    // Читаем ответ сервера, чтобы показать понятную причину ошибки.
+    try{
+      const response = error?.context;
+      if(response && typeof response.clone === "function"){
+        const responseText = await response.clone().text();
+
+        if(responseText){
+          try{
+            const responseData = JSON.parse(responseText);
+            if(responseData?.error){
+              message = responseData.error;
+            }else if(responseData?.message){
+              message = responseData.message;
+            }
+          }catch(parseError){
+            message = responseText;
+          }
         }
-      }catch(e){
-        console.error("Ошибка чтения ответа:",e);
       }
+    }catch(readError){
+      console.error("Не удалось прочитать ответ сервера:", readError);
     }
 
+    // Переводим известные ошибки на русский язык.
+    const friendlyMessages = {
+      "Not enough coins": "Недостаточно монет",
+      "Недостаточно монет": "Недостаточно монет",
+      "Not enough energy": "Недостаточно энергии",
+      "Недостаточно энергии": "Недостаточно энергии",
+      "Item already purchased": "Этот предмет уже куплен",
+      "Business already purchased": "Этот бизнес уже приобретён",
+      "Upgrade unavailable": "Улучшение сейчас недоступно",
+      "Invalid item": "Такого предмета нет в магазине",
+      "Invalid business": "Неизвестный бизнес"
+    };
+
+    message = friendlyMessages[message] || message;
     showMessage(message);
   }finally{
     actionBusy=false;
