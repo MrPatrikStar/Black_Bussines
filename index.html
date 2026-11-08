@@ -106,11 +106,7 @@ const PROF=[
  ["Металлург","Перерабатывает руду в металл",4],["Фермер","Выращивает продукцию для магазинов",5],
  ["Механик","Чинит транспорт деталями завода",6],["Водитель","Доставляет товары между игроками",7]];
 /* Разделы-заготовки: интерфейс есть, механика будет добавлена позже */
-const STUB={
- estate:["Недвижимость","Покупка и аренда жилья, склады, аукцион недвижимости."],
- factory:["Завод","Переработка руды в металл и детали. Зависит от шахтёров."],
- farm:["Ферма","Фермеры выращивают продукцию для магазинов и водителей."],
- market:["Торговая площадка","Торговля между игроками и аукционы."]};
+const STUB={farm:["Ферма","Фермеры выращивают продукцию для магазинов и водителей."]};
 
 /* =========================================================
    СОСТОЯНИЕ ПРОТОТИПА
@@ -118,14 +114,14 @@ const STUB={
    Серверный баланс и прогресс не используются.
    ========================================================= */
 const KEY="bb_proto_v1";
-const def=()=>({coins:1000,energy:100,xp:0,lv:1,ore:{},found:{},own:[],eq:{},biz:{},bizT:Date.now(),zone:"z1",st:{mined:0,bought:0,sold:0},claimed:[]});
+const def=()=>({coins:1000,energy:100,xp:0,lv:1,ore:{},found:{},own:[],eq:{},biz:{},bizT:Date.now(),zone:"z1",st:{mined:0,bought:0,sold:0},claimed:[],mats:{},log:[],pass:0,daily:0,streak:0,proj:0,props:{},frag:0,jobs:0});
 function load(){try{return Object.assign(def(),JSON.parse(localStorage.getItem(KEY)||"{}"))}catch(e){return def()}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 let S=load(),cur="home",pname="Игрок",veins=[],lastMsg="";
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const num=n=>Number(n).toLocaleString("ru-RU");
 const item=id=>ITEMS.find(x=>x.id===id);
-let tmr;function toast(m){const t=document.getElementById("toast");t.textContent=m;t.style.opacity=1;clearTimeout(tmr);tmr=setTimeout(()=>t.style.opacity=0,2200)}
+let tmr;function toast(m){S.log.unshift(new Date().toLocaleTimeString("ru-RU").slice(0,5)+" "+m);S.log.length=Math.min(S.log.length,40);const t=document.getElementById("toast");t.textContent=m;t.style.opacity=1;clearTimeout(tmr);tmr=setTimeout(()=>t.style.opacity=0,2200)}
 /* Опыт: порог растёт с уровнем */
 const xpNeed=()=>80+40*S.lv;
 function gain(x){S.xp+=x;while(S.xp>=xpNeed()){S.xp-=xpNeed();S.lv++;toast("Новый уровень: "+S.lv)}}
@@ -155,7 +151,7 @@ Object.keys(STUB).forEach(k=>{TT[k]=STUB[k][0];LOC[k]="city";R[k]=()=>`<div clas
    Одежда из гардероба меняет внешний вид (пока 2D-схема;
    3D-модель требует отдельной проработки для Mini App).
    ========================================================= */
-const LEFT=[["inv","🎒","Инвентарь"],["ward","👕","Гардероб"],["ach","🏆","Достижения"],["col","💎","Коллекции"]];
+const LEFT=[["inv","🎒","Инвентарь"],["ward","👕","Гардероб"],["ach","🏆","Достижения"],["col","💎","Коллекции"],["log","📜","Журнал"]];
 const RIGHT=[["city","🏙","Город"],["work","⛏","Профессии"],["tasks","📋","Задания"],["biz","💼","Бизнес"],["shop","🛍","Магазин"],["estate","🏠","Недвижимость"]];
 const rail=a=>a.map(b=>`<button onclick="go('${b[0]}')"><b>${b[1]}</b>${b[2]}</button>`).join("");
 function hero(){
@@ -181,7 +177,7 @@ R.home=()=>`<div class="stage"><div class="rail">${rail(LEFT)}</div><div class="
    ГОРОД
    Интерактивные объекты ведут в игровые разделы.
    ========================================================= */
-R.city=()=>`<div class="grid">${[["mine","Шахта","Руда и минералы","#0f4a47"],["shop","Магазин","Одежда и инструменты","#5a1d36"],["biz","Бизнес","Пассивный доход","#5a4018"],["work","Профессии","Работа и развитие","#17406a"],["factory","Завод","Скоро","#33295f"],["farm","Ферма","Скоро","#2f4a24"],["market","Торговая площадка","Скоро","#4a3a2a"],["estate","Недвижимость","Скоро","#2d3a52"]].map(b=>`<button class="tile" style="--c:${b[3]}" onclick="go('${b[0]}')"><b>${b[1]}</b><div class="sm">${b[2]}</div></button>`).join("")}</div>`;
+R.city=()=>`<div class="grid">${[["mine","Шахта","Руда и минералы","#0f4a47"],["shop","Магазин","Одежда и инструменты","#5a1d36"],["biz","Бизнес","Пассивный доход","#5a4018"],["work","Профессии","Работа и развитие","#17406a"],["factory","Завод","Плавка и детали","#33295f"],["farm","Ферма","Скоро","#2f4a24"],["market","Торговая площадка","Цены руды","#4a3a2a"],["estate","Недвижимость","Аренда и доход","#2d3a52"],["events","События","Бонусы и проекты","#4a2a5a"],["pass","Game Pass","Месяц бонусов","#2a3a5a"],["cases","Кейсы","Редкие предметы","#5a2a2a"]].map(b=>`<button class="tile" style="--c:${b[3]}" onclick="go('${b[0]}')"><b>${b[1]}</b><div class="sm">${b[2]}</div></button>`).join("")}</div>`;
 
 /* =========================================================
    СИСТЕМА ШАХТЫ
@@ -210,13 +206,13 @@ R.mine=()=>`<div class="chips">${ZONES.map(x=>`<button class="chip${x.id===S.zon
 <div class="scene">${veins.map((v,i)=>`<button class="vein" aria-label="${ORE[v.o][0]}" style="--vc:${ORE[v.o][2]};left:${v.x}%;top:${v.y}%" onclick="mineVein(${i})"></button>`).join("")}</div>
 <div class="card row"><div><b>${lastMsg||"Нажми на светящуюся жилу"}</b><div class="sm">Энергия за добычу: ${zone().en}</div></div><button class="btn" onclick="rest()">Отдых +30 · 20 🪙</button></div>`;
 /* Энергия восстанавливается со временем (1 единица в 8 секунд) */
-setInterval(()=>{if(S.energy<100){S.energy++;document.getElementById("be").textContent=S.energy+"/100";save()}},8000);
+setInterval(()=>{if(S.energy<100){S.energy=Math.min(100,S.energy+(S.pass>Date.now()?2:1));document.getElementById("be").textContent=S.energy+"/100";save()}},8000);
 
 /* =========================================================
    ПРОФЕССИИ И ЗАДАНИЯ
    Профессии связаны между собой: игроки зависят друг от друга.
    ========================================================= */
-R.work=()=>PROF.map((p,i)=>`<div class="card row"><div><b>${p[0]}</b><div class="sm">${p[1]}</div></div>${i===0?`<button class="btn" onclick="go('mine')">В шахту</button>`:`<span class="sm">Ур. ${p[2]} · скоро</span>`}</div>`).join("");
+R.work=()=>PROF.map((p,i)=>`<div class="card row"><div><b>${p[0]}</b><div class="sm">${p[1]}</div></div>${i<3?`<button class="btn" onclick="go('${["mine","photo","factory"][i]}')">Открыть</button>`:`<span class="sm">Ур. ${p[2]} · скоро</span>`}</div>`).join("");
 const prog=t=>t.k==="lv"?S.lv:S.st[t.k];
 function claim(id){const t=TASKS.find(x=>x.id===id);if(S.claimed.includes(id)||prog(t)<t.need)return;S.claimed.push(id);S.coins+=t.r;toast("Награда: +"+t.r+" 🪙");save();draw()}
 R.tasks=()=>TASKS.map(t=>{const p=Math.min(prog(t),t.need),d=S.claimed.includes(t.id);return `<div class="card"><div class="row"><div><b>${t.n}</b><div class="sm">${p}/${t.need} · награда ${t.r} 🪙</div></div><button class="btn" ${d||p<t.need?"disabled":""} onclick="claim('${t.id}')">${d?"Получено":"Забрать"}</button></div><div class="bar"><i style="width:${p/t.need*100}%"></i></div></div>`}).join("");
@@ -233,10 +229,10 @@ function buy(id){
   if(!S.eq[i.s])S.eq[i.s]=id;
   toast("Куплено: "+i.n);save();draw();
 }
-function sellOre(o){const n=S.ore[o]||0;if(!n)return;const s=n*ORE[o][1];S.coins+=s;S.st.sold+=s;S.ore[o]=0;toast("Продано: +"+s+" 🪙");save();draw()}
+function sellOre(o){const n=S.ore[o]||0;if(!n)return;const s=Math.round(n*ORE[o][1]*mk(o)*pm());S.coins+=s;S.st.sold+=s;S.ore[o]=0;toast("Продано: +"+s+" 🪙");save();draw()}
 R.shop=()=>{
   const ores=Object.keys(ORE).filter(o=>S.ore[o]>0);
-  return `<h2>Скупка руды</h2>${ores.length?ores.map(o=>`<div class="card row"><div><b>${ORE[o][0]} × ${S.ore[o]}</b><div class="sm">${ORE[o][1]} 🪙 за штуку</div></div><button class="btn" onclick="sellOre('${o}')">+${S.ore[o]*ORE[o][1]} 🪙</button></div>`).join(""):`<div class="card sm">Руды нет. Добудь её в шахте.</div>`}
+  return `<h2>Скупка руды</h2>${ores.length?ores.map(o=>`<div class="card row"><div><b>${ORE[o][0]} × ${S.ore[o]}</b><div class="sm">${Math.round(ORE[o][1]*mk(o)*pm())} 🪙 за штуку</div></div><button class="btn" onclick="sellOre('${o}')">+${Math.round(S.ore[o]*ORE[o][1]*mk(o)*pm())} 🪙</button></div>`).join(""):`<div class="card sm">Руды нет. Добудь её в шахте.</div>`}
   <h2>Одежда и инструменты</h2>${ITEMS.map(i=>`<div class="card row"><div><b>${i.n}</b><div class="sm">${i.r} · ${SL[i.s]}</div></div>${S.own.includes(i.id)?`<span class="sm">Куплено</span>`:`<button class="btn" onclick="buy('${i.id}')">${i.p} 🪙</button>`}</div>`).join("")}`;
 };
 
@@ -249,7 +245,7 @@ function resetAll(){if(confirm("Сбросить тестовые данные �
 R.inv=()=>{
   const ores=Object.keys(ORE).filter(o=>S.ore[o]>0),tools=ITEMS.filter(i=>i.s==="tool"&&S.own.includes(i.id));
   return `<h2>Материалы</h2>${ores.length?ores.map(o=>`<div class="card row"><b>${ORE[o][0]}</b><span>${S.ore[o]}</span></div>`).join(""):`<div class="card sm">Инвентарь пока пуст.</div>`}
-  <h2>Инструменты</h2><div class="card row"><b>Обычная кирка</b><span class="sm">${S.eq.tool?"":"Надета"}</span></div>
+  ${Object.keys(MAT).filter(k=>S.mats[k]>0).map(k=>`<div class="card row"><b>${MAT[k][0]}</b><span>${S.mats[k]}</span></div>`).join("")}<h2>Инструменты</h2><div class="card row"><b>Обычная кирка</b><span class="sm">${S.eq.tool?"":"Надета"}</span></div>
   ${tools.map(i=>`<div class="card row"><b>${i.n}</b><button class="btn" onclick="equip('${i.id}')">${S.eq.tool===i.id?"Снять":"Надеть"}</button></div>`).join("")}
   <p class="sm" style="margin-top:14px">Тестовые данные хранятся только на этом устройстве.</p><button class="chip" onclick="resetAll()">Сбросить прототип</button>`;
 };
@@ -263,7 +259,7 @@ R.ward=()=>{
    Пассивный доход копится до 12 часов и забирается вручную.
    Улучшение: цена = цена бизнеса × уровень × 0.75, максимум 10.
    ========================================================= */
-const rate=()=>BIZ.reduce((s,b)=>s+(S.biz[b.id]||0)*b.i,0);
+const rate=()=>BIZ.reduce((s,b)=>s+(S.biz[b.id]||0)*b.i,0)+PROP.reduce((s,b)=>s+(S.props[b.id]?b.i:0),0);
 const pend=()=>Math.floor(rate()*Math.min(Date.now()-S.bizT,43200000)/3600000);
 function collect(){S.coins+=pend();S.bizT=Date.now()}
 function bizBuy(id){
@@ -280,8 +276,101 @@ ${BIZ.map(b=>{const lv=S.biz[b.id]||0,cost=lv?Math.round(b.p*lv*.75):b.p;return 
 /* =========================================================
    ДОСТИЖЕНИЯ И КОЛЛЕКЦИИ
    ========================================================= */
-R.ach=()=>[["Первая руда",S.st.mined>=1],["Добыто 50 единиц руды",S.st.mined>=50],["Первая покупка",S.st.bought>=1],["Третий уровень",S.lv>=3],["Владелец бизнеса",Object.keys(S.biz).length>0]].map(a=>`<div class="card row"><b>${a[0]}</b><span class="sm">${a[1]?"Получено":"Не получено"}</span></div>`).join("");
+R.ach=()=>[["Первая руда",S.st.mined>=1],["Добыто 50 единиц руды",S.st.mined>=50],["Первая покупка",S.st.bought>=1],["Третий уровень",S.lv>=3],["Владелец бизнеса",Object.keys(S.biz).length>0],["Владелец недвижимости",Object.keys(S.props).length>0],["Фотограф-новичок",S.jobs>0],["Участник проекта",S.proj>0]].map(a=>`<div class="card row"><b>${a[0]}</b><span class="sm">${a[1]?"Получено":"Не получено"}</span></div>`).join("");
 R.col=()=>`<h2>Найденные руды</h2>${Object.keys(ORE).map(o=>`<div class="card row"><b>${S.found[o]?ORE[o][0]:"???"}</b><span class="sm">${S.found[o]?"Найдено":"Не найдено"}</span></div>`).join("")}<h2>Одежда</h2><div class="card">Собрано предметов: ${S.own.length} из ${ITEMS.length}</div>`;
+
+/* =========================================================
+   РЫНОК
+   Цены руды колеблются от 60% до 150% каждые 30 секунд
+   (имитация торговой площадки; торговля между игроками — на сервере).
+   ========================================================= */
+const MKT={};Object.keys(ORE).forEach(o=>MKT[o]=1);
+const mk=o=>MKT[o]||1,pm=()=>S.pass>Date.now()?1.1:1;
+setInterval(()=>{Object.keys(MKT).forEach(o=>MKT[o]=Math.min(1.5,Math.max(.6,MKT[o]+(Math.random()-.5)*.2)));if(cur==="market")draw()},30000);
+R.market=()=>`<div class="card sm">Продажа — в магазине по этим ценам.${S.pass>Date.now()?" Game Pass: +10%.":""}</div>`+Object.keys(ORE).map(o=>{const m=mk(o);return `<div class="card row"><b>${ORE[o][0]}</b><span>${Math.round(ORE[o][1]*m*pm())} 🪙 <span class="sm">${m>1.05?"▲":m<.95?"▼":"•"}</span></span></div>`}).join("");
+
+/* =========================================================
+   ПРОИЗВОДСТВО И КРАФТ
+   Цепочка: шахтёр добывает → металлург плавит → завод делает детали.
+   Проверки: энергия и наличие всех материалов.
+   ========================================================= */
+const MAT={iron_bar:["Железный слиток",30],copper_bar:["Медный слиток",45],silver_bar:["Серебряный слиток",110],part:["Деталь",160],jewel:["Украшение",600]};
+const REC=[
+ {n:"Железный слиток",i:{iron:3,coal:1},o:"iron_bar",en:3},
+ {n:"Медный слиток",i:{copper:3,coal:1},o:"copper_bar",en:3},
+ {n:"Серебряный слиток",i:{silver:2,coal:2},o:"silver_bar",en:4},
+ {n:"Деталь",i:{iron_bar:2,copper_bar:1},o:"part",en:5},
+ {n:"Украшение",i:{silver_bar:1,gold:2},o:"jewel",en:5}];
+const have=k=>ORE[k]?(S.ore[k]||0):(S.mats[k]||0);
+const nm=k=>ORE[k]?ORE[k][0]:MAT[k][0];
+function craft(i){
+  const r=REC[i];
+  if(S.energy<r.en)return toast("Недостаточно энергии");
+  if(!Object.keys(r.i).every(k=>have(k)>=r.i[k]))return toast("Не хватает материалов");
+  Object.keys(r.i).forEach(k=>{if(ORE[k])S.ore[k]-=r.i[k];else S.mats[k]-=r.i[k]});
+  S.energy-=r.en;S.mats[r.o]=(S.mats[r.o]||0)+1;gain(5);toast("Создано: "+r.n);save();draw();
+}
+function sellMat(k){const n=S.mats[k]||0;if(!n)return;const s=Math.round(n*MAT[k][1]*pm());S.coins+=s;S.st.sold+=s;S.mats[k]=0;toast("Продано: +"+s+" 🪙");save();draw()}
+R.factory=()=>`<h2>Плавильня и завод</h2>`+REC.map((r,i)=>`<div class="card row"><div><b>${r.n}</b><div class="sm">${Object.keys(r.i).map(k=>nm(k)+" "+have(k)+"/"+r.i[k]).join(" · ")} · ⚡${r.en}</div></div><button class="btn" onclick="craft(${i})">Создать</button></div>`).join("")+`<h2>Склад изделий</h2>`+(Object.keys(MAT).filter(k=>S.mats[k]>0).map(k=>`<div class="card row"><b>${MAT[k][0]} × ${S.mats[k]}</b><button class="btn" onclick="sellMat('${k}')">Продать</button></div>`).join("")||`<div class="card sm">Склад пуст.</div>`);
+
+/* =========================================================
+   ПРОФЕССИЯ ФОТОГРАФА
+   Заказ → фото через камеру → отправка → оплата и опыт.
+   Сейчас проверяется только наличие снимка; проверка на сервере позже.
+   ========================================================= */
+const ORD=["Фасад магазина","Закат над городом","Уличная еда","Старый мост","Портрет прохожего"];
+function photo(inp){if(!inp.files[0])return;const r=120+S.jobs*10;S.coins+=r;S.jobs++;gain(8);toast("Заказ принят: +"+r+" 🪙");save();draw()}
+R.photo=()=>S.lv<3?`<div class="card sm">Профессия открывается на 3 уровне.</div>`:`<div class="card"><b>Заказ: ${ORD[S.jobs%ORD.length]}</b><p class="sm">Сфотографируй объект и отправь снимок. Оплата ${120+S.jobs*10} 🪙. Выполнено заказов: ${S.jobs}.</p><label class="btn" style="display:inline-block">Сделать фото<input type="file" accept="image/*" capture="environment" hidden onchange="photo(this)"></label></div>`;
+
+/* =========================================================
+   НЕДВИЖИМОСТЬ
+   Аренда копится вместе с доходом бизнеса (раздел «Бизнес»).
+   ========================================================= */
+const PROP=[{id:"flat",n:"Квартира",p:15000,i:60},{id:"house",n:"Дом",p:60000,i:280},{id:"villa",n:"Вилла",p:250000,i:1300}];
+function propBuy(id){const p=PROP.find(x=>x.id===id);if(S.props[id])return;collect();if(S.coins<p.p)return toast("Недостаточно монет");S.coins-=p.p;S.props[id]=1;toast("Куплено: "+p.n);save();draw()}
+R.estate=()=>PROP.map(p=>`<div class="card row"><div><b>${p.n}</b><div class="sm">Аренда ${p.i} 🪙/час · копится в разделе «Бизнес»</div></div>${S.props[p.id]?`<span class="sm">Ваше</span>`:`<button class="btn" onclick="propBuy('${p.id}')">${num(p.p)} 🪙</button>`}</div>`).join("");
+
+/* =========================================================
+   МЕСЯЧНЫЙ GAME PASS
+   +10% к продаже, энергия восстанавливается вдвое быстрее,
+   ежедневный бонус ×2. Срок — 30 дней.
+   ========================================================= */
+function buyPass(){if(S.pass>Date.now())return;if(S.coins<5000)return toast("Недостаточно монет");S.coins-=5000;S.pass=Date.now()+30*864e5;toast("Game Pass активирован на 30 дней");save();draw()}
+R.pass=()=>`<div class="card"><b>Месячный Game Pass</b><p class="sm">+10% к продаже руды и изделий, энергия восстанавливается вдвое быстрее, ежедневный бонус ×2.</p>${S.pass>Date.now()?`<p>Активен до ${new Date(S.pass).toLocaleDateString("ru-RU")}</p>`:`<button class="btn" onclick="buyPass()">Купить · 5 000 🪙</button>`}</div>`;
+
+/* =========================================================
+   СОБЫТИЯ И ГЛОБАЛЬНЫЕ ПРОЕКТЫ
+   Ежедневный бонус с серией дней; проект сервера «Мост»
+   (общий прогресс пока имитируется).
+   ========================================================= */
+const day=()=>Math.floor(Date.now()/864e5);
+function daily(){if(S.daily===day())return;S.streak=S.daily===day()-1?(S.streak||0)+1:1;S.daily=day();const r=100*Math.min(S.streak,7)*(S.pass>Date.now()?2:1);S.coins+=r;toast("Ежедневный бонус: +"+r+" 🪙 (день "+S.streak+")");save();draw()}
+function donate(){if(!(S.mats.iron_bar>0))return toast("Нужен железный слиток");S.mats.iron_bar--;S.proj++;S.coins+=25;gain(3);toast("Вклад принят: +25 🪙");save();draw()}
+R.events=()=>{const t=800+S.proj;return `<div class="card row"><div><b>Ежедневный бонус</b><div class="sm">Серия: ${S.streak||0} дн.</div></div><button class="btn" ${S.daily===day()?"disabled":""} onclick="daily()">${S.daily===day()?"Получено":"Забрать"}</button></div><div class="card"><b>Глобальный проект: мост через реку</b><div class="sm">Собрано ${t} из 2000 железных слитков · ваш вклад: ${S.proj}</div><div class="bar"><i style="width:${Math.min(100,t/20)}%"></i></div><button class="btn" style="margin-top:10px" onclick="donate()">Отдать слиток</button></div>`};
+
+/* =========================================================
+   КЕЙСЫ И ФРАГМЕНТЫ
+   Награда: монеты, руда или предмет. Повторный предмет
+   превращается в фрагменты; 20 фрагментов — новый предмет.
+   ========================================================= */
+function openCase(){
+  if(S.coins<300)return toast("Недостаточно монет");
+  S.coins-=300;const r=Math.random();let m;
+  if(r<.55){const c=100+Math.floor(Math.random()*301);S.coins+=c;m="монеты +"+c}
+  else if(r<.85){const o=pick(ZONES[1].w);S.ore[o]=(S.ore[o]||0)+4;S.found[o]=1;m=ORE[o][0]+" ×4"}
+  else{const i=ITEMS[Math.floor(Math.random()*ITEMS.length)];if(S.own.includes(i.id)){S.frag+=5;m=i.n+" уже есть, +5 фрагментов"}else{S.own.push(i.id);m="предмет "+i.n}}
+  toast("Кейс: "+m);save();draw();
+}
+function fragCraft(){if(S.frag<20)return;const l=ITEMS.filter(i=>!S.own.includes(i.id));if(!l.length)return toast("Все предметы собраны");S.frag-=20;const i=l[Math.floor(Math.random()*l.length)];S.own.push(i.id);toast("Создано: "+i.n);save();draw()}
+R.cases=()=>`<div class="card"><b>Кейс</b><p class="sm">Монеты, руда или предмет. Повторы превращаются в фрагменты.</p><button class="btn" onclick="openCase()">Открыть · 300 🪙</button></div><div class="card row"><div><b>Фрагменты: ${S.frag}</b><div class="sm">20 фрагментов — случайный новый предмет</div></div><button class="btn" ${S.frag<20?"disabled":""} onclick="fragCraft()">Создать</button></div>`;
+
+/* =========================================================
+   ЖУРНАЛ ОПЕРАЦИЙ
+   Последние 40 событий (покупки, продажи, награды).
+   ========================================================= */
+R.log=()=>S.log.length?S.log.map(l=>`<div class="card sm">${esc(l)}</div>`).join(""):`<div class="card sm">Операций пока нет.</div>`;
+Object.assign(TT,{factory:"Завод",market:"Торговая площадка",photo:"Фотограф",estate:"Недвижимость",pass:"Game Pass",events:"События",cases:"Кейсы",log:"Журнал"});
+Object.assign(LOC,{factory:"work",market:"city",photo:"work",estate:"city",pass:"biz",events:"city",cases:"shop",log:"home"});
 
 /* =========================================================
    ЗАПУСК И АВТОРИЗАЦИЯ
