@@ -1,116 +1,777 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Название игры -->
 <title>BLACK BUSSINES</title>
+
+<!-- Подключение Telegram Mini App -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<!-- Подключение библиотеки Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box}
-:root{
-  --bg:#090e16;--panel:#141e2b;--border:#29394c;
-  --gold:#e8b957;--muted:#91a2b7;
-}
-body{margin:0;background:var(--bg);color:#fff;font-family:Arial,sans-serif;padding-bottom:90px}
-header{padding:18px 17px;background:rgba(15,23,35,.96);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
-.logo{font-size:19px;font-weight:900;letter-spacing:1.5px}
-.logo span{color:var(--gold)}
-.header-level{background:#25364b;border:1px solid #3b5069;padding:7px 12px;border-radius:9px;font-size:12px}
-main{padding:15px;max-width:650px;margin:auto}
-.page{display:none;animation:appear .25s ease}
-.page.active{display:block}
-@keyframes appear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.hero{position:relative;overflow:hidden;min-height:210px;padding:23px;border-radius:19px;background:linear-gradient(110deg,rgba(5,12,22,.98),rgba(15,38,60,.82)),radial-gradient(circle at 80% 20%,#315a78,#101925);border:1px solid #34475d;margin-bottom:15px}
-.hero:after{content:"";position:absolute;width:190px;height:190px;right:-55px;bottom:-80px;border:1px solid rgba(255,255,255,.13);border-radius:50%;box-shadow:0 0 0 20px rgba(255,255,255,.025),0 0 0 40px rgba(255,255,255,.02)}
-.hero-label{color:var(--gold);font-size:11px;font-weight:bold;letter-spacing:2px;margin-bottom:12px}
-.hero h1{font-size:27px;margin:0 0 9px;max-width:250px}
-.hero p{color:#aab9ca;font-size:13px;line-height:1.5;max-width:260px}
-.hero-button{margin-top:12px;position:relative;z-index:2}
-.card{background:linear-gradient(145deg,#182536,#111b28);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:14px}
-.card-title{font-size:16px;font-weight:bold;margin:0 0 14px}
-.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.stat-box{background:#0e1723;border:1px solid #25364a;border-radius:12px;padding:13px}
-.stat-box span{display:block;color:var(--muted);font-size:11px;margin-bottom:7px}
-.stat-box b{font-size:18px}
-.stat{display:flex;justify-content:space-between;margin:11px 0;font-size:14px}
-.small{color:var(--muted);font-size:12px;line-height:1.5}
-.bar{height:8px;background:#293747;border-radius:10px;overflow:hidden;margin:8px 0 13px}
-.fill{height:100%;width:0%;background:linear-gradient(90deg,#2478df,#55b6ff);border-radius:10px;transition:width .4s ease}
-.energy-fill{background:linear-gradient(90deg,#20a66a,#7be5a5)}
-button{border:0;border-radius:11px;padding:13px 15px;background:linear-gradient(135deg,#2878df,#1758ad);color:white;font-weight:bold;font-size:14px;cursor:pointer;transition:transform .15s,filter .15s}
-button:active{transform:scale(.97);filter:brightness(1.2)}
-button:disabled{opacity:.5}
-.action{width:100%;margin-top:10px}
-.secondary{background:#26374a;border:1px solid #3a5069}
-.gold-button{background:linear-gradient(135deg,#d7a844,#a87920);color:#15110a}
-.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:15px}
-.menu-tile{text-align:left;min-height:105px;padding:15px;background:linear-gradient(145deg,#1b2b3e,#111b28);border:1px solid #2c4057;border-radius:15px;color:white}
-.tile-icon{font-size:25px;display:block;margin-bottom:12px}
-.tile-name{display:block;font-size:14px;font-weight:bold}
-.tile-description{display:block;color:var(--muted);font-size:11px;margin-top:5px}
-.section-heading{font-size:18px;font-weight:bold;margin:20px 0 12px}
-.item{border-bottom:1px solid #29394c;padding:13px 0}
-.item:last-child{border:0}
-.item p{margin:7px 0}
-.error{color:#ff8585;font-size:13px;margin:12px 0;min-height:18px}
-.status{color:#91d7a4;font-size:12px}
-.character-card{display:flex;align-items:center;gap:15px}
-.character-avatar{width:75px;height:75px;flex-shrink:0;border-radius:18px;background:linear-gradient(145deg,#344c65,#152437);border:1px solid #52677f;display:flex;align-items:center;justify-content:center;font-size:36px}
-.nav{position:fixed;bottom:0;left:0;right:0;background:rgba(13,21,32,.97);border-top:1px solid #29394c;display:flex;justify-content:space-around;padding:9px 3px calc(9px + env(safe-area-inset-bottom));z-index:20;backdrop-filter:blur(12px)}
-.nav button{background:transparent;color:#8192a7;padding:7px 4px;font-size:10px;border-radius:8px;min-width:55px}
-.nav button.active{color:#68adff;background:#1c3048}
-.nav-icon{display:block;font-size:19px;margin-bottom:4px}
 
-/* ШАХТА */
+/* =========================================
+   1. ОСНОВНЫЕ НАСТРОЙКИ И ЦВЕТА ИГРЫ
+   ========================================= */
+
+*{box-sizing:border-box}
+
+:root{
+  --bg:#090e16;
+  --panel:#141e2b;
+  --border:#29394c;
+  --gold:#e8b957;
+  --muted:#91a2b7;
+}
+
+/* Основной фон и шрифт приложения */
+body{
+  margin:0;
+  background:var(--bg);
+  color:#fff;
+  font-family:Arial,sans-serif;
+  padding-bottom:90px
+}
+
+/* =========================================
+   2. ВЕРХНЯЯ ПАНЕЛЬ И ЛОГОТИП
+   ========================================= */
+
+header{
+  padding:18px 17px;
+  background:rgba(15,23,35,.96);
+  border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  z-index:10
+}
+
+/* Логотип BLACK BUSSINES */
+.logo{
+  font-size:19px;
+  font-weight:900;
+  letter-spacing:1.5px
+}
+
+.logo span{color:var(--gold)}
+
+/* Уровень игрока в верхней панели */
+.header-level{
+  background:#25364b;
+  border:1px solid #3b5069;
+  padding:7px 12px;
+  border-radius:9px;
+  font-size:12px
+}
+
+/* Основная область приложения */
+main{
+  padding:15px;
+  max-width:650px;
+  margin:auto
+}
+
+/* =========================================
+   3. ИГРОВЫЕ СТРАНИЦЫ И ИХ АНИМАЦИЯ
+   ========================================= */
+
+/* Скрываем неактивные страницы */
+.page{
+  display:none;
+  animation:appear .25s ease
+}
+
+/* Показываем выбранную страницу */
+.page.active{display:block}
+
+/* Анимация появления страницы */
+@keyframes appear{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* =========================================
+   4. ГЛАВНЫЙ БАННЕР
+   ========================================= */
+
+.hero{
+  position:relative;
+  overflow:hidden;
+  min-height:210px;
+  padding:23px;
+  border-radius:19px;
+  background:
+    linear-gradient(110deg,rgba(5,12,22,.98),rgba(15,38,60,.82)),
+    radial-gradient(circle at 80% 20%,#315a78,#101925);
+  border:1px solid #34475d;
+  margin-bottom:15px
+}
+
+/* Декоративный круг на баннере */
+.hero:after{
+  content:"";
+  position:absolute;
+  width:190px;
+  height:190px;
+  right:-55px;
+  bottom:-80px;
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:50%;
+  box-shadow:
+    0 0 0 20px rgba(255,255,255,.025),
+    0 0 0 40px rgba(255,255,255,.02)
+}
+
+/* Маленькая надпись баннера */
+.hero-label{
+  color:var(--gold);
+  font-size:11px;
+  font-weight:bold;
+  letter-spacing:2px;
+  margin-bottom:12px
+}
+
+/* Заголовок баннера */
+.hero h1{
+  font-size:27px;
+  margin:0 0 9px;
+  max-width:250px
+}
+
+/* Описание баннера */
+.hero p{
+  color:#aab9ca;
+  font-size:13px;
+  line-height:1.5;
+  max-width:260px
+}
+
+/* Кнопка баннера */
+.hero-button{
+  margin-top:12px;
+  position:relative;
+  z-index:2
+}
+
+/* =========================================
+   5. КАРТОЧКИ И ИГРОВАЯ СТАТИСТИКА
+   ========================================= */
+
+.card{
+  background:linear-gradient(145deg,#182536,#111b28);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:14px
+}
+
+/* Заголовок карточки */
+.card-title{
+  font-size:16px;
+  font-weight:bold;
+  margin:0 0 14px
+}
+
+/* Сетка показателей игрока */
+.stats-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px
+}
+
+/* Отдельный показатель */
+.stat-box{
+  background:#0e1723;
+  border:1px solid #25364a;
+  border-radius:12px;
+  padding:13px
+}
+
+/* Название показателя */
+.stat-box span{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  margin-bottom:7px
+}
+
+/* Значение показателя */
+.stat-box b{font-size:18px}
+
+/* Строка статистики */
+.stat{
+  display:flex;
+  justify-content:space-between;
+  margin:11px 0;
+  font-size:14px
+}
+
+/* Вспомогательный текст */
+.small{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.5
+}
+
+/* =========================================
+   6. ПОЛОСЫ ОПЫТА И ЭНЕРГИИ
+   ========================================= */
+
+/* Фоновая часть полосы */
+.bar{
+  height:8px;
+  background:#293747;
+  border-radius:10px;
+  overflow:hidden;
+  margin:8px 0 13px
+}
+
+/* Заполнение полосы опыта */
+.fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#2478df,#55b6ff);
+  border-radius:10px;
+  transition:width .4s ease
+}
+
+/* Заполнение полосы энергии */
+.energy-fill{
+  background:linear-gradient(90deg,#20a66a,#7be5a5)
+}
+
+/* =========================================
+   7. КНОПКИ И ИХ ОФОРМЛЕНИЕ
+   ========================================= */
+
+button{
+  border:0;
+  border-radius:11px;
+  padding:13px 15px;
+  background:linear-gradient(135deg,#2878df,#1758ad);
+  color:white;
+  font-weight:bold;
+  font-size:14px;
+  cursor:pointer;
+  transition:transform .15s,filter .15s
+}
+
+/* Эффект нажатия */
+button:active{
+  transform:scale(.97);
+  filter:brightness(1.2)
+}
+
+/* Отключённая кнопка */
+button:disabled{opacity:.5}
+
+/* Кнопка на всю ширину */
+.action{
+  width:100%;
+  margin-top:10px
+}
+
+/* Второстепенная кнопка */
+.secondary{
+  background:#26374a;
+  border:1px solid #3a5069
+}
+
+/* Золотая кнопка */
+.gold-button{
+  background:linear-gradient(135deg,#d7a844,#a87920);
+  color:#15110a
+}
+
+/* =========================================
+   8. ИГРОВОЕ МЕНЮ
+   ========================================= */
+
+.menu-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:11px;
+  margin-bottom:15px
+}
+
+/* Плитка игрового меню */
+.menu-tile{
+  text-align:left;
+  min-height:105px;
+  padding:15px;
+  background:linear-gradient(145deg,#1b2b3e,#111b28);
+  border:1px solid #2c4057;
+  border-radius:15px;
+  color:white
+}
+
+/* Иконка плитки */
+.tile-icon{
+  font-size:25px;
+  display:block;
+  margin-bottom:12px
+}
+
+/* Название плитки */
+.tile-name{
+  display:block;
+  font-size:14px;
+  font-weight:bold
+}
+
+/* Описание плитки */
+.tile-description{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  margin-top:5px
+}
+
+/* Заголовки разделов */
+.section-heading{
+  font-size:18px;
+  font-weight:bold;
+  margin:20px 0 12px
+}
+
+/* =========================================
+   9. СПИСКИ, СООБЩЕНИЯ И СТАТУСЫ
+   ========================================= */
+
+.item{
+  border-bottom:1px solid #29394c;
+  padding:13px 0
+}
+
+.item:last-child{border:0}
+
+.item p{margin:7px 0}
+
+/* Сообщение об ошибке */
+.error{
+  color:#ff8585;
+  font-size:13px;
+  margin:12px 0;
+  min-height:18px
+}
+
+/* Статус подключения */
+.status{
+  color:#91d7a4;
+  font-size:12px
+}
+
+/* =========================================
+   10. КАРТОЧКА ПЕРСОНАЖА
+   ========================================= */
+
+.character-card{
+  display:flex;
+  align-items:center;
+  gap:15px
+}
+
+/* Аватар персонажа */
+.character-avatar{
+  width:75px;
+  height:75px;
+  flex-shrink:0;
+  border-radius:18px;
+  background:linear-gradient(145deg,#344c65,#152437);
+  border:1px solid #52677f;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:36px
+}
+
+/* =========================================
+   11. НИЖНЕЕ МЕНЮ НАВИГАЦИИ
+   ========================================= */
+
+.nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:rgba(13,21,32,.97);
+  border-top:1px solid #29394c;
+  display:flex;
+  justify-content:space-around;
+  padding:9px 3px calc(9px + env(safe-area-inset-bottom));
+  z-index:20;
+  backdrop-filter:blur(12px)
+}
+
+/* Кнопки нижнего меню */
+.nav button{
+  background:transparent;
+  color:#8192a7;
+  padding:7px 4px;
+  font-size:10px;
+  border-radius:8px;
+  min-width:55px
+}
+
+/* Активная кнопка нижнего меню */
+.nav button.active{
+  color:#68adff;
+  background:#1c3048
+}
+
+/* Иконки нижнего меню */
+.nav-icon{
+  display:block;
+  font-size:19px;
+  margin-bottom:4px
+}
+
+/* =========================================
+   12. ВИЗУАЛЬНАЯ СЦЕНА УГОЛЬНОЙ ШАХТЫ
+   ========================================= */
+
+/* Основной контейнер шахты */
 .mine-scene{
-  position:relative;height:270px;overflow:hidden;border-radius:17px;
-  border:1px solid #405064;margin-bottom:14px;
+  position:relative;
+  height:270px;
+  overflow:hidden;
+  border-radius:17px;
+  border:1px solid #405064;
+  margin-bottom:14px;
   background:
     radial-gradient(ellipse at 70% 45%,rgba(224,156,67,.22),transparent 28%),
-    linear-gradient(180deg,#172333 0%,#26303a 48%,#101820 100%);
+    linear-gradient(180deg,#172333 0%,#26303a 48%,#101820 100%)
 }
-.mine-scene:before{
-  content:"";position:absolute;inset:0;
-  background:linear-gradient(90deg,transparent 48%,rgba(0,0,0,.3)),
-  repeating-linear-gradient(90deg,transparent 0 55px,rgba(5,10,15,.8) 57px 64px,transparent 66px 105px);
-  opacity:.7;
-}
-.mine-tunnel{position:absolute;inset:0;border:13px solid #39414a;border-bottom:25px solid #303943;border-radius:48% 48% 0 0 / 35% 35% 0 0;opacity:.75}
-.mine-lamp{position:absolute;top:37px;left:50%;width:12px;height:12px;border-radius:50%;background:#ffd889;box-shadow:0 0 15px 7px rgba(255,190,91,.55),0 0 65px 25px rgba(255,174,65,.16);animation:lampGlow 2s infinite alternate}
-@keyframes lampGlow{from{opacity:.7}to{opacity:1}}
-.mine-rocks{position:absolute;right:15px;bottom:28px;font-size:57px;filter:brightness(.65)}
-.mine-cart{position:absolute;left:17px;bottom:17px;font-size:38px;filter:brightness(.8)}
-.mine-rails{position:absolute;left:0;right:0;bottom:13px;height:5px;background:#65717b;box-shadow:0 10px 0 #414c56}
-.miner{position:absolute;left:47%;bottom:29px;width:85px;height:145px;transform-origin:bottom center;z-index:3}
-.miner-body{position:absolute;left:23px;bottom:0;width:43px;height:75px;background:linear-gradient(90deg,#263b50,#45627c,#263b50);border:2px solid #182b3d;border-radius:13px 13px 5px 5px}
-.miner-head{position:absolute;left:29px;bottom:75px;width:34px;height:37px;border-radius:13px;background:#c58e69;border:2px solid #815a43}
-.miner-helmet{position:absolute;left:25px;bottom:104px;width:42px;height:17px;border-radius:17px 17px 5px 5px;background:#d9a83d;border-bottom:4px solid #956c23;z-index:2}
-.miner-helmet:after{content:"";position:absolute;left:17px;top:4px;width:8px;height:7px;border-radius:50%;background:#fff0a7;box-shadow:0 0 12px 5px #ffc85c}
-.miner-arm{position:absolute;left:8px;bottom:47px;width:39px;height:13px;background:#c58e69;border-radius:10px;transform:rotate(-25deg);transform-origin:right center}
-.miner-pickaxe{position:absolute;left:-5px;bottom:75px;width:65px;height:7px;border-radius:5px;background:#946b43;transform:rotate(-35deg);transform-origin:right center}
-.miner-pickaxe:after{content:"";position:absolute;right:-5px;top:-7px;width:27px;height:9px;border-radius:5px;background:#aeb9c3;transform:rotate(25deg)}
-.miner-leg{position:absolute;bottom:-7px;left:26px;width:14px;height:27px;background:#24364a;border-radius:5px}
-.miner-leg.second{left:49px}
-.mine-scene.mining .miner{animation:minerSwing .55s ease-in-out 3}
-.mine-scene.mining .miner-pickaxe{animation:pickaxeSwing .55s ease-in-out 3}
-@keyframes minerSwing{0%,100%{transform:rotate(0)}45%{transform:rotate(-9deg) translateY(3px)}70%{transform:rotate(5deg)}}
-@keyframes pickaxeSwing{0%,100%{transform:rotate(-35deg)}45%,65%{transform:rotate(35deg)}}
-.mine-particles{position:absolute;left:68%;bottom:92px;z-index:4;pointer-events:none}
-.mine-particle{position:absolute;width:7px;height:7px;border-radius:2px;background:#d4a46a;animation:particleFly .8s ease-out forwards}
-@keyframes particleFly{from{opacity:1;transform:translate(0,0) scale(1)}to{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.3)}}
-.mine-result{position:absolute;top:25px;left:50%;transform:translateX(-50%);z-index:5;color:#ffe0a0;font-size:14px;font-weight:bold;text-shadow:0 2px 8px #000;opacity:0;white-space:nowrap;pointer-events:none}
-.mine-result.show{animation:resultPop 1.2s ease forwards}
-@keyframes resultPop{0%{opacity:0;transform:translate(-50%,12px)}20%{opacity:1;transform:translate(-50%,0)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-25px)}}
-.mine-caption{position:absolute;left:13px;top:13px;z-index:5;color:#d9e4ee;font-size:10px;letter-spacing:1.5px;font-weight:bold;text-shadow:0 2px 5px #000}
 
-@media(min-width:500px){main{padding:22px}.hero{min-height:230px}}
+/* Фоновые элементы шахтного тоннеля */
+.mine-scene:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg,transparent 48%,rgba(0,0,0,.3)),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 55px,
+      rgba(5,10,15,.8) 57px 64px,
+      transparent 66px 105px
+    );
+  opacity:.7
+}
+
+/* Контур тоннеля */
+.mine-tunnel{
+  position:absolute;
+  inset:0;
+  border:13px solid #39414a;
+  border-bottom:25px solid #303943;
+  border-radius:48% 48% 0 0 / 35% 35% 0 0;
+  opacity:.75
+}
+
+/* Свет шахтной лампы */
+.mine-lamp{
+  position:absolute;
+  top:37px;
+  left:50%;
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:#ffd889;
+  box-shadow:
+    0 0 15px 7px rgba(255,190,91,.55),
+    0 0 65px 25px rgba(255,174,65,.16);
+  animation:lampGlow 2s infinite alternate
+}
+
+/* Мерцание лампы */
+@keyframes lampGlow{
+  from{opacity:.7}
+  to{opacity:1}
+}
+
+/* Камни в шахте */
+.mine-rocks{
+  position:absolute;
+  right:15px;
+  bottom:28px;
+  font-size:57px;
+  filter:brightness(.65)
+}
+
+/* Вагонетка */
+.mine-cart{
+  position:absolute;
+  left:17px;
+  bottom:17px;
+  font-size:38px;
+  filter:brightness(.8)
+}
+
+/* Рельсы */
+.mine-rails{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:13px;
+  height:5px;
+  background:#65717b;
+  box-shadow:0 10px 0 #414c56
+}
+
+/* =========================================
+   13. МОДЕЛЬ ШАХТЁРА
+   ========================================= */
+
+/* Контейнер персонажа */
+.miner{
+  position:absolute;
+  left:47%;
+  bottom:29px;
+  width:85px;
+  height:145px;
+  transform-origin:bottom center;
+  z-index:3
+}
+
+/* Тело шахтёра */
+.miner-body{
+  position:absolute;
+  left:23px;
+  bottom:0;
+  width:43px;
+  height:75px;
+  background:linear-gradient(90deg,#263b50,#45627c,#263b50);
+  border:2px solid #182b3d;
+  border-radius:13px 13px 5px 5px
+}
+
+/* Голова шахтёра */
+.miner-head{
+  position:absolute;
+  left:29px;
+  bottom:75px;
+  width:34px;
+  height:37px;
+  border-radius:13px;
+  background:#c58e69;
+  border:2px solid #815a43
+}
+
+/* Каска шахтёра */
+.miner-helmet{
+  position:absolute;
+  left:25px;
+  bottom:104px;
+  width:42px;
+  height:17px;
+  border-radius:17px 17px 5px 5px;
+  background:#d9a83d;
+  border-bottom:4px solid #956c23;
+  z-index:2
+}
+
+/* Фонарь на каске */
+.miner-helmet:after{
+  content:"";
+  position:absolute;
+  left:17px;
+  top:4px;
+  width:8px;
+  height:7px;
+  border-radius:50%;
+  background:#fff0a7;
+  box-shadow:0 0 12px 5px #ffc85c
+}
+
+/* Рука шахтёра */
+.miner-arm{
+  position:absolute;
+  left:8px;
+  bottom:47px;
+  width:39px;
+  height:13px;
+  background:#c58e69;
+  border-radius:10px;
+  transform:rotate(-25deg);
+  transform-origin:right center
+}
+
+/* Кирка шахтёра */
+.miner-pickaxe{
+  position:absolute;
+  left:-5px;
+  bottom:75px;
+  width:65px;
+  height:7px;
+  border-radius:5px;
+  background:#946b43;
+  transform:rotate(-35deg);
+  transform-origin:right center
+}
+
+/* Металлическая часть кирки */
+.miner-pickaxe:after{
+  content:"";
+  position:absolute;
+  right:-5px;
+  top:-7px;
+  width:27px;
+  height:9px;
+  border-radius:5px;
+  background:#aeb9c3;
+  transform:rotate(25deg)
+}
+
+/* Ноги шахтёра */
+.miner-leg{
+  position:absolute;
+  bottom:-7px;
+  left:26px;
+  width:14px;
+  height:27px;
+  background:#24364a;
+  border-radius:5px
+}
+
+/* Вторая нога */
+.miner-leg.second{left:49px}
+
+/* =========================================
+   14. АНИМАЦИЯ ДОБЫЧИ УГЛЯ
+   ========================================= */
+
+/* Движение шахтёра при добыче */
+.mine-scene.mining .miner{
+  animation:minerSwing .55s ease-in-out 3
+}
+
+/* Движение кирки при добыче */
+.mine-scene.mining .miner-pickaxe{
+  animation:pickaxeSwing .55s ease-in-out 3
+}
+
+/* Анимация движения шахтёра */
+@keyframes minerSwing{
+  0%,100%{transform:rotate(0)}
+  45%{transform:rotate(-9deg) translateY(3px)}
+  70%{transform:rotate(5deg)}
+}
+
+/* Анимация удара киркой */
+@keyframes pickaxeSwing{
+  0%,100%{transform:rotate(-35deg)}
+  45%,65%{transform:rotate(35deg)}
+}
+
+/* Контейнер частиц */
+.mine-particles{
+  position:absolute;
+  left:68%;
+  bottom:92px;
+  z-index:4;
+  pointer-events:none
+}
+
+/* Частицы камней */
+.mine-particle{
+  position:absolute;
+  width:7px;
+  height:7px;
+  border-radius:2px;
+  background:#d4a46a;
+  animation:particleFly .8s ease-out forwards
+}
+
+/* Разлёт частиц после удара */
+@keyframes particleFly{
+  from{
+    opacity:1;
+    transform:translate(0,0) scale(1)
+  }
+  to{
+    opacity:0;
+    transform:translate(var(--dx),var(--dy)) scale(.3)
+  }
+}
+
+/* Текст результата добычи */
+.mine-result{
+  position:absolute;
+  top:25px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:5;
+  color:#ffe0a0;
+  font-size:14px;
+  font-weight:bold;
+  text-shadow:0 2px 8px #000;
+  opacity:0;
+  white-space:nowrap;
+  pointer-events:none
+}
+
+/* Появление результата добычи */
+.mine-result.show{
+  animation:resultPop 1.2s ease forwards
+}
+
+/* Анимация текста результата */
+@keyframes resultPop{
+  0%{
+    opacity:0;
+    transform:translate(-50%,12px)
+  }
+  20%{
+    opacity:1;
+    transform:translate(-50%,0)
+  }
+  75%{opacity:1}
+  100%{
+    opacity:0;
+    transform:translate(-50%,-25px)
+  }
+}
+
+/* Надпись внутри шахты */
+.mine-caption{
+  position:absolute;
+  left:13px;
+  top:13px;
+  z-index:5;
+  color:#d9e4ee;
+  font-size:10px;
+  letter-spacing:1.5px;
+  font-weight:bold;
+  text-shadow:0 2px 5px #000
+}
+
+/* =========================================
+   15. АДАПТАЦИЯ ПОД МОБИЛЬНЫЕ УСТРОЙСТВА
+   ========================================= */
+
+@media(min-width:500px){
+  main{padding:22px}
+  .hero{min-height:230px}
+}
+
 </style>
 </head>
 
 <body>
+
+<!-- =========================================
+     16. ВЕРХНЯЯ ПАНЕЛЬ ИГРЫ
+     ========================================= -->
+
 <header>
   <div class="logo">BLACK <span>BUSSINES</span></div>
   <div class="header-level">LVL <b id="headerLevel">—</b></div>
@@ -118,7 +779,15 @@ button:disabled{opacity:.5}
 
 <main>
 
+<!-- =========================================
+     17. ГЛАВНАЯ СТРАНИЦА
+     Здесь отображаются основные показатели
+     и меню перехода по разделам игры
+     ========================================= -->
+
 <section id="home" class="page active">
+
+  <!-- Приветственный баннер -->
   <div class="hero">
     <div class="hero-label">ТВОЯ ИСТОРИЯ НАЧИНАЕТСЯ ЗДЕСЬ</div>
     <h1>Построй свою империю</h1>
@@ -126,50 +795,115 @@ button:disabled{opacity:.5}
     <button class="gold-button hero-button" onclick="showPage('work')">Начать играть →</button>
   </div>
 
+  <!-- Карточка основных показателей игрока -->
   <div class="card">
     <div class="card-title">Мои показатели</div>
+
     <div class="stats-grid">
-      <div class="stat-box"><span>💰 Монеты</span><b id="coins">—</b></div>
-      <div class="stat-box"><span>⛏ Уголь</span><b id="coal">—</b></div>
-      <div class="stat-box"><span>⭐ Уровень</span><b id="level">—</b></div>
-      <div class="stat-box"><span>⚡ Энергия</span><b id="energy">—</b></div>
+      <div class="stat-box">
+        <span>💰 Монеты</span>
+        <b id="coins">—</b>
+      </div>
+
+      <div class="stat-box">
+        <span>⛏ Уголь</span>
+        <b id="coal">—</b>
+      </div>
+
+      <div class="stat-box">
+        <span>⭐ Уровень</span>
+        <b id="level">—</b>
+      </div>
+
+      <div class="stat-box">
+        <span>⚡ Энергия</span>
+        <b id="energy">—</b>
+      </div>
     </div>
+
+    <!-- Полоса опыта -->
     <div class="small" style="margin-top:15px">Прогресс опыта</div>
-    <div class="bar"><div class="fill" id="xpBar"></div></div>
+    <div class="bar">
+      <div class="fill" id="xpBar"></div>
+    </div>
+
     <div class="small">Опыт: <b id="xp">—</b></div>
   </div>
 
+  <!-- Переходы к игровым разделам -->
   <div class="section-heading">Игровое меню</div>
+
   <div class="menu-grid">
-    <button class="menu-tile" onclick="showPage('work')"><span class="tile-icon">⛏</span><span class="tile-name">Работа</span><span class="tile-description">Профессии и заработок</span></button>
-    <button class="menu-tile" onclick="showPage('business')"><span class="tile-icon">🏢</span><span class="tile-name">Бизнес</span><span class="tile-description">Мои предприятия</span></button>
-    <button class="menu-tile" onclick="showPage('shop')"><span class="tile-icon">🛒</span><span class="tile-name">Магазин</span><span class="tile-description">Предметы и улучшения</span></button>
-    <button class="menu-tile" onclick="showPage('inventory')"><span class="tile-icon">🎒</span><span class="tile-name">Инвентарь</span><span class="tile-description">Мои предметы</span></button>
+
+    <button class="menu-tile" onclick="showPage('work')">
+      <span class="tile-icon">⛏</span>
+      <span class="tile-name">Работа</span>
+      <span class="tile-description">Профессии и заработок</span>
+    </button>
+
+    <button class="menu-tile" onclick="showPage('business')">
+      <span class="tile-icon">🏢</span>
+      <span class="tile-name">Бизнес</span>
+      <span class="tile-description">Мои предприятия</span>
+    </button>
+
+    <button class="menu-tile" onclick="showPage('shop')">
+      <span class="tile-icon">🛒</span>
+      <span class="tile-name">Магазин</span>
+      <span class="tile-description">Предметы и улучшения</span>
+    </button>
+
+    <button class="menu-tile" onclick="showPage('inventory')">
+      <span class="tile-icon">🎒</span>
+      <span class="tile-name">Инвентарь</span>
+      <span class="tile-description">Мои предметы</span>
+    </button>
+
   </div>
 
+  <!-- Карточка персонажа -->
   <div class="card">
     <div class="card-title">👤 Мой персонаж</div>
+
     <div class="character-card">
       <div class="character-avatar">👨</div>
-      <div><b id="homePlayerName">Игрок</b><p class="small">Уровень <span id="homeLevel">—</span></p><button class="secondary" onclick="showPage('profile')">Открыть профиль</button></div>
+
+      <div>
+        <b id="homePlayerName">Игрок</b>
+        <p class="small">Уровень <span id="homeLevel">—</span></p>
+        <button class="secondary" onclick="showPage('profile')">Открыть профиль</button>
+      </div>
     </div>
   </div>
+
 </section>
 
+<!-- =========================================
+     18. СТРАНИЦА РАБОТЫ И УГОЛЬНОЙ ШАХТЫ
+     Здесь игрок добывает уголь и восстанавливает
+     энергию своего персонажа
+     ========================================= -->
+
 <section id="work" class="page">
+
   <div class="hero">
     <div class="hero-label">РАБОЧАЯ ЗОНА</div>
     <h1>Угольная шахта</h1>
     <p>Твоя первая работа. Добывай ресурсы и развивайся.</p>
   </div>
 
+  <!-- Визуальная сцена шахты -->
   <div class="mine-scene" id="mineScene">
+
     <div class="mine-caption">ШАХТА · УРОВЕНЬ 1</div>
+
     <div class="mine-tunnel"></div>
     <div class="mine-lamp"></div>
     <div class="mine-rocks">🪨</div>
     <div class="mine-rails"></div>
     <div class="mine-cart">🛒</div>
+
+    <!-- Персонаж шахтёра -->
     <div class="miner" id="miner">
       <div class="miner-helmet"></div>
       <div class="miner-head"></div>
@@ -179,80 +913,285 @@ button:disabled{opacity:.5}
       <div class="miner-leg"></div>
       <div class="miner-leg second"></div>
     </div>
+
+    <!-- Контейнер частиц после удара -->
     <div class="mine-particles" id="mineParticles"></div>
+
+    <!-- Сообщение о результате добычи -->
     <div class="mine-result" id="mineResult"></div>
+
   </div>
 
+  <!-- Показатели игрока в шахте -->
   <div class="card">
     <div class="card-title">Твои ресурсы</div>
-    <div class="stat"><span>💰 Монеты</span><b id="workCoins">—</b></div>
-    <div class="stat"><span>⛏ Уголь</span><b id="workCoal">—</b></div>
-    <div class="stat"><span>⚡ Энергия</span><b id="workEnergy">—</b></div>
-    <div class="bar"><div class="fill energy-fill" id="energyBar"></div></div>
+
+    <div class="stat">
+      <span>💰 Монеты</span>
+      <b id="workCoins">—</b>
+    </div>
+
+    <div class="stat">
+      <span>⛏ Уголь</span>
+      <b id="workCoal">—</b>
+    </div>
+
+    <div class="stat">
+      <span>⚡ Энергия</span>
+      <b id="workEnergy">—</b>
+    </div>
+
+    <div class="bar">
+      <div class="fill energy-fill" id="energyBar"></div>
+    </div>
   </div>
 
+  <!-- Кнопки управления работой -->
   <div class="card">
     <div class="card-title">⛏ Добыча угля</div>
-    <p class="small">Нажми кнопку, чтобы шахтёр начал работать. За добычу начисляются ресурсы по правилам игры.</p>
-    <button class="action" id="mineButton" onclick="gameAction('mine')">⛏ Добывать уголь</button>
-    <button class="action secondary" onclick="gameAction('rest')">⚡ Отдохнуть (+20 энергии)</button>
+
+    <p class="small">
+      Нажми кнопку, чтобы шахтёр начал работать.
+      За добычу начисляются ресурсы по правилам игры.
+    </p>
+
+    <button class="action" id="mineButton" onclick="gameAction('mine')">
+      ⛏ Добывать уголь
+    </button>
+
+    <button class="action secondary" onclick="gameAction('rest')">
+      ⚡ Отдохнуть (+20 энергии)
+    </button>
   </div>
+
 </section>
+
+<!-- =========================================
+     19. СТРАНИЦА БИЗНЕСА
+     Здесь игрок может покупать и улучшать
+     предприятия для получения пассивного дохода
+     ========================================= -->
 
 <section id="business" class="page">
-  <div class="hero"><div class="hero-label">МОЯ ИМПЕРИЯ</div><h1>Мой бизнес</h1><p>Покупай предприятия и развивай собственное дело.</p></div>
-  <div class="card"><div class="card-title">Пассивный доход</div><div class="stat"><span>Доход в час</span><b id="income">0</b></div><div id="businessList"></div></div>
+
+  <div class="hero">
+    <div class="hero-label">МОЯ ИМПЕРИЯ</div>
+    <h1>Мой бизнес</h1>
+    <p>Покупай предприятия и развивай собственное дело.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Пассивный доход</div>
+
+    <!-- Общий доход всех предприятий -->
+    <div class="stat">
+      <span>Доход в час</span>
+      <b id="income">0</b>
+    </div>
+
+    <!-- Список предприятий формируется JavaScript -->
+    <div id="businessList"></div>
+  </div>
+
 </section>
+
+<!-- =========================================
+     20. СТРАНИЦА МАГАЗИНА
+     Здесь игрок приобретает игровые предметы
+     ========================================= -->
 
 <section id="shop" class="page">
-  <div class="hero"><div class="hero-label">ТОРГОВАЯ ПЛОЩАДКА</div><h1>Магазин</h1><p>Приобретай предметы, которые помогут тебе в развитии.</p></div>
+
+  <div class="hero">
+    <div class="hero-label">ТОРГОВАЯ ПЛОЩАДКА</div>
+    <h1>Магазин</h1>
+    <p>Приобретай предметы, которые помогут тебе в развитии.</p>
+  </div>
+
   <div class="card">
     <div class="card-title">Предметы</div>
-    <div class="item"><b>🧤 Рабочие перчатки</b><p class="small">Стоимость: 500 монет</p><button onclick="gameAction('buy_item','gloves')">Купить</button></div>
-    <div class="item"><b>🎒 Рюкзак</b><p class="small">Стоимость: 1000 монет</p><button onclick="gameAction('buy_item','bag')">Купить</button></div>
-    <div class="item"><b>⛏ Улучшенная кирка</b><p class="small">Стоимость: 2000 монет</p><button onclick="gameAction('buy_item','pickaxe')">Купить</button></div>
+
+    <!-- Покупка рабочих перчаток -->
+    <div class="item">
+      <b>🧤 Рабочие перчатки</b>
+      <p class="small">Стоимость: 500 монет</p>
+      <button onclick="gameAction('buy_item','gloves')">Купить</button>
+    </div>
+
+    <!-- Покупка рюкзака -->
+    <div class="item">
+      <b>🎒 Рюкзак</b>
+      <p class="small">Стоимость: 1000 монет</p>
+      <button onclick="gameAction('buy_item','bag')">Купить</button>
+    </div>
+
+    <!-- Покупка улучшенной кирки -->
+    <div class="item">
+      <b>⛏ Улучшенная кирка</b>
+      <p class="small">Стоимость: 2000 монет</p>
+      <button onclick="gameAction('buy_item','pickaxe')">Купить</button>
+    </div>
+
   </div>
+
 </section>
+
+<!-- =========================================
+     21. СТРАНИЦА ИНВЕНТАРЯ
+     Здесь отображаются приобретённые предметы
+     ========================================= -->
 
 <section id="inventory" class="page">
-  <div class="hero"><div class="hero-label">ЛИЧНЫЕ ВЕЩИ</div><h1>Инвентарь</h1><p>Здесь хранятся все приобретённые предметы.</p></div>
-  <div class="card"><div class="card-title">🎒 Мои предметы</div><div id="inventoryList"></div></div>
+
+  <div class="hero">
+    <div class="hero-label">ЛИЧНЫЕ ВЕЩИ</div>
+    <h1>Инвентарь</h1>
+    <p>Здесь хранятся все приобретённые предметы.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎒 Мои предметы</div>
+
+    <!-- Список предметов заполняется автоматически -->
+    <div id="inventoryList"></div>
+  </div>
+
 </section>
+
+<!-- =========================================
+     22. СТРАНИЦА ПРОФИЛЯ ИГРОКА
+     Здесь отображается личная статистика
+     ========================================= -->
 
 <section id="profile" class="page">
-  <div class="hero"><div class="hero-label">ЛИЧНОЕ ДЕЛО</div><h1>Профиль игрока</h1><p>Информация о твоём персонаже и игровом прогрессе.</p></div>
-  <div class="card">
-    <div class="character-card"><div class="character-avatar">👨</div><div><b id="profileName">Игрок</b><p class="small">Игрок BLACK BUSSINES</p></div></div>
+
+  <div class="hero">
+    <div class="hero-label">ЛИЧНОЕ ДЕЛО</div>
+    <h1>Профиль игрока</h1>
+    <p>Информация о твоём персонаже и игровом прогрессе.</p>
   </div>
+
+  <!-- Имя и аватар игрока -->
+  <div class="card">
+    <div class="character-card">
+      <div class="character-avatar">👨</div>
+
+      <div>
+        <b id="profileName">Игрок</b>
+        <p class="small">Игрок BLACK BUSSINES</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Статистика профиля -->
   <div class="card">
     <div class="card-title">Статистика</div>
-    <div class="stat"><span>Уровень</span><b id="profileLevel">—</b></div>
-    <div class="stat"><span>Уголь</span><b id="profileCoal">—</b></div>
-    <div class="stat"><span>Опыт</span><b id="profileXp">—</b></div>
-    <div class="stat"><span>Монеты</span><b id="profileCoins">—</b></div>
+
+    <div class="stat">
+      <span>Уровень</span>
+      <b id="profileLevel">—</b>
+    </div>
+
+    <div class="stat">
+      <span>Уголь</span>
+      <b id="profileCoal">—</b>
+    </div>
+
+    <div class="stat">
+      <span>Опыт</span>
+      <b id="profileXp">—</b>
+    </div>
+
+    <div class="stat">
+      <span>Монеты</span>
+      <b id="profileCoins">—</b>
+    </div>
+
+    <!-- Статус подключения к серверу -->
     <p class="status" id="connectionStatus">Подключение...</p>
   </div>
+
 </section>
 
+<!-- Область отображения сообщений и ошибок -->
 <div id="message" class="error"></div>
+
 </main>
 
+<!-- =========================================
+     23. НИЖНЕЕ МЕНЮ НАВИГАЦИИ
+     Позволяет быстро переключаться между
+     основными страницами игры
+     ========================================= -->
+
 <nav class="nav">
-  <button class="active" data-page="home" onclick="showPage('home')"><span class="nav-icon">🏠</span>Главная</button>
-  <button data-page="work" onclick="showPage('work')"><span class="nav-icon">⛏</span>Работа</button>
-  <button data-page="business" onclick="showPage('business')"><span class="nav-icon">🏢</span>Бизнес</button>
-  <button data-page="shop" onclick="showPage('shop')"><span class="nav-icon">🛒</span>Магазин</button>
-  <button data-page="profile" onclick="showPage('profile')"><span class="nav-icon">👤</span>Профиль</button>
+
+  <button class="active" data-page="home" onclick="showPage('home')">
+    <span class="nav-icon">🏠</span>
+    Главная
+  </button>
+
+  <button data-page="work" onclick="showPage('work')">
+    <span class="nav-icon">⛏</span>
+    Работа
+  </button>
+
+  <button data-page="business" onclick="showPage('business')">
+    <span class="nav-icon">🏢</span>
+    Бизнес
+  </button>
+
+  <button data-page="shop" onclick="showPage('shop')">
+    <span class="nav-icon">🛒</span>
+    Магазин
+  </button>
+
+  <button data-page="profile" onclick="showPage('profile')">
+    <span class="nav-icon">👤</span>
+    Профиль
+  </button>
+
 </nav>
 
 <script>
+
+/* =========================================
+   24. ПОДКЛЮЧЕНИЕ SUPABASE И TELEGRAM
+   Здесь указываются данные проекта Supabase
+   и создаётся подключение к серверу
+   ========================================= */
+
+// Адрес проекта Supabase
 const SUPABASE_URL="https://lcutewtfifmrqmpzjjth.supabase.co";
+
+// Публичный ключ Supabase
 const SUPABASE_ANON_KEY="sb_publishable_Pw418XOzxvsbT8A_YDdMqQ_OdL4EUvG";
-const sbClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+
+// Создание клиента Supabase
+const sbClient=window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
+// Получение объекта Telegram Mini App
 const tg=window.Telegram?.WebApp;
 
+
+/* =========================================
+   25. ОСНОВНЫЕ ПЕРЕМЕННЫЕ ИГРЫ
+   ========================================= */
+
+// Данные текущего игрока
 let player=null;
+
+// Защита от одновременного выполнения действий
 let actionBusy=false;
+
+
+/* =========================================
+   26. СПИСОК ДОСТУПНЫХ ПРЕДПРИЯТИЙ
+   Здесь задаются названия, цены и доход бизнеса
+   ========================================= */
 
 const businessOffers=[
   {name:"Ларёк",price:5000,income:100},
@@ -260,249 +1199,567 @@ const businessOffers=[
   {name:"Автомойка",price:50000,income:800}
 ];
 
+
+/* =========================================
+   27. НАЗВАНИЯ ПРЕДМЕТОВ ИНВЕНТАРЯ
+   Код предмета связывается с его названием
+   ========================================= */
+
 const itemNames={
   gloves:"Рабочие перчатки",
   bag:"Рюкзак",
   pickaxe:"Улучшенная кирка"
 };
 
+
+/* =========================================
+   28. ПЕРЕКЛЮЧЕНИЕ ИГРОВЫХ СТРАНИЦ
+   Функция скрывает остальные страницы
+   и показывает выбранную страницу
+   ========================================= */
+
 function showPage(id){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+
+  // Скрываем все страницы
+  document.querySelectorAll(".page").forEach(p=>{
+    p.classList.remove("active");
+  });
+
+  // Сбрасываем активное состояние кнопок меню
+  document.querySelectorAll(".nav button").forEach(b=>{
+    b.classList.remove("active");
+  });
+
+  // Находим нужную страницу
   const page=document.getElementById(id);
+
+  // Показываем выбранную страницу
   if(page)page.classList.add("active");
-  const navButton=document.querySelector('.nav button[data-page="'+id+'"]');
+
+  // Находим кнопку нижней навигации
+  const navButton=document.querySelector(
+    '.nav button[data-page="'+id+'"]'
+  );
+
+  // Подсвечиваем выбранную кнопку
   if(navButton)navButton.classList.add("active");
+
+  // Убираем старые сообщения
   showMessage("");
+
+  // Перемещаем экран наверх
   window.scrollTo({top:0,behavior:"smooth"});
 }
+
+
+/* =========================================
+   29. ОТОБРАЖЕНИЕ СООБЩЕНИЙ
+   Используется для ошибок и уведомлений
+   ========================================= */
 
 function showMessage(text){
   document.getElementById("message").textContent=text||"";
 }
 
-/* АНИМАЦИЯ ДОБЫЧИ */
+
+/* =========================================
+   30. АНИМАЦИЯ ДОБЫЧИ УГЛЯ
+   Запускает движение шахтёра и разлёт частиц
+   ========================================= */
+
 function startMiningAnimation(){
+
+  // Получаем элементы шахты
   const scene=document.getElementById("mineScene");
   const particles=document.getElementById("mineParticles");
+
+  // Перезапускаем анимацию
   scene.classList.remove("mining");
   void scene.offsetWidth;
   scene.classList.add("mining");
+
+  // Очищаем старые частицы
   particles.innerHTML="";
 
+  // Создаём новые частицы после удара
   for(let i=0;i<9;i++){
+
     const particle=document.createElement("span");
+
     particle.className="mine-particle";
-    particle.style.setProperty("--dx",(Math.random()*90-45)+"px");
-    particle.style.setProperty("--dy",(Math.random()*-75-10)+"px");
+
+    // Случайное направление разлёта
+    particle.style.setProperty(
+      "--dx",
+      (Math.random()*90-45)+"px"
+    );
+
+    particle.style.setProperty(
+      "--dy",
+      (Math.random()*-75-10)+"px"
+    );
+
+    // Случайная задержка анимации
     particle.style.animationDelay=(Math.random()*.2)+"s";
+
     particles.appendChild(particle);
   }
 }
 
+
+/* =========================================
+   31. ЗАВЕРШЕНИЕ АНИМАЦИИ ДОБЫЧИ
+   Показывает результат успешной добычи
+   ========================================= */
+
 function finishMiningAnimation(success){
+
   const scene=document.getElementById("mineScene");
   const result=document.getElementById("mineResult");
+
+  // Останавливаем движение шахтёра
   scene.classList.remove("mining");
 
+  // Если добыча прошла успешно
   if(success){
+
     result.textContent="✓ Добыча завершена";
+
+    // Перезапускаем анимацию результата
     result.classList.remove("show");
     void result.offsetWidth;
     result.classList.add("show");
   }
 }
 
+
+/* =========================================
+   32. ПОЛУЧЕНИЕ ЗНАЧЕНИЯ ИЗ ОБЪЕКТА
+   Проверяет несколько возможных названий поля
+   и возвращает первое найденное значение
+   ========================================= */
+
 function getValue(obj,names,fallback){
+
   for(const name of names){
-    if(obj&&obj[name]!==undefined&&obj[name]!==null)return obj[name];
+
+    if(
+      obj&&
+      obj[name]!==undefined&&
+      obj[name]!==null
+    ){
+      return obj[name];
+    }
   }
+
   return fallback;
 }
 
+
+/* =========================================
+   33. НОРМАЛИЗАЦИЯ СПИСКА БИЗНЕСА
+   Преобразует данные сервера в единый формат
+   ========================================= */
+
 function normalizeBusinesses(value){
+
+  // Если сервер вернул массив предприятий
   if(Array.isArray(value)){
+
     const result={};
+
     value.forEach(b=>{
-      if(b&&b.business_type)result[b.business_type]=Number(b.level||1);
+      if(b&&b.business_type){
+        result[b.business_type]=Number(b.level||1);
+      }
     });
+
     return result;
   }
+
+  // Если сервер вернул объект предприятий
   if(value&&typeof value==="object"){
+
     const result={};
+
     for(const key of Object.keys(value)){
+
       const entry=value[key];
-      result[key]=Number(typeof entry==="object"?entry.level||1:entry);
+
+      result[key]=Number(
+        typeof entry==="object"
+          ?entry.level||1
+          :entry
+      );
     }
+
     return result;
   }
+
   return {};
 }
+
+
+/* =========================================
+   34. НОРМАЛИЗАЦИЯ ИНВЕНТАРЯ
+   Преобразует предметы в единый формат
+   ========================================= */
 
 function normalizeInventory(value){
+
+  // Если сервер вернул массив предметов
   if(Array.isArray(value)){
+
     const result={};
+
     value.forEach(item=>{
-      const code=typeof item==="string"?item:item.item_code;
-      if(code)result[code]=Number(item.quantity||1);
+
+      const code=
+        typeof item==="string"
+          ?item
+          :item.item_code;
+
+      if(code){
+        result[code]=Number(item.quantity||1);
+      }
     });
+
     return result;
   }
-  if(value&&typeof value==="object")return value;
+
+  // Если сервер вернул готовый объект
+  if(value&&typeof value==="object"){
+    return value;
+  }
+
   return {};
 }
 
+
+/* =========================================
+   35. ЗАГРУЗКА ДАННЫХ ИГРОКА В ПРИЛОЖЕНИЕ
+   Получает профиль с сервера и сохраняет
+   его в переменную player
+   ========================================= */
+
 function applyPlayer(data){
-  if(!data||typeof data!=="object")throw new Error("Пустой профиль");
+
+  // Проверяем, что профиль существует
+  if(!data||typeof data!=="object"){
+    throw new Error("Пустой профиль");
+  }
+
+  // Формируем объект игрового персонажа
   player={
+
+    // Количество монет
     coins:Number(getValue(data,["coins","coin"],0)),
+
+    // Количество угля
     coal:Number(getValue(data,["coal"],0)),
+
+    // Накопленный опыт
     xp:Number(getValue(data,["xp"],0)),
+
+    // Уровень персонажа
     level:Number(getValue(data,["level"],1)),
+
+    // Энергия персонажа
     energy:Number(getValue(data,["energy"],100)),
+
+    // Предприятия игрока
     businesses:normalizeBusinesses(data.businesses),
+
+    // Предметы игрока
     inventory:normalizeInventory(data.inventory)
   };
+
+  // Обновляем интерфейс после загрузки данных
   render();
 }
 
+
+/* =========================================
+   36. РАСЧЁТ НЕОБХОДИМОГО ОПЫТА
+   Определяет, сколько опыта требуется
+   для следующего уровня персонажа
+   ========================================= */
+
 function xpNeeded(){
+
   const n=player.level;
+
   return 100+40*n+10*n*n;
 }
 
+
+/* =========================================
+   37. РАСЧЁТ ПАССИВНОГО ДОХОДА
+   Суммирует доход всех предприятий игрока
+   ========================================= */
+
 function getIncome(){
+
   let total=0;
+
   businessOffers.forEach(b=>{
-    total+=(player.businesses[b.name]||0)*b.income;
+
+    total+=
+      (player.businesses[b.name]||0)*
+      b.income;
+
   });
+
   return total;
 }
 
+
+/* =========================================
+   38. ОБНОВЛЕНИЕ ИГРОВОГО ИНТЕРФЕЙСА
+   Заполняет все показатели данными игрока
+   ========================================= */
+
 function render(){
+
+  // Если профиль ещё не загружен, ничего не делаем
   if(!player)return;
 
+  // Форматируем количество монет
   const coins=player.coins.toLocaleString("ru-RU");
+
+  // Форматируем количество угля
   const coal=player.coal.toLocaleString("ru-RU");
 
+  // Главная страница
   document.getElementById("level").textContent=player.level;
   document.getElementById("coins").textContent=coins;
   document.getElementById("coal").textContent=coal;
   document.getElementById("xp").textContent=player.xp;
   document.getElementById("energy").textContent=player.energy+"/100";
+
+  // Уровень в верхней панели
   document.getElementById("headerLevel").textContent=player.level;
+
+  // Уровень на карточке персонажа
   document.getElementById("homeLevel").textContent=player.level;
+
+  // Страница работы
   document.getElementById("workCoins").textContent=coins;
   document.getElementById("workCoal").textContent=coal;
   document.getElementById("workEnergy").textContent=player.energy+"/100";
+
+  // Страница профиля
   document.getElementById("profileLevel").textContent=player.level;
   document.getElementById("profileCoal").textContent=coal;
   document.getElementById("profileXp").textContent=player.xp;
   document.getElementById("profileCoins").textContent=coins;
 
+  // Обновляем полосу опыта
   document.getElementById("xpBar").style.width=
     Math.min(100,player.xp/xpNeeded()*100)+"%";
+
+  // Обновляем полосу энергии
   document.getElementById("energyBar").style.width=
     Math.min(100,player.energy)+"%";
+
+  // Показываем общий пассивный доход
   document.getElementById("income").textContent=
     getIncome().toLocaleString("ru-RU")+" монет";
 
+  // Обновляем список предприятий
   renderBusinesses();
+
+  // Обновляем инвентарь
   renderInventory();
 }
 
+
+/* =========================================
+   39. ОТОБРАЖЕНИЕ ПРЕДПРИЯТИЙ
+   Создаёт карточки бизнеса и кнопки покупки
+   или улучшения предприятия
+   ========================================= */
+
 function renderBusinesses(){
+
   const box=document.getElementById("businessList");
+
+  // Очищаем старый список
   box.innerHTML="";
 
+  // Перебираем доступные предприятия
   businessOffers.forEach(b=>{
+
+    // Получаем уровень конкретного бизнеса
     const level=player.businesses[b.name]||0;
+
+    // Создаём карточку предприятия
     const div=document.createElement("div");
     div.className="item";
 
+    // Название предприятия
     const title=document.createElement("b");
     title.textContent=b.name;
 
+    // Информация о цене и доходе
     const info=document.createElement("p");
     info.className="small";
+
     info.textContent=level
       ?"Уровень "+level+" · Доход: "+(b.income*level)+" монет/час"
       :"Стоимость: "+b.price+" монет · Доход: "+b.income+" монет/час";
 
+    // Создаём кнопку покупки или улучшения
     const button=document.createElement("button");
-    button.textContent=level?"Улучшить":"Купить";
-    button.onclick=()=>gameAction(level?"upgrade_business":"buy_business",b.name);
 
+    button.textContent=level?"Улучшить":"Купить";
+
+    // Отправляем действие на сервер
+    button.onclick=()=>gameAction(
+      level?"upgrade_business":"buy_business",
+      b.name
+    );
+
+    // Добавляем элементы в карточку
     div.append(title,info,button);
+
+    // Добавляем карточку в список
     box.appendChild(div);
   });
 }
 
+
+/* =========================================
+   40. ОТОБРАЖЕНИЕ ИНВЕНТАРЯ
+   Показывает предметы, которые есть у игрока
+   ========================================= */
+
 function renderInventory(){
+
   const box=document.getElementById("inventoryList");
+
+  // Очищаем старый список
   box.innerHTML="";
+
   let hasItems=false;
 
+  // Перебираем все предметы игрока
   Object.entries(player.inventory).forEach(([code,quantity])=>{
+
+    // Показываем только известные предметы
     if(Number(quantity)>0&&itemNames[code]){
+
       hasItems=true;
+
       const div=document.createElement("div");
+
       div.className="item";
+
       div.textContent=itemNames[code]+" × "+quantity;
+
       box.appendChild(div);
     }
   });
 
-  if(!hasItems)box.textContent="Инвентарь пока пуст.";
+  // Если предметов нет, показываем сообщение
+  if(!hasItems){
+    box.textContent="Инвентарь пока пуст.";
+  }
 }
 
+
+/* =========================================
+   41. ВЫПОЛНЕНИЕ ИГРОВЫХ ДЕЙСТВИЙ
+   Отправляет запрос на сервер Supabase
+   для добычи, отдыха, покупки и улучшений
+   ========================================= */
+
 async function gameAction(action,target=null){
+
+  // Не разрешаем повторные действия
   if(actionBusy||!player)return;
 
+  // Блокируем выполнение других действий
   actionBusy=true;
 
+  // Если игрок добывает уголь, запускаем анимацию
   if(action==="mine"){
     startMiningAnimation();
   }
 
+  // Показываем сообщение о выполнении
   showMessage("Выполняется действие...");
-  document.querySelectorAll("button").forEach(b=>b.disabled=true);
+
+  // Временно отключаем все кнопки
+  document.querySelectorAll("button").forEach(b=>{
+    b.disabled=true;
+  });
 
   try{
+
+    // Получаем данные авторизации Telegram
     const initData=tg?.initData;
-    if(!initData)throw new Error("Открой игру через Telegram.");
 
-    const {data,error}=await sbClient.functions.invoke("game--action",{
-      body:{initData,action,target}
-    });
-
-    if(error)throw error;
-
-    if(!data||!data.success||!data.player){
-      throw new Error(data?.error||"Не удалось выполнить действие");
+    // Проверяем запуск через Telegram
+    if(!initData){
+      throw new Error("Открой игру через Telegram.");
     }
 
+    // Отправляем действие на сервер Supabase
+    const {data,error}=await sbClient.functions.invoke("game--action",{
+
+      body:{
+        initData,
+        action,
+        target
+      }
+
+    });
+
+    // Проверяем ошибку запроса
+    if(error)throw error;
+
+    // Проверяем ответ сервера
+    if(!data||!data.success||!data.player){
+
+      throw new Error(
+        data?.error||"Не удалось выполнить действие"
+      );
+    }
+
+    // Обновляем профиль игрока
     applyPlayer(data.player);
 
+    // Завершаем анимацию добычи
     if(action==="mine"){
       finishMiningAnimation(true);
     }
 
+    // Сообщаем об успешном выполнении
     showMessage("Готово!");
 
   }catch(error){
+
+    // Записываем подробности ошибки в консоль
     console.error("Game action error:",error);
 
     let rawMessage=error?.message||"";
 
+    // Пытаемся прочитать подробный ответ сервера
     try{
+
       const response=error?.context;
+
       if(response&&typeof response.clone==="function"){
+
         const responseText=await response.clone().text();
 
         if(responseText){
+
           try{
+
             const responseData=JSON.parse(responseText);
+
             rawMessage=
               responseData?.error?.message||
               responseData?.error||
@@ -513,18 +1770,31 @@ async function gameAction(action,target=null){
             if(typeof rawMessage!=="string"){
               rawMessage=JSON.stringify(rawMessage);
             }
+
           }catch(parseError){
+
             rawMessage=responseText||rawMessage;
+
           }
         }
       }
+
     }catch(readError){
-      console.error("Не удалось прочитать ответ сервера:",readError);
+
+      console.error(
+        "Не удалось прочитать ответ сервера:",
+        readError
+      );
+
     }
 
+    // Приводим текст ошибки к нижнему регистру
     const normalizedMessage=String(rawMessage).toLowerCase();
+
+    // Сообщение по умолчанию
     let friendlyMessage="Не удалось выполнить действие. Попробуй ещё раз.";
 
+    // Проверяем ошибки недостатка денег
     if(
       normalizedMessage.includes("not enough coins")||
       normalizedMessage.includes("not enough funds")||
@@ -534,96 +1804,212 @@ async function gameAction(action,target=null){
       normalizedMessage.includes("недостаточно монет")||
       normalizedMessage.includes("недостаточно средств")
     ){
+
       friendlyMessage="Недостаточно монет";
+
+    // Проверяем недостаток энергии
     }else if(
       normalizedMessage.includes("not enough energy")||
       normalizedMessage.includes("недостаточно энергии")
     ){
+
       friendlyMessage="Недостаточно энергии";
+
+    // Проверяем повторную покупку предмета
     }else if(
       normalizedMessage.includes("item already purchased")||
       normalizedMessage.includes("этот предмет уже куплен")
     ){
+
       friendlyMessage="Этот предмет уже куплен";
+
+    // Проверяем повторную покупку бизнеса
     }else if(
       normalizedMessage.includes("business already purchased")||
       normalizedMessage.includes("этот бизнес уже приобрет")
     ){
+
       friendlyMessage="Этот бизнес уже приобретён";
+
+    // Проверяем доступность улучшения
     }else if(
       normalizedMessage.includes("upgrade unavailable")||
       normalizedMessage.includes("улучшение сейчас недоступно")
     ){
+
       friendlyMessage="Улучшение сейчас недоступно";
+
+    // Проверяем неправильный предмет
     }else if(normalizedMessage.includes("invalid item")){
+
       friendlyMessage="Такого предмета нет в магазине";
+
+    // Проверяем неправильный бизнес
     }else if(normalizedMessage.includes("invalid business")){
+
       friendlyMessage="Неизвестный бизнес";
+
+    // Проверяем отсутствие запуска через Telegram
     }else if(normalizedMessage.includes("открой игру через telegram")){
+
       friendlyMessage="Открой игру через Telegram";
     }
 
+    // Если добыча завершилась ошибкой, останавливаем анимацию
     if(action==="mine"){
       finishMiningAnimation(false);
     }
 
+    // Показываем понятное сообщение игроку
     showMessage(friendlyMessage);
 
   }finally{
+
+    // Разрешаем следующие действия
     actionBusy=false;
-    document.querySelectorAll("button").forEach(b=>b.disabled=false);
+
+    // Повторно включаем кнопки
+    document.querySelectorAll("button").forEach(b=>{
+      b.disabled=false;
+    });
+
   }
 }
 
+
+/* =========================================
+   42. ЗАПУСК ИГРЫ И АВТОРИЗАЦИЯ
+   Подключает Telegram, авторизует игрока
+   и загружает его игровой профиль
+   ========================================= */
+
 async function startGame(){
+
   try{
+
+    // Сообщаем Telegram, что приложение готово
     tg?.ready();
+
+    // Разворачиваем Mini App
     tg?.expand();
 
+    // Получаем данные пользователя Telegram
     const initData=tg?.initData;
-    if(!initData)throw new Error("Открой мини-приложение через Telegram.");
 
-    document.getElementById("connectionStatus").textContent="Авторизация...";
+    // Проверяем авторизацию
+    if(!initData){
 
-    const {data:authData,error:authError}=await sbClient.functions.invoke(
-      "telegram-auth",{body:{initData}}
-    );
-
-    if(authError)throw authError;
-    if(authData?.error)throw new Error(authData.error);
-
-    document.getElementById("connectionStatus").textContent="Загрузка профиля...";
-
-    const {data:stateData,error:stateError}=await sbClient.functions.invoke(
-      "game-state",{body:{initData}}
-    );
-
-    if(stateError)throw stateError;
-    if(stateData?.error)throw new Error(stateData.error);
-
-    const serverPlayer=stateData?.player||stateData?.data?.player;
-    if(!serverPlayer)throw new Error("Не удалось получить профиль игрока.");
-
-    applyPlayer(serverPlayer);
-
-    const user=tg?.initDataUnsafe?.user;
-    if(user){
-      const name=user.first_name||"Игрок";
-      document.getElementById("profileName").textContent=name;
-      document.getElementById("homePlayerName").textContent=name;
+      throw new Error(
+        "Открой мини-приложение через Telegram."
+      );
     }
 
-    document.getElementById("connectionStatus").textContent="Подключено к серверу";
+    // Показываем статус авторизации
+    document.getElementById("connectionStatus").textContent=
+      "Авторизация...";
+
+    // Отправляем данные Telegram на функцию авторизации
+    const {data:authData,error:authError}=
+      await sbClient.functions.invoke(
+        "telegram-auth",
+        {
+          body:{initData}
+        }
+      );
+
+    // Проверяем ошибку авторизации
+    if(authError)throw authError;
+
+    if(authData?.error){
+      throw new Error(authData.error);
+    }
+
+    // Показываем статус загрузки профиля
+    document.getElementById("connectionStatus").textContent=
+      "Загрузка профиля...";
+
+    // Запрашиваем игровой профиль с сервера
+    const {data:stateData,error:stateError}=
+      await sbClient.functions.invoke(
+        "game-state",
+        {
+          body:{initData}
+        }
+      );
+
+    // Проверяем ошибку получения профиля
+    if(stateError)throw stateError;
+
+    if(stateData?.error){
+      throw new Error(stateData.error);
+    }
+
+    // Получаем объект игрока из ответа сервера
+    const serverPlayer=
+      stateData?.player||
+      stateData?.data?.player;
+
+    // Проверяем наличие профиля
+    if(!serverPlayer){
+
+      throw new Error(
+        "Не удалось получить профиль игрока."
+      );
+    }
+
+    // Загружаем данные игрока в приложение
+    applyPlayer(serverPlayer);
+
+    // Получаем информацию о пользователе Telegram
+    const user=tg?.initDataUnsafe?.user;
+
+    // Если данные пользователя доступны
+    if(user){
+
+      // Получаем имя пользователя
+      const name=user.first_name||"Игрок";
+
+      // Отображаем имя на главной странице
+      document.getElementById("homePlayerName").textContent=name;
+
+      // Отображаем имя в профиле
+      document.getElementById("profileName").textContent=name;
+    }
+
+    // Сообщаем об успешном подключении
+    document.getElementById("connectionStatus").textContent=
+      "Подключено к серверу";
+
+    // Убираем сообщения об ошибках
     showMessage("");
 
   }catch(error){
+
+    // Записываем ошибку в консоль
     console.error(error);
-    document.getElementById("connectionStatus").textContent="Ошибка подключения";
-    showMessage(error.message||"Не удалось загрузить игру");
+
+    // Показываем статус ошибки подключения
+    document.getElementById("connectionStatus").textContent=
+      "Ошибка подключения";
+
+    // Показываем сообщение игроку
+    showMessage(
+      error.message||"Не удалось загрузить игру"
+    );
+
   }
 }
 
+
+/* =========================================
+   43. АВТОМАТИЧЕСКИЙ ЗАПУСК ИГРЫ
+   После загрузки страницы запускается
+   авторизация и загрузка профиля игрока
+   ========================================= */
+
 startGame();
+
 </script>
+
 </body>
 </html>
