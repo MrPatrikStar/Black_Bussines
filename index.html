@@ -12,53 +12,38 @@
 <style>
 *{box-sizing:border-box}
 :root{
-  --bg:#080d13;
-  --panel:#141d28;
-  --border:#293747;
-  --gold:#e9b653;
-  --muted:#94a4b7;
+  --bg:#080d13;--panel:#141d28;--border:#293747;
+  --gold:#e9b653;--muted:#94a4b7;
 }
-body{
-  margin:0;background:var(--bg);color:#fff;
-  font-family:Arial,sans-serif;padding-bottom:90px;
-}
+body{margin:0;background:var(--bg);color:#fff;font-family:Arial,sans-serif;padding-bottom:90px}
 header{
   padding:16px 17px;background:rgba(10,16,24,.96);
-  border-bottom:1px solid var(--border);
-  display:flex;justify-content:space-between;align-items:center;
+  border-bottom:1px solid var(--border);display:flex;
+  justify-content:space-between;align-items:center;
   position:sticky;top:0;z-index:20;backdrop-filter:blur(12px)
 }
 .logo{font-size:19px;font-weight:900;letter-spacing:1.5px}
 .logo span{color:var(--gold)}
-.header-level{
-  background:#25364b;border:1px solid #3b5069;
-  padding:7px 12px;border-radius:9px;font-size:12px
-}
+.header-level{background:#25364b;border:1px solid #3b5069;padding:7px 12px;border-radius:9px;font-size:12px}
 main{padding:15px;max-width:700px;margin:auto}
 .page{display:none;animation:appear .25s ease}
 .page.active{display:block}
 @keyframes appear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-
 .hero{
-  position:relative;overflow:hidden;min-height:190px;padding:23px;
-  border-radius:19px;
+  position:relative;overflow:hidden;min-height:190px;padding:23px;border-radius:19px;
   background:linear-gradient(110deg,rgba(5,12,22,.98),rgba(15,38,60,.82)),
   radial-gradient(circle at 80% 20%,#315a78,#101925);
   border:1px solid #34475d;margin-bottom:15px
 }
 .hero:after{
-  content:"";position:absolute;width:190px;height:190px;
-  right:-55px;bottom:-80px;border:1px solid rgba(255,255,255,.13);
-  border-radius:50%;box-shadow:0 0 0 20px rgba(255,255,255,.025),0 0 0 40px rgba(255,255,255,.02)
+  content:"";position:absolute;width:190px;height:190px;right:-55px;bottom:-80px;
+  border:1px solid rgba(255,255,255,.13);border-radius:50%;
+  box-shadow:0 0 0 20px rgba(255,255,255,.025),0 0 0 40px rgba(255,255,255,.02)
 }
 .hero-label{color:var(--gold);font-size:11px;font-weight:bold;letter-spacing:2px;margin-bottom:12px}
 .hero h1{font-size:27px;margin:0 0 9px;max-width:280px}
 .hero p{color:#aab9ca;font-size:13px;line-height:1.5;max-width:290px}
-.card{
-  background:linear-gradient(145deg,#182536,#111b28);
-  border:1px solid var(--border);border-radius:16px;
-  padding:16px;margin-bottom:14px
-}
+.card{background:linear-gradient(145deg,#182536,#111b28);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:14px}
 .card-title{font-size:16px;font-weight:bold;margin:0 0 14px}
 .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .stat-box{background:#0e1723;border:1px solid #25364a;border-radius:12px;padding:13px}
@@ -66,7 +51,7 @@ main{padding:15px;max-width:700px;margin:auto}
 .stat-box b{font-size:18px}
 .stat{display:flex;justify-content:space-between;margin:11px 0;font-size:14px}
 .small{color:var(--muted);font-size:12px;line-height:1.5}
-.bar{height:8px;background:#293747;border-radius:10px;overflow:hidden;margin:8px 0 13px}
+.bar{height:9px;background:#293747;border-radius:10px;overflow:hidden;margin:8px 0 13px}
 .fill{height:100%;width:0%;background:linear-gradient(90deg,#2478df,#55b6ff);border-radius:10px;transition:width .4s}
 .energy-fill{background:linear-gradient(90deg,#20a66a,#7be5a5)}
 button{
@@ -99,26 +84,22 @@ button:disabled{opacity:.5;cursor:default}
 .character-avatar{
   width:75px;height:75px;flex-shrink:0;border-radius:18px;
   background:linear-gradient(145deg,#344c65,#152437);
-  border:1px solid #52677f;display:flex;align-items:center;
-  justify-content:center;font-size:36px
+  border:1px solid #52677f;display:flex;align-items:center;justify-content:center;font-size:36px
 }
 .nav{
-  position:fixed;bottom:0;left:0;right:0;
-  background:rgba(13,21,32,.97);border-top:1px solid #29394c;
-  display:flex;justify-content:space-around;
+  position:fixed;bottom:0;left:0;right:0;background:rgba(13,21,32,.97);
+  border-top:1px solid #29394c;display:flex;justify-content:space-around;
   padding:9px 3px calc(9px + env(safe-area-inset-bottom));
   z-index:30;backdrop-filter:blur(12px)
 }
-.nav button{
-  background:transparent;color:#8192a7;padding:7px 4px;
-  font-size:10px;border-radius:8px;min-width:55px
-}
+.nav button{background:transparent;color:#8192a7;padding:7px 4px;font-size:10px;border-radius:8px;min-width:55px}
 .nav button.active{color:#e9b653;background:#302b20}
 .nav-icon{display:block;font-size:19px;margin-bottom:4px}
 
-/* =====================================
-   НОВАЯ ИГРОВАЯ ШАХТА
-   ===================================== */
+/* ==========================================
+   ШАХТА BLACK BUSSINES
+   Визуальная сцена и игровые объекты
+   ========================================== */
 
 .mine-scene{
   position:relative;width:100%;height:390px;overflow:hidden;
@@ -127,30 +108,20 @@ button:disabled{opacity:.5;cursor:default}
   background:
     radial-gradient(ellipse at 50% 25%,rgba(201,139,69,.22),transparent 45%),
     linear-gradient(180deg,#18212b 0%,#27313a 42%,#171d23 75%,#0d1218 100%);
-  box-shadow:inset 0 0 65px #05090e,0 12px 35px #0008
+  box-shadow:inset 0 0 65px #05090e,0 12px 35px #0008;
+  transition:background .5s,filter .2s
 }
 .mine-scene:before{
   content:"";position:absolute;inset:0;z-index:-1;
   background:
     radial-gradient(ellipse at 50% 0%,transparent 20%,rgba(0,0,0,.55) 78%),
-    linear-gradient(90deg,rgba(0,0,0,.5),transparent 25%,transparent 75%,rgba(0,0,0,.5));
+    linear-gradient(90deg,rgba(0,0,0,.5),transparent 25%,transparent 75%,rgba(0,0,0,.5))
 }
 .mine-scene:after{
   content:"";position:absolute;left:0;right:0;bottom:0;height:115px;
   background:linear-gradient(180deg,transparent,#111820 30%,#090e13);
   z-index:0;pointer-events:none
 }
-.mine-caption{
-  position:absolute;top:13px;left:13px;z-index:10;
-  color:#e5c58a;font-size:10px;letter-spacing:1.8px;font-weight:bold;
-  text-shadow:0 2px 5px #000
-}
-.mine-depth{
-  position:absolute;right:13px;top:13px;z-index:10;
-  color:#b5c1cc;font-size:10px;letter-spacing:1px
-}
-
-/* Каменные стены */
 .mine-wall{
   position:absolute;inset:0;z-index:0;opacity:.75;
   background:
@@ -158,7 +129,7 @@ button:disabled{opacity:.5;cursor:default}
     radial-gradient(ellipse at 90% 28%,#48515a 0 3%,transparent 13%),
     radial-gradient(ellipse at 25% 68%,#343e47 0 3%,transparent 13%),
     radial-gradient(ellipse at 78% 65%,#303943 0 4%,transparent 15%),
-    repeating-linear-gradient(165deg,transparent 0 34px,rgba(0,0,0,.13) 35px 38px,transparent 40px 67px);
+    repeating-linear-gradient(165deg,transparent 0 34px,rgba(0,0,0,.13) 35px 38px,transparent 40px 67px)
 }
 .mine-arch{
   position:absolute;left:5%;right:5%;top:48px;height:255px;
@@ -169,30 +140,24 @@ button:disabled{opacity:.5;cursor:default}
 }
 .mine-arch:before{
   content:"";position:absolute;left:8%;right:8%;top:12px;height:220px;
-  border:3px solid rgba(124,132,136,.24);
-  border-bottom:0;border-radius:50% 50% 0 0 / 30% 30% 0 0
+  border:3px solid rgba(124,132,136,.24);border-bottom:0;
+  border-radius:50% 50% 0 0 / 30% 30% 0 0
 }
-
-/* Крепления тоннеля */
 .mine-support{
   position:absolute;top:62px;width:13px;height:235px;
   background:linear-gradient(90deg,#29221c,#76583a,#392a20);
-  border:1px solid #1c1916;z-index:2;
-  box-shadow:3px 0 8px #0008
+  border:1px solid #1c1916;z-index:2;box-shadow:3px 0 8px #0008
 }
 .mine-support.left{left:12%}
 .mine-support.right{right:12%}
 .mine-beam{
   position:absolute;top:60px;left:11%;right:11%;height:14px;
-  background:linear-gradient(#806344,#3a2c20);
-  border:1px solid #241c16;z-index:2;border-radius:3px
+  background:linear-gradient(#806344,#3a2c20);border:1px solid #241c16;z-index:2;border-radius:3px
 }
 .mine-support:after{
   content:"";position:absolute;top:40%;left:-5px;width:21px;height:5px;
   background:#9a805f;transform:rotate(-12deg)
 }
-
-/* Каменные выступы */
 .mine-stalagmite{
   position:absolute;z-index:2;bottom:92px;width:0;height:0;
   border-left:17px solid transparent;border-right:17px solid transparent;
@@ -207,8 +172,6 @@ button:disabled{opacity:.5;cursor:default}
 }
 .mine-stalactite.one{left:27%}
 .mine-stalactite.two{right:27%;transform:scale(.7)}
-
-/* Светильники */
 .mine-lamp{
   position:absolute;top:78px;left:50%;width:10px;height:10px;
   border-radius:50%;background:#ffe2a1;z-index:4;
@@ -221,8 +184,6 @@ button:disabled{opacity:.5;cursor:default}
   background:radial-gradient(ellipse,#e4a64b20,transparent 70%)
 }
 @keyframes lampFlicker{0%,100%{opacity:1}45%{opacity:.75}52%{opacity:.95}70%{opacity:.8}}
-
-/* Рельсы и вагонетка */
 .mine-ground{
   position:absolute;bottom:0;left:0;right:0;height:120px;z-index:2;
   background:linear-gradient(180deg,#242b30,#11171d 75%)
@@ -230,17 +191,15 @@ button:disabled{opacity:.5;cursor:default}
 .mine-rail{
   position:absolute;bottom:27px;left:-10%;width:120%;height:5px;
   background:linear-gradient(90deg,#525b62,#c0a77e,#515b63);
-  transform:perspective(130px) rotateX(18deg);z-index:4;
-  box-shadow:0 8px 0 #343d44
+  transform:perspective(130px) rotateX(18deg);z-index:4;box-shadow:0 8px 0 #343d44
 }
 .mine-sleeper{
   position:absolute;bottom:16px;left:0;right:0;height:25px;z-index:3;
   background:repeating-linear-gradient(90deg,transparent 0 22px,#493b2d 23px 30px,transparent 31px 48px)
 }
 .mine-cart{
-  position:absolute;bottom:42px;left:8%;z-index:5;
-  width:76px;height:48px;border:4px solid #4b555d;
-  border-top:0;border-radius:4px 4px 13px 13px;
+  position:absolute;bottom:42px;left:8%;z-index:5;width:76px;height:48px;
+  border:4px solid #4b555d;border-top:0;border-radius:4px 4px 13px 13px;
   background:linear-gradient(145deg,#414b53,#171e24);
   box-shadow:inset 0 9px 12px #0008,0 5px 8px #0008
 }
@@ -254,16 +213,23 @@ button:disabled{opacity:.5;cursor:default}
   box-shadow:37px 0 0 -3px #161a1d,37px 0 0 0 #77818a
 }
 .cart-coal{position:absolute;bottom:83px;left:15%;font-size:23px;z-index:6;filter:brightness(.7)}
+.mine-caption{
+  position:absolute;top:13px;left:13px;z-index:10;
+  color:#e5c58a;font-size:10px;letter-spacing:1.8px;font-weight:bold;text-shadow:0 2px 5px #000
+}
+.mine-depth{
+  position:absolute;right:13px;top:13px;z-index:10;
+  color:#b5c1cc;font-size:10px;letter-spacing:1px
+}
 
-/* Залежи угля */
+/* Контейнер динамических залежей */
 .coal-field{position:absolute;inset:0;z-index:8;pointer-events:none}
 .coal-node{
   position:absolute;pointer-events:auto;display:flex;
   align-items:center;justify-content:center;
   width:62px;height:58px;padding:0;border:0;
   background:transparent;border-radius:50%;cursor:pointer;
-  filter:drop-shadow(0 5px 5px #0009);
-  animation:coalAppear .35s ease-out both;
+  filter:drop-shadow(0 5px 5px #0009);animation:coalAppear .35s ease-out both;
   z-index:8
 }
 .coal-node:before{
@@ -272,35 +238,31 @@ button:disabled{opacity:.5;cursor:default}
   border:2px solid #69737a;box-shadow:inset 0 0 9px #000,0 0 0 2px #171d22
 }
 .coal-node:after{
-  content:"";position:absolute;width:15px;height:9px;
-  top:17px;left:21px;background:#9ba2a3;
-  border-radius:50%;transform:rotate(-28deg);opacity:.5;
+  content:"";position:absolute;width:15px;height:9px;top:17px;left:21px;
+  background:#9ba2a3;border-radius:50%;transform:rotate(-28deg);opacity:.5;
   box-shadow:13px 13px 0 -3px #879196,-8px 12px 0 -4px #a6a9a5
 }
 .coal-node .coal-spark{
   position:absolute;width:6px;height:6px;border-radius:50%;
-  background:#e9b65b;box-shadow:0 0 10px 4px #e9a747;
-  right:12px;top:11px;z-index:2
+  background:#e9b65b;box-shadow:0 0 10px 4px #e9a747;right:12px;top:11px;z-index:2
 }
-.coal-node.size-small{transform:scale(.72)}
-.coal-node.size-large{transform:scale(1.25)}
-.coal-node.variant-2:before{
-  background:radial-gradient(circle at 35% 25%,#858b8c 0 5%,#41474a 22%,#20262b 65%,#090d11);
-  border-color:#818b8e
-}
-.coal-node.variant-3:before{
-  background:radial-gradient(circle at 35% 25%,#554d43 0 5%,#39312a 22%,#191817 65%,#090d11);
-  border-color:#8d7557
-}
+.coal-node .ore-icon{position:relative;z-index:3;font-size:23px;filter:drop-shadow(0 2px 3px #000)}
 .coal-node:active{filter:brightness(1.5) drop-shadow(0 0 10px #e9b653)}
-@keyframes coalAppear{
-  from{opacity:0;scale:.3}
-  to{opacity:1;scale:1}
-}
+@keyframes coalAppear{from{opacity:0;scale:.3}to{opacity:1;scale:1}}
 .coal-node.mined{animation:coalDisappear .3s ease forwards;pointer-events:none}
 @keyframes coalDisappear{to{opacity:0;scale:.15;rotate:35deg}}
+.coal-node.size-small{transform:scale(.75)}
+.coal-node.size-large{transform:scale(1.2)}
 
-/* Подсказки и эффекты добычи */
+/* Внешний вид разных видов руды */
+.coal-node.ore-iron:before{background:radial-gradient(circle at 35% 25%,#b0a9a0,#54565a 45%,#22272b);border-color:#a3a5a4}
+.coal-node.ore-copper:before{background:radial-gradient(circle at 35% 25%,#d28b54,#71442e 45%,#211b19);border-color:#c27b45}
+.coal-node.ore-silver:before{background:radial-gradient(circle at 35% 25%,#eff4f7,#929da9 45%,#252d37);border-color:#c5d0dc}
+.coal-node.ore-gold:before{background:radial-gradient(circle at 35% 25%,#ffe7a0,#b8872d 45%,#443016);border-color:#e9b653;box-shadow:0 0 13px #e9b65366}
+.coal-node.ore-diamond:before{background:radial-gradient(circle at 35% 25%,#d9ffff,#4cabb8 45%,#12353f);border-color:#76eaff;box-shadow:0 0 18px #5deeff77}
+.coal-node.ore-artifact:before{background:radial-gradient(circle at 35% 25%,#e5b8ff,#7644a4 45%,#251436);border-color:#c18bff;box-shadow:0 0 20px #a75aff99}
+
+/* Эффекты добычи */
 .mine-hint{
   position:absolute;bottom:112px;left:50%;transform:translateX(-50%);
   z-index:10;background:#090e13c9;border:1px solid #ffffff22;
@@ -321,7 +283,7 @@ button:disabled{opacity:.5;cursor:default}
   z-index:15;color:#ffe0a0;font-size:14px;font-weight:bold;
   text-shadow:0 2px 8px #000;opacity:0;white-space:nowrap;pointer-events:none
 }
-.mine-result.show{animation:resultPop 1.2s ease forwards}
+.mine-result.show{animation:resultPop 1.5s ease forwards}
 @keyframes resultPop{
   0%{opacity:0;transform:translate(-50%,12px)}
   20%,75%{opacity:1;transform:translate(-50%,0)}
@@ -331,29 +293,65 @@ button:disabled{opacity:.5;cursor:default}
 .mine-scene.mining{filter:brightness(1.08)}
 .mine-scene.mining .mine-light{opacity:1;filter:brightness(1.7)}
 
-/* Нижняя панель шахты */
+/* Панель локации и прогресса */
 .mine-status{
-  display:flex;justify-content:space-between;gap:8px;
+  display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;
   margin:0 0 12px;padding:11px 13px;
   background:#111a24;border:1px solid #2b3948;border-radius:12px;
   color:#aab8c6;font-size:11px
 }
 .mine-status b{color:#e9bd6c}
-.mine-action-note{margin-top:9px;text-align:center;color:#8292a4;font-size:11px}
+.mine-progress-card{
+  background:linear-gradient(145deg,#182536,#111b28);
+  border:1px solid #394b5f;border-radius:15px;padding:15px;margin-bottom:14px
+}
+.mine-progress-title{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mine-progress-title b{font-size:14px}
+.mine-progress-number{font-size:22px;font-weight:900;color:#e9bd6c}
+.mine-progress-bar{height:15px;background:#080f18;border:1px solid #35475a;border-radius:20px;overflow:hidden;margin:12px 0 8px}
+.mine-progress-fill{
+  height:100%;width:0%;border-radius:20px;
+  background:linear-gradient(90deg,#b77b26,#e9b653,#ffe2a1);
+  box-shadow:0 0 13px #e9b65388;transition:width .45s
+}
+.mine-progress-info{display:flex;justify-content:space-between;color:#91a2b5;font-size:10px}
+.mine-progress-complete{color:#79e5a5!important}
 
-@media(min-width:500px){
-  main{padding:22px}
-  .hero{min-height:210px}
-  .mine-scene{height:430px}
+/* Информация о кирке */
+.pickaxe-select{
+  width:100%;background:#0d1723;border:1px solid #35485e;
+  color:#fff;padding:12px;border-radius:10px;font-size:13px;margin-top:9px
 }
-@media(max-width:380px){
-  .mine-scene{height:350px}
-  .mine-cart{left:5%;transform:scale(.85);transform-origin:bottom left}
-  .coal-node{width:55px;height:52px}
+.pickaxe-bonus{
+  background:#0d1723;border:1px solid #2d4054;border-radius:10px;
+  padding:11px;margin-top:10px;font-size:11px;color:#aebdce;line-height:1.7
 }
-@media(prefers-reduced-motion:reduce){
-  *,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+.pickaxe-bonus b{color:#e9bd6c}
+
+/* Материалы */
+.ore-inventory{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.ore-item{
+  background:#0d1723;border:1px solid #293c51;
+  border-radius:11px;padding:11px;min-width:0
 }
+.ore-item span{font-size:20px}
+.ore-item b{display:block;font-size:12px;margin-top:5px}
+.ore-item small{font-size:10px;color:#91a2b5}
+
+/* Уведомления о редких находках */
+.rare-notice{
+  display:none;background:linear-gradient(135deg,#332044,#171d31);
+  border:1px solid #b37bdf;border-radius:13px;padding:13px;
+  margin-bottom:13px;text-align:center;box-shadow:0 0 20px #9b55d933
+}
+.rare-notice.show{display:block;animation:rarePop .4s ease}
+.rare-notice b{color:#e3bdff}
+@keyframes rarePop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+
+.mine-action-note{margin-top:9px;text-align:center;color:#8292a4;font-size:11px}
+@media(min-width:500px){main{padding:22px}.hero{min-height:210px}.mine-scene{height:430px}}
+@media(max-width:380px){.mine-scene{height:350px}.mine-cart{left:5%;transform:scale(.85);transform-origin:bottom left}.coal-node{width:55px;height:52px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
 
@@ -405,16 +403,37 @@ button:disabled{opacity:.5;cursor:default}
 
 <section id="work" class="page">
   <div class="hero">
-    <div class="hero-label">РАБОЧАЯ ЗОНА · ЛОКАЦИЯ 01</div>
+    <div class="hero-label">РАБОЧАЯ ЗОНА · ШАХТА</div>
     <h1>Угольная шахта</h1>
-    <p>Исследуй тоннель, находи залежи угля и добывай ресурсы для развития своей империи.</p>
+    <p>Исследуй случайные месторождения, добывай руду и собирай редкие материалы.</p>
   </div>
 
+  <!-- Информация о текущей случайной локации -->
   <div class="mine-status">
-    <span>⛏ Залежей найдено: <b id="coalCount">0</b></span>
-    <span>Уровень шахты: <b>01</b></span>
+    <span>📍 Локация: <b id="locationNumber">—</b></span>
+    <span>⛏ Залежей: <b id="coalCount">0</b></span>
+    <span>Глубина: <b id="locationDepth">—</b></span>
   </div>
 
+  <!-- Прогресс разработки текущей локации -->
+  <div class="mine-progress-card">
+    <div class="mine-progress-title">
+      <b>⛏ Разработка месторождения</b>
+      <span class="mine-progress-number" id="mineProgressText">0%</span>
+    </div>
+    <div class="mine-progress-bar">
+      <div class="mine-progress-fill" id="mineProgressFill"></div>
+    </div>
+    <div class="mine-progress-info">
+      <span id="mineProgressStatus">Месторождение не разработано</span>
+      <span>Цель: 100%</span>
+    </div>
+    <button class="action gold-button" id="nextLocationButton" onclick="nextMineLocation()" style="display:none">
+      🗺 Отправиться в следующую локацию
+    </button>
+  </div>
+
+  <!-- Игровая сцена шахты -->
   <div class="mine-scene" id="mineScene">
     <div class="mine-wall"></div>
     <div class="mine-arch"></div>
@@ -428,8 +447,8 @@ button:disabled{opacity:.5;cursor:default}
     <div class="mine-light"></div>
     <div class="mine-lamp"></div>
 
-    <div class="mine-caption">BLACK BUSSINES · MINE 01</div>
-    <div class="mine-depth">ГЛУБИНА 120 М</div>
+    <div class="mine-caption" id="mineCaption">BLACK BUSSINES · MINE</div>
+    <div class="mine-depth" id="mineDepthCaption">ГЛУБИНА 120 М</div>
 
     <div class="coal-field" id="coalField"></div>
 
@@ -439,11 +458,30 @@ button:disabled{opacity:.5;cursor:default}
     <div class="cart-coal">⚫⚫</div>
     <div class="mine-cart"></div>
 
-    <div class="mine-hint" id="mineHint">Нажми на залежь угля, чтобы добыть её</div>
+    <div class="mine-hint" id="mineHint">Нажми на жилу, чтобы добыть руду</div>
     <div class="mine-particles" id="mineParticles"></div>
     <div class="mine-result" id="mineResult"></div>
   </div>
 
+  <!-- Уведомление о редком предмете -->
+  <div class="rare-notice" id="rareNotice">
+    <b id="rareNoticeTitle">✨ Редкая находка!</b>
+    <div class="small" id="rareNoticeText"></div>
+  </div>
+
+  <!-- Система кирок -->
+  <div class="card">
+    <div class="card-title">⛏ Экипированная кирка</div>
+    <p class="small">Выбери кирку из доступных предметов. Её характеристики будут влиять на эффективность добычи.</p>
+    <select class="pickaxe-select" id="pickaxeSelect" onchange="selectPickaxe(this.value)">
+      <option value="basic">Обычная кирка</option>
+    </select>
+    <div class="pickaxe-bonus" id="pickaxeBonus">
+      Бонусы: <b>без улучшений</b>
+    </div>
+  </div>
+
+  <!-- Информация об игровых ресурсах -->
   <div class="card">
     <div class="card-title">Твои ресурсы</div>
     <div class="stat"><span>💰 Монеты</span><b id="workCoins">—</b></div>
@@ -452,12 +490,19 @@ button:disabled{opacity:.5;cursor:default}
     <div class="bar"><div class="fill energy-fill" id="energyBar"></div></div>
   </div>
 
+  <!-- Собранные материалы шахты -->
+  <div class="card">
+    <div class="card-title">💎 Добытые материалы</div>
+    <div class="ore-inventory" id="oreInventory"></div>
+    <p class="small" style="margin-top:12px">Материалы предназначены для будущей системы крафта.</p>
+  </div>
+
   <div class="card">
     <div class="card-title">⛏ Управление добычей</div>
-    <p class="small">Выбирай появившиеся залежи прямо в шахте. Каждая успешная добыча обрабатывается сервером.</p>
+    <p class="small">Нажимай непосредственно на появляющиеся жилы. Их расположение и тип определяются случайным образом.</p>
     <button class="action" id="mineButton" onclick="gameAction('mine')">⛏ Добывать уголь</button>
     <button class="action secondary" onclick="gameAction('rest')">⚡ Отдохнуть (+20 энергии)</button>
-    <div class="mine-action-note">Новые залежи появляются в разных частях тоннеля.</div>
+    <div class="mine-action-note">Добыча осуществляется нажатием на жилу внутри шахты.</div>
   </div>
 </section>
 
@@ -507,7 +552,8 @@ button:disabled{opacity:.5;cursor:default}
 
 <script>
 /* =========================================
-   SUPABASE И TELEGRAM — СОХРАНЕНЫ
+   SUPABASE И TELEGRAM
+   Существующие подключения сохранены
    ========================================= */
 
 const SUPABASE_URL="https://lcutewtfifmrqmpzjjth.supabase.co";
@@ -532,132 +578,536 @@ const itemNames={
 };
 
 /* =========================================
-   НАВИГАЦИЯ
+   НОВАЯ СИСТЕМА ШАХТЫ
+   ВНИМАНИЕ: ПОКА ЛОКАЛЬНЫЙ ПРОТОТИП
    ========================================= */
 
-function showPage(id){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+/* Виды руды, которые могут появляться в шахте.
+   weight — относительная вероятность появления.
+   progress — базовый процент разработки за жилу. */
+const oreTypes=[
+  {id:"coal",name:"Уголь",icon:"⚫",weight:45,progress:[3,4,5,10]},
+  {id:"iron",name:"Железная руда",icon:"🪨",weight:23,progress:[3,4,5,10]},
+  {id:"copper",name:"Медная руда",icon:"🟠",weight:14,progress:[3,4,5,10]},
+  {id:"silver",name:"Серебряная руда",icon:"🥈",weight:9,progress:[3,4,5,10]},
+  {id:"gold",name:"Золотая руда",icon:"🥇",weight:5,progress:[3,4,5,10]},
+  {id:"diamond",name:"Алмазная жила",icon:"💎",weight:3,progress:[3,4,5,10]},
+  {id:"artifact",name:"Древний минерал",icon:"🔮",weight:1,progress:[3,4,5,10]}
+];
 
-  const page=document.getElementById(id);
-  if(page)page.classList.add("active");
+/* Редкие предметы, которые могут выпадать дополнительно.
+   chance — вероятность дополнительной находки в процентах. */
+const rareMaterials=[
+  {id:"silver_fragment",name:"Серебряный фрагмент",icon:"✨",chance:8,rarity:"Необычный"},
+  {id:"gold_nugget",name:"Золотой самородок",icon:"🌟",chance:4,rarity:"Редкий"},
+  {id:"crystal",name:"Редкий кристалл",icon:"💎",chance:2,rarity:"Эпический"},
+  {id:"ancient_relic",name:"Древний артефакт",icon:"🏺",chance:.5,rarity:"Легендарный"}
+];
 
-  const navButton=document.querySelector('.nav button[data-page="'+id+'"]');
-  if(navButton)navButton.classList.add("active");
+/* Список кирок и их игровых характеристик.
+   Ключи соответствуют возможным кодам предметов инвентаря. */
+const pickaxeCatalog={
+  basic:{
+    name:"Обычная кирка",icon:"⛏",
+    progressBonus:0,rareBonus:0,doubleBonus:0
+  },
+  pickaxe:{
+    name:"Улучшенная кирка",icon:"🔨",
+    progressBonus:5,rareBonus:2,doubleBonus:0
+  },
+  iron_pickaxe:{
+    name:"Железная кирка",icon:"⛏",
+    progressBonus:5,rareBonus:2,doubleBonus:1
+  },
+  silver_pickaxe:{
+    name:"Серебряная кирка",icon:"🥈",
+    progressBonus:10,rareBonus:5,doubleBonus:2
+  },
+  gold_pickaxe:{
+    name:"Золотая кирка",icon:"🥇",
+    progressBonus:15,rareBonus:8,doubleBonus:3
+  },
+  diamond_pickaxe:{
+    name:"Алмазная кирка",icon:"💎",
+    progressBonus:25,rareBonus:12,doubleBonus:5
+  },
+  improved_pickaxe:{
+    name:"Улучшенная профессиональная кирка",icon:"⚒",
+    progressBonus:35,rareBonus:15,doubleBonus:8
+  }
+};
 
-  showMessage("");
-  window.scrollTo({top:0,behavior:"smooth"});
+/* Состояние шахты.
+   locationOrder — перемешанный список локаций.
+   progress — прогресс текущей локации.
+   materials — локальный прототип инвентаря материалов. */
+const mineState={
+  locationOrder:[],
+  locationIndex:0,
+  currentLocation:1,
+  progress:0,
+  materials:{},
+  selectedPickaxe:"basic",
+  discoveredLocations:[],
+  minedCount:0
+};
 
-  if(id==="work")ensureCoalNodes();
+/* Создаём случайный порядок из 100 локаций.
+   Локации не повторяются, пока не пройдёт весь цикл. */
+function shuffleLocations(){
+  const list=Array.from({length:100},(_,i)=>i+1);
+
+  for(let i=list.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [list[i],list[j]]=[list[j],list[i]];
+  }
+
+  /* Не допускаем повторения последней локации
+     на границе двух циклов. */
+  if(
+    mineState.discoveredLocations.length>0&&
+    list[0]===mineState.discoveredLocations[mineState.discoveredLocations.length-1]
+  ){
+    [list[0],list[1]]=[list[1],list[0]];
+  }
+
+  mineState.locationOrder=list;
+  mineState.locationIndex=0;
 }
 
-function showMessage(text){
-  document.getElementById("message").textContent=text||"";
+/* Получение следующей локации из перемешанного списка. */
+function getNextLocation(){
+  if(mineState.locationOrder.length===0||
+     mineState.locationIndex>=mineState.locationOrder.length){
+    shuffleLocations();
+  }
+
+  return mineState.locationOrder[mineState.locationIndex++];
+}
+
+/* Генерация номера и глубины новой локации. */
+function createLocation(){
+  mineState.currentLocation=getNextLocation();
+  mineState.progress=0;
+  mineState.discoveredLocations.push(mineState.currentLocation);
+
+  /* Глубина зависит от номера локации. */
+  const depth=100+mineState.currentLocation*12;
+
+  document.getElementById("locationNumber").textContent=
+    String(mineState.currentLocation).padStart(2,"0")+"/100";
+
+  document.getElementById("locationDepth").textContent=depth+" м";
+  document.getElementById("mineDepthCaption").textContent="ГЛУБИНА "+depth+" М";
+  document.getElementById("mineCaption").textContent=
+    "BLACK BUSSINES · MINE "+String(mineState.currentLocation).padStart(2,"0");
+
+  /* Небольшое визуальное отличие локаций:
+     оттенок освещения меняется от номера локации. */
+  const hue=(mineState.currentLocation*37)%360;
+  document.getElementById("mineScene").style.background=
+    "radial-gradient(ellipse at 50% 25%,hsla("+hue+",45%,48%,.22),transparent 45%),"+
+    "linear-gradient(180deg,#18212b 0%,#27313a 42%,#171d23 75%,#0d1218 100%)";
+
+  updateMineProgress();
+  activeCoalNodes=[];
+  const field=document.getElementById("coalField");
+  field.innerHTML="";
+
+  spawnCoalNodes();
+}
+
+/* Переход в следующую локацию разрешён после 100%. */
+function nextMineLocation(){
+  if(mineState.progress<100)return;
+
+  createLocation();
+  document.getElementById("nextLocationButton").style.display="none";
+  document.getElementById("mineHint").textContent=
+    "Новая локация! Найди залежи руды.";
+  showMineResult("🗺 Новое месторождение!");
+}
+
+/* Расчёт и отображение прогресса локации. */
+function updateMineProgress(){
+  const progress=Math.min(100,mineState.progress);
+
+  document.getElementById("mineProgressText").textContent=progress+"%";
+  document.getElementById("mineProgressFill").style.width=progress+"%";
+
+  const status=document.getElementById("mineProgressStatus");
+  const nextButton=document.getElementById("nextLocationButton");
+
+  if(progress>=100){
+    status.textContent="Месторождение полностью разработано!";
+    status.classList.add("mine-progress-complete");
+    nextButton.style.display="block";
+    document.getElementById("mineHint").textContent="Месторождение исчерпано!";
+  }else{
+    status.textContent="Продолжай добычу руды";
+    status.classList.remove("mine-progress-complete");
+    nextButton.style.display="none";
+  }
 }
 
 /* =========================================
-   ДИНАМИЧЕСКАЯ СИСТЕМА УГОЛЬНЫХ ЗАЛЕЖЕЙ
+   СЛУЧАЙНОЕ ПОЯВЛЕНИЕ ЖИЛ
    ========================================= */
 
-// Координаты подготовлены так, чтобы залежи не перекрывали друг друга.
-// Каждая позиция — отдельное место появления ресурса.
-const coalSlots=[
-  {x:8,y:39},
-  {x:25,y:53},
-  {x:43,y:35},
-  {x:63,y:53},
-  {x:82,y:37},
-  {x:15,y:66},
-  {x:48,y:65},
-  {x:76,y:67}
-];
-
 let activeCoalNodes=[];
-let coalSpawnTimer=null;
 let coalNodeId=0;
-const MAX_COAL_NODES=3;
+const MAX_COAL_NODES=4;
 
-function ensureCoalNodes(){
-  const field=document.getElementById("coalField");
-  if(!field)return;
+/* Выбираем случайную руду с учётом её веса. */
+function getRandomOre(){
+  const total=oreTypes.reduce((sum,ore)=>sum+ore.weight,0);
+  let roll=Math.random()*total;
 
-  if(activeCoalNodes.length===0){
-    spawnCoalNodes();
+  for(const ore of oreTypes){
+    roll-=ore.weight;
+    if(roll<=0)return ore;
   }
+
+  return oreTypes[0];
 }
 
-function spawnCoalNodes(){
-  if(!document.getElementById("work").classList.contains("active"))return;
+/* Случайная координата внутри игровой сцены.
+   Дополнительно проверяем расстояние между жилами,
+   чтобы они не накладывались друг на друга. */
+function getRandomPosition(){
+  const positions=[];
 
-  const field=document.getElementById("coalField");
-  if(!field)return;
+  for(let attempt=0;attempt<40;attempt++){
+    const x=12+Math.random()*76;
+    const y=19+Math.random()*49;
 
-  const freeSlots=coalSlots.filter(slot=>
-    !activeCoalNodes.some(node=>node.slot===slot)
-  );
+    const farEnough=activeCoalNodes.every(node=>{
+      const dx=node.x-x;
+      const dy=node.y-y;
+      return Math.sqrt(dx*dx+dy*dy)>16;
+    });
 
-  // Перемешиваем свободные точки появления
-  for(let i=freeSlots.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [freeSlots[i],freeSlots[j]]=[freeSlots[j],freeSlots[i]];
+    if(farEnough){
+      positions.push({x,y});
+      break;
+    }
   }
 
-  const amount=Math.min(
-    MAX_COAL_NODES-activeCoalNodes.length,
-    freeSlots.length
-  );
+  if(positions.length)return positions[0];
+
+  return {x:15+Math.random()*70,y:22+Math.random()*40};
+}
+
+/* Проверяем, нужно ли создать новые залежи. */
+function ensureCoalNodes(){
+  if(!document.getElementById("work").classList.contains("active"))return;
+  if(mineState.progress>=100)return;
+
+  if(activeCoalNodes.length===0)spawnCoalNodes();
+}
+
+/* Создание случайных залежей в свободных местах. */
+function spawnCoalNodes(){
+  if(!document.getElementById("work").classList.contains("active"))return;
+  if(mineState.progress>=100)return;
+
+  const amount=MAX_COAL_NODES-activeCoalNodes.length;
 
   for(let i=0;i<amount;i++){
-    createCoalNode(freeSlots[i]);
+    createCoalNode();
   }
 
   updateCoalCount();
 }
 
-function createCoalNode(slot){
+/* Создаём интерактивную жилу. */
+function createCoalNode(){
   const field=document.getElementById("coalField");
   if(!field)return;
 
-  const node=document.createElement("button");
+  const position=getRandomPosition();
+  const ore=getRandomOre();
   const id=++coalNodeId;
 
-  const sizeRoll=Math.random();
-  const sizeClass=sizeRoll<.25?"size-small":sizeRoll>.78?"size-large":"";
-  const variant="variant-"+(1+Math.floor(Math.random()*3));
-
+  const node=document.createElement("button");
   node.type="button";
-  node.className="coal-node "+sizeClass+" "+variant;
+  node.className="coal-node ore-"+ore.id;
   node.dataset.nodeId=String(id);
-  node.setAttribute("aria-label","Добыть залежь угля");
+  node.setAttribute("aria-label","Добыть: "+ore.name);
 
-  node.style.left=slot.x+"%";
-  node.style.top=slot.y+"%";
+  if(Math.random()<.25)node.classList.add("size-small");
+  else if(Math.random()<.2)node.classList.add("size-large");
+
+  node.style.left=position.x+"%";
+  node.style.top=position.y+"%";
+
+  const icon=document.createElement("span");
+  icon.className="ore-icon";
+  icon.textContent=ore.icon;
 
   const spark=document.createElement("span");
   spark.className="coal-spark";
-  node.appendChild(spark);
 
+  node.append(icon,spark);
   node.onclick=()=>mineCoalNode(node);
 
   field.appendChild(node);
 
-  activeCoalNodes.push({id,slot,element:node});
+  activeCoalNodes.push({
+    id,
+    x:position.x,
+    y:position.y,
+    ore,
+    element:node
+  });
+
   updateCoalCount();
 }
 
+/* Обновление счётчика видимых жил. */
 function updateCoalCount(){
   const counter=document.getElementById("coalCount");
   if(counter)counter.textContent=activeCoalNodes.length;
 }
 
+/* =========================================
+   СИСТЕМА КИРОК
+   ========================================= */
+
+/* Проверяем наличие кирки в инвентаре.
+   Обычная кирка доступна всегда.
+   Остальные отображаются, если соответствующий
+   предмет присутствует в player.inventory. */
+function getAvailablePickaxes(){
+  const result=["basic"];
+
+  if(!player)return result;
+
+  Object.keys(pickaxeCatalog).forEach(code=>{
+    if(code==="basic")return;
+
+    const quantity=Number(player.inventory[code]||0);
+
+    if(quantity>0&&!result.includes(code)){
+      result.push(code);
+    }
+  });
+
+  return result;
+}
+
+/* Обновляем список кирок в интерфейсе. */
+function renderPickaxeSelector(){
+  const select=document.getElementById("pickaxeSelect");
+  if(!select)return;
+
+  const available=getAvailablePickaxes();
+
+  if(!available.includes(mineState.selectedPickaxe)){
+    mineState.selectedPickaxe="basic";
+  }
+
+  select.innerHTML="";
+
+  available.forEach(code=>{
+    const pickaxe=pickaxeCatalog[code];
+    const option=document.createElement("option");
+
+    option.value=code;
+    option.textContent=pickaxe.icon+" "+pickaxe.name;
+
+    select.appendChild(option);
+  });
+
+  select.value=mineState.selectedPickaxe;
+  renderPickaxeBonus();
+}
+
+/* Выбор экипированной кирки. */
+function selectPickaxe(code){
+  if(!pickaxeCatalog[code])return;
+  if(!getAvailablePickaxes().includes(code))return;
+
+  mineState.selectedPickaxe=code;
+  renderPickaxeBonus();
+}
+
+/* Получение бонусов активной кирки. */
+function getPickaxeBonus(){
+  return pickaxeCatalog[mineState.selectedPickaxe]||pickaxeCatalog.basic;
+}
+
+/* Отображение характеристик кирки. */
+function renderPickaxeBonus(){
+  const box=document.getElementById("pickaxeBonus");
+  const pickaxe=getPickaxeBonus();
+
+  box.innerHTML=
+    "Прогресс за добычу: <b>+"+pickaxe.progressBonus+"%</b><br>"+
+    "Шанс редкого предмета: <b>+"+pickaxe.rareBonus+"%</b><br>"+
+    "Шанс двойного выпадения: <b>+"+pickaxe.doubleBonus+"%</b>";
+}
+
+/* =========================================
+   ДОБЫЧА ИГРОВЫХ РЕСУРСОВ
+   ========================================= */
+
+/* Выбор случайного процента заполнения.
+   3% — часто.
+   4% — часто.
+   5% — реже.
+   10% — очень редко. */
+function getRandomProgress(){
+  const roll=Math.random()*100;
+
+  if(roll<48)return 3;
+  if(roll<78)return 4;
+  if(roll<97)return 5;
+
+  return 10;
+}
+
+/* Добавляем добытый материал в локальное состояние. */
+function addMaterial(id,amount=1){
+  mineState.materials[id]=(mineState.materials[id]||0)+amount;
+  renderOreInventory();
+}
+
+/* Случайное выпадение дополнительного редкого предмета. */
+function rollRareMaterial(){
+  const bonus=getPickaxeBonus().rareBonus;
+  const chanceMultiplier=1+bonus/100;
+
+  for(const material of rareMaterials){
+    if(Math.random()*100<material.chance*chanceMultiplier){
+      addMaterial(material.id,1);
+      showRareNotice(material);
+      return material;
+    }
+  }
+
+  return null;
+}
+
+/* Шанс получить второй экземпляр материала. */
+function rollDoubleDrop(){
+  const bonus=getPickaxeBonus().doubleBonus;
+  return Math.random()*100<bonus;
+}
+
+/* Применение результата успешной добычи.
+   Здесь рассчитывается локальный прогресс,
+   бонус кирки и дополнительная награда. */
+function applyLocalMiningReward(ore){
+  const baseProgress=getRandomProgress();
+  const pickaxe=getPickaxeBonus();
+
+  /* Бонус кирки увеличивает базовое заполнение.
+     Результат округляется до целого процента. */
+  const finalProgress=Math.round(
+    baseProgress*(1+pickaxe.progressBonus/100)
+  );
+
+  mineState.progress=Math.min(
+    100,
+    mineState.progress+finalProgress
+  );
+
+  mineState.minedCount++;
+
+  /* Основной материал добытой жилы. */
+  addMaterial(ore.id,1);
+
+  /* Возможное двойное выпадение. */
+  if(rollDoubleDrop()){
+    addMaterial(ore.id,1);
+  }
+
+  /* Проверка случайного редкого предмета. */
+  const rare=rollRareMaterial();
+
+  updateMineProgress();
+
+  const rewardText="+"+finalProgress+"% · "+ore.icon+" "+ore.name;
+
+  showMineResult(rewardText);
+
+  if(mineState.progress>=100){
+    setTimeout(()=>{
+      showMineResult("🏆 Локация разработана на 100%!");
+    },700);
+  }
+
+  return finalProgress;
+}
+
+/* Отображение редкой находки. */
+function showRareNotice(material){
+  const box=document.getElementById("rareNotice");
+
+  document.getElementById("rareNoticeTitle").textContent=
+    material.icon+" Редкая находка!";
+
+  document.getElementById("rareNoticeText").textContent=
+    material.name+" · "+material.rarity;
+
+  box.classList.remove("show");
+  void box.offsetWidth;
+  box.classList.add("show");
+}
+
+/* Отрисовка всех добытых материалов. */
+function renderOreInventory(){
+  const box=document.getElementById("oreInventory");
+  if(!box)return;
+
+  box.innerHTML="";
+
+  const allMaterials=[
+    ...oreTypes,
+    ...rareMaterials
+  ];
+
+  allMaterials.forEach(material=>{
+    const quantity=mineState.materials[material.id]||0;
+
+    const item=document.createElement("div");
+    item.className="ore-item";
+
+    const icon=document.createElement("span");
+    icon.textContent=material.icon;
+
+    const name=document.createElement("b");
+    name.textContent=material.name;
+
+    const count=document.createElement("small");
+    count.textContent="Количество: "+quantity;
+
+    item.append(icon,name,count);
+    box.appendChild(item);
+  });
+}
+
+/* =========================================
+   ОБРАБОТКА НАЖАТИЯ НА ЖИЛУ
+   ========================================= */
+
 async function mineCoalNode(node){
   if(actionBusy||!player)return;
   if(!node||!node.isConnected)return;
+  if(mineState.progress>=100)return;
 
   const nodeId=Number(node.dataset.nodeId);
   const record=activeCoalNodes.find(item=>item.id===nodeId);
+
   if(!record)return;
 
+  /* Запоминаем тип руды до обращения к серверу. */
+  const ore=record.ore;
+
+  /* Существующее серверное действие пока сохранено.
+     Сервер по-прежнему обрабатывает обычную добычу угля.
+     Новые материалы и прогресс пока рассчитываются локально. */
   const success=await gameAction("mine");
 
   if(success){
@@ -666,14 +1116,22 @@ async function mineCoalNode(node){
     activeCoalNodes=activeCoalNodes.filter(item=>item.id!==nodeId);
     updateCoalCount();
 
+    /* Добавляем локальные награды новой шахты. */
+    applyLocalMiningReward(ore);
+
     setTimeout(()=>{
       if(node.parentNode)node.remove();
-      spawnCoalNodes();
-    },350);
 
-    showMineResult("⛏ Залежь добыта!");
+      if(mineState.progress<100){
+        spawnCoalNodes();
+      }
+    },350);
   }
 }
+
+/* =========================================
+   АНИМАЦИЯ ДОБЫЧИ
+   ========================================= */
 
 function showMineResult(text){
   const result=document.getElementById("mineResult");
@@ -688,6 +1146,7 @@ function showMineResult(text){
 function startMiningAnimation(){
   const scene=document.getElementById("mineScene");
   const particles=document.getElementById("mineParticles");
+
   if(!scene||!particles)return;
 
   scene.classList.remove("mining");
@@ -712,9 +1171,38 @@ function startMiningAnimation(){
 
 function finishMiningAnimation(success){
   const scene=document.getElementById("mineScene");
+
   if(scene)scene.classList.remove("mining");
 
   if(success)showMineResult("✓ Добыча завершена");
+}
+
+/* =========================================
+   НАВИГАЦИЯ
+   ========================================= */
+
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+
+  const page=document.getElementById(id);
+  if(page)page.classList.add("active");
+
+  const navButton=document.querySelector('.nav button[data-page="'+id+'"]');
+  if(navButton)navButton.classList.add("active");
+
+  showMessage("");
+  window.scrollTo({top:0,behavior:"smooth"});
+
+  if(id==="work"){
+    ensureCoalNodes();
+    renderPickaxeSelector();
+    renderOreInventory();
+  }
+}
+
+function showMessage(text){
+  document.getElementById("message").textContent=text||"";
 }
 
 /* =========================================
@@ -733,20 +1221,24 @@ function getValue(obj,names,fallback){
 function normalizeBusinesses(value){
   if(Array.isArray(value)){
     const result={};
+
     value.forEach(b=>{
       if(b&&b.business_type){
         result[b.business_type]=Number(b.level||1);
       }
     });
+
     return result;
   }
 
   if(value&&typeof value==="object"){
     const result={};
+
     for(const key of Object.keys(value)){
       const entry=value[key];
       result[key]=Number(typeof entry==="object"?entry.level||1:entry);
     }
+
     return result;
   }
 
@@ -756,16 +1248,20 @@ function normalizeBusinesses(value){
 function normalizeInventory(value){
   if(Array.isArray(value)){
     const result={};
+
     value.forEach(item=>{
       const code=typeof item==="string"?item:item.item_code;
+
       if(code){
         result[code]=Number(item.quantity||1);
       }
     });
+
     return result;
   }
 
   if(value&&typeof value==="object")return value;
+
   return {};
 }
 
@@ -787,16 +1283,20 @@ function applyPlayer(data){
   render();
 }
 
+/* Расчёт опыта для следующего уровня. */
 function xpNeeded(){
   const n=player.level;
   return 100+40*n+10*n*n;
 }
 
+/* Расчёт дохода от бизнеса. */
 function getIncome(){
   let total=0;
+
   businessOffers.forEach(b=>{
     total+=(player.businesses[b.name]||0)*b.income;
   });
+
   return total;
 }
 
@@ -839,8 +1339,10 @@ function render(){
 
   renderBusinesses();
   renderInventory();
+  renderPickaxeSelector();
 }
 
+/* Отображение предприятий. */
 function renderBusinesses(){
   const box=document.getElementById("businessList");
   box.innerHTML="";
@@ -855,12 +1357,14 @@ function renderBusinesses(){
 
     const info=document.createElement("p");
     info.className="small";
+
     info.textContent=level
       ?"Уровень "+level+" · Доход: "+(b.income*level)+" монет/час"
       :"Стоимость: "+b.price+" монет · Доход: "+b.income+" монет/час";
 
     const button=document.createElement("button");
     button.textContent=level?"Улучшить":"Купить";
+
     button.onclick=()=>gameAction(
       level?"upgrade_business":"buy_business",
       b.name
@@ -871,6 +1375,7 @@ function renderBusinesses(){
   });
 }
 
+/* Отображение предметов инвентаря. */
 function renderInventory(){
   const box=document.getElementById("inventoryList");
   box.innerHTML="";
@@ -878,11 +1383,17 @@ function renderInventory(){
   let hasItems=false;
 
   Object.entries(player.inventory).forEach(([code,quantity])=>{
-    if(Number(quantity)>0&&itemNames[code]){
+    if(Number(quantity)>0){
       hasItems=true;
+
       const div=document.createElement("div");
       div.className="item";
-      div.textContent=itemNames[code]+" × "+quantity;
+
+      const knownName=itemNames[code]||
+        pickaxeCatalog[code]?.name||
+        code;
+
+      div.textContent=knownName+" × "+quantity;
       box.appendChild(div);
     }
   });
@@ -892,7 +1403,7 @@ function renderInventory(){
 
 /* =========================================
    ИГРОВЫЕ ДЕЙСТВИЯ — SUPABASE
-   Контракт game--action сохранён
+   Существующий контракт game--action сохранён
    ========================================= */
 
 async function gameAction(action,target=null){
@@ -948,6 +1459,7 @@ async function gameAction(action,target=null){
         if(responseText){
           try{
             const responseData=JSON.parse(responseText);
+
             rawMessage=
               responseData?.error?.message||
               responseData?.error||
@@ -958,6 +1470,7 @@ async function gameAction(action,target=null){
             if(typeof rawMessage!=="string"){
               rawMessage=JSON.stringify(rawMessage);
             }
+
           }catch(parseError){
             rawMessage=responseText||rawMessage;
           }
@@ -1072,16 +1585,22 @@ async function startGame(){
     document.getElementById("connectionStatus").textContent="Подключено к серверу";
     showMessage("");
 
-    // Подготавливаем залежи для шахты.
-    // Они появятся при первом открытии раздела «Работа».
+    /* Создаём первую случайную локацию после загрузки игрока. */
+    createLocation();
+
+    /* Обновляем локальные материалы и кирку. */
+    renderOreInventory();
+    renderPickaxeSelector();
 
   }catch(error){
     console.error(error);
+
     document.getElementById("connectionStatus").textContent="Ошибка подключения";
     showMessage(error.message||"Не удалось загрузить игру");
   }
 }
 
+/* Запуск приложения. */
 startGame();
 </script>
 </body>
