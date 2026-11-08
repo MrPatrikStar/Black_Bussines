@@ -298,7 +298,21 @@ async function gameAction(action,target=null){
     showMessage("Готово!");
   }catch(error){
     console.error(error);
-    showMessage("Ошибка: "+(error.message||"Не удалось связаться с сервером"));
+
+    let message = error.message || "Не удалось связаться с сервером";
+
+    if(error.context && typeof error.context.json === "function"){
+      try{
+        const responseData = await error.context.json();
+        if(responseData?.error){
+          message = responseData.error;
+        }
+      }catch(e){
+        console.error("Ошибка чтения ответа:",e);
+      }
+    }
+
+    showMessage(message);
   }finally{
     actionBusy=false;
     document.querySelectorAll("button").forEach(b=>b.disabled=false);
