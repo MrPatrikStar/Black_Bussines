@@ -5,505 +5,350 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BLACK BUSSINES</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#10151d;color:#fff;font-family:Arial,sans-serif;padding-bottom:85px}
-header{background:#1b2430;padding:20px;text-align:center;border-bottom:1px solid #354152}
-h1{color:#e7b84c;margin:0;font-size:25px}
-header p{color:#aab5c5;margin:7px 0 0;font-size:13px}
-main{max-width:650px;margin:auto;padding:15px}
-.card{background:#1b2430;border:1px solid #344052;border-radius:15px;padding:17px;margin-bottom:14px}
-h2{font-size:19px;margin:0 0 14px}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.stat{background:#273343;padding:13px;border-radius:10px}
-.stat small{color:#aab5c5}
-.value{font-size:22px;color:#e7b84c;font-weight:bold;margin-top:6px}
-button{background:#d9aa3e;color:#171717;border:0;border-radius:10px;padding:14px;font-size:15px;font-weight:bold;width:100%;margin-top:9px}
-button:disabled{opacity:.45}
-.secondary{background:#34465c;color:white}
-.nav{position:fixed;bottom:0;left:0;right:0;background:#19222e;display:grid;grid-template-columns:repeat(5,1fr);padding:8px 2px;border-top:1px solid #354152}
-.nav button{background:transparent;color:#cbd4e0;margin:0;padding:8px 2px;font-size:11px}
-.nav button.active{color:#e7b84c}
-.nav span{display:block;font-size:20px;margin-bottom:4px}
+header{background:#1b2430;padding:20px;text-align:center;font-size:22px;font-weight:bold}
+main{padding:15px}
 .page{display:none}
 .page.active{display:block}
-.bar{height:10px;background:#354152;border-radius:20px;overflow:hidden;margin-top:8px}
-.fill{height:100%;background:#42bd7b;width:100%}
-.muted{color:#aab5c5;font-size:13px}
-.item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #354152}
-.item button{width:auto;min-width:95px;margin:0;padding:10px}
+.card{background:#1b2430;border-radius:14px;padding:16px;margin-bottom:14px}
+h2{margin-top:0}
+.stat{display:flex;justify-content:space-between;margin:10px 0}
+button{border:0;border-radius:10px;padding:13px;background:#2878df;color:white;font-weight:bold;font-size:15px;cursor:pointer}
+button:disabled{opacity:.5}
+.action{width:100%;margin-top:10px}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#1b2430;display:flex;justify-content:space-around;padding:10px 3px}
+.nav button{background:transparent;padding:8px 5px;font-size:12px}
+.nav button.active{color:#58a6ff}
+.bar{height:10px;background:#303b49;border-radius:10px;overflow:hidden;margin:8px 0}
+.fill{height:100%;background:#27ae60;width:0%}
+.small{color:#aab6c5;font-size:13px}
+.item{border-bottom:1px solid #303b49;padding:12px 0}
+.item:last-child{border:0}
+.error{color:#ff7777;margin:12px 0}
+.status{color:#9bd6a5;font-size:13px}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
 
-<header>
-<h1>BLACK BUSSINES</h1>
-<p>Построй свою экономическую империю</p>
-</header>
+<header>BLACK BUSSINES</header>
 
 <main>
-
 <section id="work" class="page active">
-<div class="card">
-<h2>👤 Твой персонаж</h2>
-<div class="stats">
-<div class="stat"><small>Уровень</small><div class="value" id="level">1</div></div>
-<div class="stat"><small>Монеты</small><div class="value" id="coins">0</div></div>
-<div class="stat"><small>Опыт</small><div class="value" id="xp">0</div></div>
-<div class="stat"><small>Уголь</small><div class="value" id="coal">0</div></div>
-</div>
-<p class="muted">Опыт до следующего уровня</p>
-<div class="bar"><div class="fill" id="xpBar"></div></div>
-</div>
-
-<div class="card">
-<h2>⛏️ Шахта</h2>
-<p>Профессия: Шахтёр</p>
-<p>Энергия: <b id="energy">100</b>/100</p>
-<div class="bar"><div class="fill" id="energyBar"></div></div>
-<button onclick="mine()">⛏️ Добывать уголь</button>
-<button class="secondary" onclick="rest()">🛌 Отдохнуть (+20 энергии)</button>
-</div>
+  <div class="card">
+    <div class="stat"><span>Уровень</span><b id="level">—</b></div>
+    <div class="stat"><span>Монеты</span><b id="coins">—</b></div>
+    <div class="stat"><span>Уголь</span><b id="coal">—</b></div>
+    <div class="stat"><span>Опыт</span><b id="xp">—</b></div>
+    <div class="bar"><div class="fill" id="xpBar"></div></div>
+    <div class="stat"><span>Энергия</span><b id="energy">—</b></div>
+    <div class="bar"><div class="fill" id="energyBar"></div></div>
+  </div>
+  <div class="card">
+    <h2>⛏ Работа в шахте</h2>
+    <p class="small">Добывай уголь и получай монеты и опыт.</p>
+    <button class="action" onclick="gameAction('mine')">Добывать уголь</button>
+    <button class="action" onclick="gameAction('rest')">Отдохнуть (+20 энергии)</button>
+  </div>
 </section>
 
 <section id="business" class="page">
-<div class="card">
-<h2>🏢 Твой бизнес</h2>
-<p class="muted">Покупай предприятия и развивай свою империю.</p>
-<p>Пассивный доход: <b id="income">0</b> монет/час</p>
-<div id="businessList"></div>
-</div>
+  <div class="card">
+    <h2>🏪 Мой бизнес</h2>
+    <div class="stat"><span>Доход в час</span><b id="income">0</b></div>
+    <div id="businessList"></div>
+  </div>
 </section>
 
 <section id="shop" class="page">
-<div class="card">
-<h2>🛒 Магазин</h2>
-<div class="item"><div>🧤 Рабочие перчатки<br><small>+5% к добыче</small></div><button onclick="buyItem(500,'gloves')">500 монет</button></div>
-<div class="item"><div>🎒 Рюкзак<br><small>+10 к энергии</small></div><button onclick="buyItem(1000,'bag')">1000 монет</button></div>
-<div class="item"><div>⛏️ Улучшенная кирка<br><small>+1 дополнительный уголь</small></div><button onclick="buyItem(2000,'pickaxe')">2000 монет</button></div>
-<p class="muted">Предметы пока представлены демонстрационными покупками за игровую валюту.</p>
-</div>
+  <div class="card">
+    <h2>🛒 Магазин</h2>
+    <div class="item">
+      <b>Рабочие перчатки</b>
+      <p class="small">Стоимость: 500 монет</p>
+      <button onclick="gameAction('buy_item','gloves')">Купить</button>
+    </div>
+    <div class="item">
+      <b>Рюкзак</b>
+      <p class="small">Стоимость: 1000 монет</p>
+      <button onclick="gameAction('buy_item','bag')">Купить</button>
+    </div>
+    <div class="item">
+      <b>Улучшенная кирка</b>
+      <p class="small">Стоимость: 2000 монет</p>
+      <button onclick="gameAction('buy_item','pickaxe')">Купить</button>
+    </div>
+  </div>
 </section>
 
 <section id="inventory" class="page">
-<div class="card">
-<h2>🎒 Инвентарь</h2>
-<div id="inventoryList">Пока предметов нет.</div>
-</div>
+  <div class="card">
+    <h2>🎒 Инвентарь</h2>
+    <div id="inventoryList"></div>
+  </div>
 </section>
 
 <section id="profile" class="page">
-<div class="card">
-<h2>👤 Профиль игрока</h2>
-<div class="stat"><small>Имя игрока</small><div class="value">Новичок</div></div>
-<div class="stats" style="margin-top:10px">
-<div class="stat"><small>Уровень</small><div class="value" id="profileLevel">1</div></div>
-<div class="stat"><small>Всего угля</small><div class="value" id="profileCoal">0</div></div>
-</div>
-<p class="muted">Твоя карьера только начинается!</p>
-</div>
+  <div class="card">
+    <h2>👤 Профиль</h2>
+    <div class="stat"><span>Игрок</span><b id="profileName">Игрок</b></div>
+    <div class="stat"><span>Уровень</span><b id="profileLevel">—</b></div>
+    <div class="stat"><span>Уголь</span><b id="profileCoal">—</b></div>
+    <p class="status" id="connectionStatus">Подключение...</p>
+  </div>
 </section>
 
+<div id="message" class="error"></div>
 </main>
 
 <nav class="nav">
-<button class="active" onclick="showPage('work',this)"><span>⛏️</span>Работа</button>
-<button onclick="showPage('business',this)"><span>🏢</span>Бизнес</button>
-<button onclick="showPage('shop',this)"><span>🛒</span>Магазин</button>
-<button onclick="showPage('inventory',this)"><span>🎒</span>Инвентарь</button>
-<button onclick="showPage('profile',this)"><span>👤</span>Профиль</button>
+  <button class="active" onclick="showPage('work',this)">⛏ Работа</button>
+  <button onclick="showPage('business',this)">🏪 Бизнес</button>
+  <button onclick="showPage('shop',this)">🛒 Магазин</button>
+  <button onclick="showPage('inventory',this)">🎒 Вещи</button>
+  <button onclick="showPage('profile',this)">👤 Профиль</button>
 </nav>
 
-
 <script>
-const SAVE_KEY = "black_bussines_save_v1";
+const SUPABASE_URL = "https://lcutewtfifmrqmpzjjth.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_Pw418XOzxvsbT8A_YDdMqQ_OdL4EUvG";
 
-let coins = 0;
-let coal = 0;
-let xp = 0;
-let level = 1;
-let energy = 100;
+const supabase = window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const tg = window.Telegram?.WebApp;
 
-let businesses = {};
-let inventory = [];
-let lastIncomeAt = Date.now();
-let incomeRemainder = 0;
+let player = null;
+let actionBusy = false;
 
-const offers = [
-  {name:"Ларёк", price:5000, income:100},
-  {name:"Продуктовый магазин", price:20000, income:350},
-  {name:"Автомойка", price:50000, income:800}
+const businessOffers = [
+  {name:"Ларёк",price:5000,income:100},
+  {name:"Продуктовый магазин",price:20000,income:350},
+  {name:"Автомойка",price:50000,income:800}
 ];
 
-function xpNeeded() {
-  let n = level - 1;
-  return 100 + 40*n + 10*n*n;
-}
+const itemNames = {
+  gloves:"Рабочие перчатки",
+  bag:"Рюкзак",
+  pickaxe:"Улучшенная кирка"
+};
 
-function normalizeBusinesses(data) {
-  let result = {};
-  if (!data || typeof data !== "object") return result;
-
-  offers.forEach(b => {
-    let value = data[b.name];
-
-    if (value === true) {
-      result[b.name] = 1;
-    } else if (value && typeof value === "object") {
-      result[b.name] = Math.max(
-        1,
-        Math.min(10, Math.floor(Number(value.level) || 1))
-      );
-    } else if (Number.isFinite(Number(value)) && Number(value) > 0) {
-      result[b.name] = Math.max(
-        1,
-        Math.min(10, Math.floor(Number(value)))
-      );
-    }
-  });
-
-  return result;
-}
-
-function getIncome() {
-  return offers.reduce((sum, b) => {
-    let businessLevel = businesses[b.name] || 0;
-    return sum + b.income * businessLevel;
-  }, 0);
-}
-
-function accrueIncome() {
-  let now = Date.now();
-
-  if (now < lastIncomeAt) {
-    lastIncomeAt = now;
-    return;
-  }
-
-  let elapsed = Math.min(now - lastIncomeAt, 12 * 60 * 60 * 1000);
-  let earned = getIncome() * elapsed / 3600000;
-
-  let total = incomeRemainder + earned;
-  let wholeCoins = Math.floor(total);
-
-  coins += wholeCoins;
-  incomeRemainder = total - wholeCoins;
-  lastIncomeAt = now;
-}
-
-function saveGame() {
-  const data = {
-    coins,
-    coal,
-    xp,
-    level,
-    energy,
-    businesses,
-    inventory,
-    lastIncomeAt,
-    incomeRemainder
-  };
-
-  localStorage.setItem(SAVE_KEY, JSON.stringify(data));
-}
-function loadGame() {
-  try {
-    let saved = localStorage.getItem(SAVE_KEY);
-    if (!saved) return;
-
-    let data = JSON.parse(saved);
-    if (!data || typeof data !== "object") return;
-
-    coins = Math.max(0, Number(data.coins) || 0);
-    coal = Math.max(0, Number(data.coal) || 0);
-    xp = Math.max(0, Number(data.xp) || 0);
-    level = Math.max(1, Math.floor(Number(data.level) || 1));
-    energy = Math.min(100, Math.max(0, Number(data.energy) || 0));
-
-    businesses = normalizeBusinesses(data.businesses);
-    inventory = Array.isArray(data.inventory) ? data.inventory : [];
-
-    lastIncomeAt = Number(data.lastIncomeAt) || Date.now();
-    incomeRemainder = Math.max(0, Number(data.incomeRemainder) || 0);
-  } catch (error) {
-    console.log("Ошибка загрузки сохранения");
-  }
-}
-function update() {
-  accrueIncome();
-
-  document.getElementById("coins").textContent = Math.floor(coins);
-  document.getElementById("coal").textContent = coal;
-  document.getElementById("xp").textContent = xp;
-  document.getElementById("level").textContent = level;
-  document.getElementById("energy").textContent = energy;
-
-  document.getElementById("profileLevel").textContent = level;
-  document.getElementById("profileCoal").textContent = coal;
-
-  document.getElementById("energyBar").style.width = energy + "%";
-  document.getElementById("xpBar").style.width =
-    Math.min(100, xp / xpNeeded() * 100) + "%";
-
-  document.getElementById("income").textContent = getIncome();
-
-  renderBusinesses();
-  renderInventory();
-  saveGame();
-}
-
-function mine() {
-  if (energy < 1) {
-    alert("Недостаточно энергии! Отдохни.");
-    return;
-  }
-
-  energy--;
-
-  let extra = inventory.includes("pickaxe") ? 1 : 0;
-  coal += 1 + extra;
-  coins += 1 + extra;
-
-  if (Math.random() < 0.1) xp += 5;
-
-  while (xp >= xpNeeded()) {
-    xp -= xpNeeded();
-    level++;
-    alert("Новый уровень: " + level);
-  }
-
-  update();
-}
-
-function rest() {
-  energy = Math.min(100, energy + 20);
-  update();
-}
-
-function showPage(id, button) {
-  document.querySelectorAll(".page").forEach(p =>
-    p.classList.remove("active")
-  );
-
+function showPage(id,button){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
   document.getElementById(id).classList.add("active");
-
-  document.querySelectorAll(".nav button").forEach(b =>
-    b.classList.remove("active")
-  );
-
   button.classList.add("active");
 }
 
-function buyBusiness(name) {
-  accrueIncome();
-
-  let b = offers.find(x => x.name === name);
-
-  if (!b || businesses[name]) {
-    alert("Это предприятие уже куплено!");
-    return;
-  }
-
-  if (coins < b.price) {
-    alert("Недостаточно монет!");
-    return;
-  }
-
-  coins -= b.price;
-  businesses[name] = 1;
-
-  update();
-  alert("Поздравляем! Ты приобрёл: " + name);
+function showMessage(text){
+  document.getElementById("message").textContent=text||"";
 }
 
-function upgradeBusiness(name) {
-  accrueIncome();
-
-  let b = offers.find(x => x.name === name);
-  let currentLevel = businesses[name] || 0;
-
-  if (!b || currentLevel < 1 || currentLevel >= 10) {
-    alert("Улучшение недоступно!");
-    return;
+function getValue(obj,names,fallback){
+  for(const name of names){
+    if(obj && obj[name]!==undefined && obj[name]!==null) return obj[name];
   }
-
-  let upgradePrice = Math.round(b.price * currentLevel * 0.75);
-
-  if (coins < upgradePrice) {
-    alert("Недостаточно монет для улучшения!");
-    return;
-  }
-
-  coins -= upgradePrice;
-  businesses[name] = currentLevel + 1;
-
-  update();
-  alert(name + " улучшен до уровня " + businesses[name]);
+  return fallback;
 }
 
-function renderBusinesses() {
-  let list = document.getElementById("businessList");
+function normalizeBusinesses(value){
+  if(Array.isArray(value)){
+    const result={};
+    value.forEach(b=>{
+      if(b && b.business_type) result[b.business_type]=Number(b.level||1);
+    });
+    return result;
+  }
+  if(value && typeof value==="object"){
+    const result={};
+    for(const key of Object.keys(value)){
+      const entry=value[key];
+      result[key]=Number(typeof entry==="object"?entry.level||1:entry);
+    }
+    return result;
+  }
+  return {};
+}
 
-  list.innerHTML = offers.map(b => {
-    let currentLevel = businesses[b.name] || 0;
+function normalizeInventory(value){
+  if(Array.isArray(value)){
+    const result={};
+    value.forEach(item=>{
+      const code=typeof item==="string"?item:item.item_code;
+      if(code) result[code]=Number(item.quantity||1);
+    });
+    return result;
+  }
+  if(value && typeof value==="object") return value;
+  return {};
+}
 
-    if (currentLevel === 0) {
-      return `
-        <div class="item">
-          <div>
-            <b>${b.name}</b><br>
-            <small>${b.income} монет/час</small>
-          </div>
-          <button onclick="buyBusiness('${b.name}')">
-            ${b.price} монет
-          </button>
-        </div>
-      `;
+function applyPlayer(data){
+  if(!data || typeof data!=="object") throw new Error("Пустой профиль");
+
+  player={
+    coins:Number(getValue(data,["coins","coin"],0)),
+    coal:Number(getValue(data,["coal"],0)),
+    xp:Number(getValue(data,["xp"],0)),
+    level:Number(getValue(data,["level"],1)),
+    energy:Number(getValue(data,["energy"],100)),
+    businesses:normalizeBusinesses(data.businesses),
+    inventory:normalizeInventory(data.inventory)
+  };
+  render();
+}
+
+function xpNeeded(){
+  const n=player.level;
+  return 100+40*n+10*n*n;
+}
+
+function getIncome(){
+  let total=0;
+  businessOffers.forEach(b=>{
+    total+=(player.businesses[b.name]||0)*b.income;
+  });
+  return total;
+}
+
+function render(){
+  if(!player) return;
+
+  document.getElementById("level").textContent=player.level;
+  document.getElementById("coins").textContent=player.coins.toLocaleString("ru-RU");
+  document.getElementById("coal").textContent=player.coal.toLocaleString("ru-RU");
+  document.getElementById("xp").textContent=player.xp;
+  document.getElementById("energy").textContent=player.energy+"/100";
+  document.getElementById("xpBar").style.width=Math.min(100,player.xp/xpNeeded()*100)+"%";
+  document.getElementById("energyBar").style.width=Math.min(100,player.energy)+"%";
+  document.getElementById("income").textContent=getIncome().toLocaleString("ru-RU")+" монет";
+  document.getElementById("profileLevel").textContent=player.level;
+  document.getElementById("profileCoal").textContent=player.coal.toLocaleString("ru-RU");
+  renderBusinesses();
+  renderInventory();
+}
+
+function renderBusinesses(){
+  const box=document.getElementById("businessList");
+  box.innerHTML="";
+
+  businessOffers.forEach(b=>{
+    const level=player.businesses[b.name]||0;
+    const div=document.createElement("div");
+    div.className="item";
+
+    const title=document.createElement("b");
+    title.textContent=b.name;
+
+    const info=document.createElement("p");
+    info.className="small";
+    info.textContent=level
+      ?"Уровень "+level+" · Доход: "+(b.income*level)+" монет/час"
+      :"Стоимость: "+b.price+" монет · Доход: "+b.income+" монет/час";
+
+    const button=document.createElement("button");
+    button.textContent=level?"Улучшить":"Купить";
+    button.onclick=()=>gameAction(level?"upgrade_business":"buy_business",b.name);
+
+    div.append(title,info,button);
+    box.appendChild(div);
+  });
+}
+
+function renderInventory(){
+  const box=document.getElementById("inventoryList");
+  box.innerHTML="";
+  let hasItems=false;
+
+  Object.entries(player.inventory).forEach(([code,quantity])=>{
+    if(Number(quantity)>0 && itemNames[code]){
+      hasItems=true;
+      const div=document.createElement("div");
+      div.className="item";
+      div.textContent=itemNames[code]+" × "+quantity;
+      box.appendChild(div);
+    }
+  });
+
+  if(!hasItems) box.textContent="Инвентарь пока пуст.";
+}
+
+async function gameAction(action,target=null){
+  if(actionBusy || !player) return;
+  actionBusy=true;
+  showMessage("Выполняется действие...");
+
+  document.querySelectorAll("button").forEach(b=>b.disabled=true);
+
+  try{
+    const initData=tg?.initData;
+    if(!initData) throw new Error("Открой игру через Telegram.");
+
+    const {data,error}=await supabase.functions.invoke("game-action",{
+      body:{initData,action,target}
+    });
+
+    if(error) throw error;
+    if(!data || !data.success || !data.player){
+      throw new Error(data?.error||"Не удалось выполнить действие");
     }
 
-    let upgradePrice = Math.round(
-      b.price * currentLevel * 0.75
+    applyPlayer(data.player);
+    showMessage("Готово!");
+  }catch(error){
+    console.error(error);
+    showMessage("Ошибка: "+(error.message||"Не удалось связаться с сервером"));
+  }finally{
+    actionBusy=false;
+    document.querySelectorAll("button").forEach(b=>b.disabled=false);
+  }
+}
+
+async function startGame(){
+  try{
+    tg?.ready();
+    tg?.expand();
+
+    const initData=tg?.initData;
+    if(!initData) throw new Error("Открой мини-приложение через Telegram.");
+
+    document.getElementById("connectionStatus").textContent="Авторизация...";
+
+    const {data:authData,error:authError}=await supabase.functions.invoke(
+      "telegram-auth",{body:{initData}}
     );
+    if(authError) throw authError;
+    if(authData?.error) throw new Error(authData.error);
 
-    return `
-      <div class="item">
-        <div>
-          <b>${b.name}</b><br>
-          <small>Уровень ${currentLevel}/10</small><br>
-          <small>${b.income * currentLevel} монет/час</small>
-        </div>
-        <button
-          ${currentLevel >= 10 ? "disabled" : ""}
-          onclick="upgradeBusiness('${b.name}')">
-          ${currentLevel >= 10 ? "Максимум" : "Улучшить: " + upgradePrice}
-        </button>
-      </div>
-    `;
-  }).join("");
-}
+    document.getElementById("connectionStatus").textContent="Загрузка профиля...";
 
-function buyItem(price, item) {
-  accrueIncome();
+    const {data:stateData,error:stateError}=await supabase.functions.invoke(
+      "game-state",{body:{initData}}
+    );
+    if(stateError) throw stateError;
+    if(stateData?.error) throw new Error(stateData.error);
 
-  if (inventory.includes(item)) {
-    alert("Уже куплено!");
-    return;
+    const serverPlayer=stateData?.player||stateData?.data?.player;
+    if(!serverPlayer) throw new Error("Не удалось получить профиль игрока.");
+
+    applyPlayer(serverPlayer);
+
+    const user=tg?.initDataUnsafe?.user;
+    if(user){
+      document.getElementById("profileName").textContent=user.first_name||"Игрок";
+    }
+
+    document.getElementById("connectionStatus").textContent="Подключено к серверу";
+    showMessage("");
+  }catch(error){
+    console.error(error);
+    document.getElementById("connectionStatus").textContent="Ошибка подключения";
+    showMessage(error.message||"Не удалось загрузить игру");
   }
-
-  if (coins < price) {
-    alert("Недостаточно монет!");
-    return;
-  }
-
-  coins -= price;
-  inventory.push(item);
-
-  update();
 }
 
-function renderInventory() {
-  let names = {
-    gloves: "🧤 Рабочие перчатки",
-    bag: "🎒 Рюкзак",
-    pickaxe: "⛏️ Улучшенная кирка"
-  };
-
-  document.getElementById("inventoryList").innerHTML =
-    inventory.length
-      ? inventory.map(x =>
-          "<div class='item'>" + (names[x] || x) + "</div>"
-        ).join("")
-      : "Пока предметов нет.";
-}
-
-loadGame();
-update();
-
-setInterval(update, 10000);
+startGame();
 </script>
-<script>
-const SUPABASE_URL = 'https://lcutewtfifmrqmpzjjth.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_Pw418XOzxvsbT8A_YDdMqQ_OdL4EUvG';
-
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
-  async function loginWithTelegram() {
-  const tg = window.Telegram?.WebApp;
-
-  if (!tg || !tg.initData) {
-    console.warn("Откройте игру через Telegram");
-    return;
-  }
-
-  tg.ready();
-
-  const { data, error } = await supabaseClient.functions.invoke(
-    "telegram-auth",
-    { body: { initData: tg.initData } }
-  );
-
-  if (error) {
-    console.error("Ошибка авторизации:", error);
-    return;
-  }
-const { data: stateData, error: stateError } =
-    await supabaseClient.functions.invoke(
-      "game-state",
-      { body: { initData: tg.initData } }
-    );
-
-  if (stateError) {
-    console.error("Ошибка загрузки профиля:", stateError);
-    return data.player;
-  }
-
-  console.log("Профиль загружен с сервера:", stateData.player);
-console.log("Игрок авторизован:", data.player);
-
-await saveGameToServer();
-
-return data.player;
-}
-  async function saveGameToServer() {
-  const tg = window.Telegram?.WebApp;
-
-  if (!tg || !tg.initData) {
-    console.log("Нет авторизации Telegram");
-    return;
-  }
-
-  const gameData = {
-    initData: tg.initData,
-    coins,
-    coal,
-    xp,
-    level,
-    energy,
-    businesses,
-    inventory,
-    lastIncomeAt,
-    incomeRemainder
-  };
-
-  const { data, error } = await supabaseClient.functions.invoke(
-    "save-game",
-    { body: gameData }
-  );
-
-  if (error) {
-    console.error("Ошибка сохранения на сервер:", error);
-    return;
-  }
-
-  console.log("Прогресс отправлен на сервер:", data);
-}
-  loginWithTelegram()
-</script></body>
+</body>
 </html>
-
-
-
