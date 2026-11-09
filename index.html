@@ -110,6 +110,52 @@ h2::before{content:"";width:4px;height:14px;border-radius:2px;background:var(--a
 .chip{transition:border-color .2s}.chip:not(:disabled):hover{border-color:var(--a)}
 .card:hover{border-color:#3b5169}
 @media (prefers-reduced-motion:reduce){.tile::before{animation:none}}
+
+/* Красота: северное сияние на фоне, свечение за персонажем, выделение и полоса прокрутки */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(40% 30% at 20% 15%,color-mix(in srgb,var(--a) 22%,transparent),transparent),radial-gradient(35% 28% at 85% 75%,#5aa7e81f,transparent);animation:aur 14s ease-in-out infinite alternate}
+@keyframes aur{to{transform:translate(3%,2%) scale(1.08)}}
+.hero{position:relative}
+.hero::before{content:"";position:absolute;left:50%;top:42%;width:210px;height:210px;transform:translate(-50%,-50%);background:radial-gradient(circle,var(--a),transparent 65%);opacity:.26;z-index:-1}
+::selection{background:var(--a);color:#07101a}
+*{scrollbar-width:thin;scrollbar-color:var(--l) transparent}
+@media (prefers-reduced-motion:reduce){body::after{animation:none}}
+
+/* Анимации: появление жил, плитки города, всплывающие суммы, повышение уровня, лес */
+#bar span{position:relative}
+.dlt{position:absolute;left:50%;top:-8px;font-weight:800;pointer-events:none;animation:fl 1.1s ease-out forwards}
+.dlt.up{color:#6ee7a0}.dlt.dn{color:#ff7a8a}
+@keyframes fl{to{transform:translateY(-30px);opacity:0}}
+.bp{animation:bp .4s ease-out}
+@keyframes bp{40%{transform:scale(1.35)}}
+.vein{animation:vpop .4s both,pulse 2.4s .4s infinite}
+@keyframes vpop{from{transform:scale(.2);opacity:0}}
+.pg .tile{animation:up .45s both}.pg .tile:nth-child(3n+2){animation-delay:.06s}.pg .tile:nth-child(3n){animation-delay:.12s}
+.bob.b::after{content:"";position:absolute;left:50%;top:70%;width:20px;height:20px;border:2px solid #fff;border-radius:50%;transform:translate(-50%,-50%);animation:rg .8s infinite}
+@keyframes rg{to{width:96px;height:96px;opacity:0}}
+.lvfx{position:fixed;inset:0;z-index:9;display:grid;place-items:center;pointer-events:none;font-size:34px;font-weight:800;color:#fff;text-shadow:0 0 20px var(--a);background:radial-gradient(circle,color-mix(in srgb,var(--a) 45%,transparent),transparent 60%);animation:lvf 1.4s ease-out forwards}
+@keyframes lvf{0%{opacity:0;transform:scale(.7)}25%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.15)}}
+.forest{position:relative;height:240px;border-radius:16px;border:1px solid var(--l);overflow:hidden;margin-bottom:10px;background:linear-gradient(#f4a259,#e8795a 22%,#2b3f5c 60%,#14233a)}
+.sun{position:absolute;left:62%;top:12%;width:46px;height:46px;border-radius:50%;background:radial-gradient(#fff3c4,#ffb347 60%,#0000 72%);box-shadow:0 0 40px #ffb347}
+.gnd{position:absolute;left:0;right:0;bottom:0;height:62px;background:linear-gradient(#264d33,#0d2217)}
+.tree2{position:absolute;left:50%;bottom:34px;font-size:120px;line-height:1;transform:translateX(-50%);transform-origin:50% 90%}
+.tree2.new{animation:grow .5s ease-out}
+.tree2.hitp,.tree2.hitg{animation:shk .3s}
+.tree2.fall{animation:fell .9s ease-in forwards}
+@keyframes grow{from{transform:translateX(-50%) scale(.3);opacity:0}}
+@keyframes shk{25%{transform:translateX(-50%) rotate(-4deg)}75%{transform:translateX(-50%) rotate(4deg)}}
+@keyframes fell{to{transform:translateX(-50%) rotate(80deg);opacity:0}}
+.leaf{position:absolute;top:-10px;width:8px;height:8px;border-radius:0 80% 0 80%;background:#7bd07a;animation:lf 7s linear infinite}
+@keyframes lf{to{transform:translate(40px,260px) rotate(360deg)}}
+.pop{position:absolute;left:50%;top:24%;transform:translateX(-50%);font-weight:800;font-size:20px;animation:fl2 .9s forwards}
+.pop.p{color:#ffd35a}.pop.g{color:#6ee7a0}.pop.m{color:#9aa7b5}
+@keyframes fl2{to{opacity:0;transform:translate(-50%,-34px)}}
+.wc{position:absolute;left:50%;bottom:90px;width:6px;height:6px;background:#a9743c;border-radius:1px;animation:wc .6s ease-out forwards}
+@keyframes wc{to{transform:translate(var(--dx),var(--dy)) rotate(260deg);opacity:0}}
+.gauge{position:relative;height:18px;border-radius:9px;background:#0009;border:1px solid var(--l);margin:10px 0;overflow:hidden}
+.gz{position:absolute;top:0;bottom:0;left:32%;width:36%;background:#3fd1b055}
+.gz.p{left:43%;width:14%;background:#ffd35aaa}
+#mk{position:absolute;top:-2px;bottom:-2px;width:6px;margin-left:-3px;border-radius:3px;background:#fff;box-shadow:0 0 10px #fff}
+@media (prefers-reduced-motion:reduce){.leaf,.tile,.vein,.dlt,.tree2{animation:none!important}}
 </style>
 </head>
 <body data-loc="home">
@@ -188,7 +234,7 @@ const num=n=>Number(n).toLocaleString("ru-RU");
 const item=id=>ITEMS.find(x=>x.id===id);
 let tmr;function toast(m){S.log.unshift(new Date().toLocaleTimeString("ru-RU").slice(0,5)+" "+m);S.log.length=Math.min(S.log.length,40);const t=document.getElementById("toast");t.textContent=m;t.style.opacity=1;clearTimeout(tmr);tmr=setTimeout(()=>t.style.opacity=0,2200)}
 const xpNeed=()=>80+40*S.lv;
-function gain(x){S.xp+=x*(curEv().x||1);S.px=S.px||{};S.px[cur]=(S.px[cur]||0)+x;while(S.xp>=xpNeed()){S.xp-=xpNeed();S.lv++;toast("Новый уровень: "+S.lv)}}
+function gain(x){S.xp+=x*(curEv().x||1);S.px=S.px||{};S.px[cur]=(S.px[cur]||0)+x;while(S.xp>=xpNeed()){S.xp-=xpNeed();S.lv++;toast("Новый уровень: "+S.lv);flash()}}
 
 /* =========================================================
    НАВИГАЦИЯ И ОТРИСОВКА
@@ -196,7 +242,7 @@ function gain(x){S.xp+=x*(curEv().x||1);S.px=S.px||{};S.px[cur]=(S.px[cur]||0)+x
 const R={};
 const TT={home:"Персонаж",city:"Город",mine:"Шахта",work:"Профессии",tasks:"Задания",shop:"Магазин",inv:"Инвентарь",ward:"Гардероб",biz:"Бизнес",ach:"Достижения",col:"Коллекции"};
 const LOC={home:"home",city:"city",mine:"mine",work:"work",tasks:"work",shop:"shop",biz:"biz",inv:"home",ward:"home",ach:"home",col:"home"};
-function go(p){const v=document.getElementById("v");v.classList.remove("pg");void v.offsetWidth;v.classList.add("pg");cur=p;if(p==="mine")newVeins();draw();scrollTo(0,0)}
+function go(p){const v=document.getElementById("v");v.classList.remove("pg");void v.offsetWidth;v.classList.add("pg");setTimeout(()=>v.classList.remove("pg"),700);cur=p;if(p==="mine")newVeins();draw();scrollTo(0,0)}
 function draw(){
   document.body.dataset.loc=LOC[cur]||"home";
   document.getElementById("ttl").textContent=TT[cur]||"BLACK BUSINESS";
@@ -204,7 +250,7 @@ function draw(){
   document.getElementById("v").innerHTML=(R[cur]||R.home)();
   document.getElementById("bc").textContent=num(S.coins);
   document.getElementById("be").textContent=S.energy+"/100";
-  document.getElementById("bl").textContent=S.lv;document.body.style.setProperty("--xp",Math.min(100,S.xp/xpNeed()*100)+"%");
+  document.getElementById("bl").textContent=S.lv;document.body.style.setProperty("--xp",Math.min(100,S.xp/xpNeed()*100)+"%");bump();
 }
 Object.keys(STUB).forEach(k=>{TT[k]=STUB[k][0];LOC[k]="city";R[k]=()=>`<div class="card"><b>${STUB[k][0]}</b><p class="sm">${STUB[k][1]}</p><p class="sm">Раздел в разработке.</p></div>`});
 
@@ -236,7 +282,7 @@ R.home=()=>`<div class="stage"><div class="rail">${rail(LEFT)}</div><div class="
 /* =========================================================
    ГОРОД
    ========================================================= */
-R.city=()=>banner()+`<div class="grid">${[["mine","Шахта","Руда и минералы","#0f4a47"],["shop","Магазин","Одежда и инструменты","#5a1d36"],["biz","Бизнес","Пассивный доход","#5a4018"],["work","Профессии","Работа и развитие","#17406a"],["factory","Завод","Плавка и детали","#33295f"],["farm","Ферма","Урожай и доставка","#2f4a24"],["market","Торговая площадка","Цены руды","#4a3a2a"],["estate","Недвижимость","Аренда и доход","#2d3a52"],["events","События","Бонусы и проекты","#4a2a5a"],["pass","Game Pass","Месяц бонусов","#2a3a5a"],["cases","Кейсы","Рулетка и редкости","#5a2a2a"],["auction","Аукцион","Лоты и продажа","#4a2a2a"],["gov","Городская артель","Работа для новичков","#2a4a4a"],["trade","Торговля","Рынок игроков и обмен","#4a4a2a"],["fish","Озеро","Рыбалка","#1b4a7a"],["wood","Лесопилка","Древесина","#2a4a2a"],["cal","Календарь","События и награды","#3a2a4a"],...(S.proj>=10?[["mall","Торговый центр","−5% на одежду","#3a2a5a"]]:[])].map(b=>`<button class="tile" style="--c:${b[3]}" onclick="go('${b[0]}')"><span class="tic">${TI[b[0]]||""}</span><b>${b[1]}</b><div class="sm">${b[2]}</div></button>`).join("")}</div>`;
+R.city=()=>banner()+`<div class="grid">${[["mine","Шахта","Руда и минералы","#0f4a47"],["shop","Магазин","Одежда и инструменты","#5a1d36"],["biz","Бизнес","Пассивный доход","#5a4018"],["work","Профессии","Работа и развитие","#17406a"],["factory","Завод","Плавка и детали","#33295f"],["farm","Ферма","Урожай и доставка","#2f4a24"],["market","Торговая площадка","Цены руды","#4a3a2a"],["estate","Недвижимость","Аренда и доход","#2d3a52"],["events","События","Бонусы и проекты","#4a2a5a"],["pass","Game Pass","Месяц бонусов","#2a3a5a"],["cases","Кейсы","Рулетка и редкости","#5a2a2a"],["auction","Аукцион","Лоты и продажа","#4a2a2a"],["gov","Городская артель","Работа для новичков","#2a4a4a"],["trade","Торговля","Рынок игроков и обмен","#4a4a2a"],["fish","Озеро","Рыбалка","#1b4a7a"],["wood","Лесопилка","Древесина","#2a4a2a"],["cal","Календарь","События и награды","#3a2a4a"],["exp","Экспедиция","Отряд в шахту","#0f3a4a"],["club","Клуб","Показы и выставки","#4a2a4a"],["rank","Рейтинг","Соревнование профессий","#3a3a1a"],...(S.proj>=10?[["mall","Торговый центр","−5% на одежду","#3a2a5a"]]:[])].map(b=>`<button class="tile" style="--c:${b[3]}" onclick="go('${b[0]}')"><span class="tic">${TI[b[0]]||""}</span><b>${b[1]}</b><div class="sm">${b[2]}</div></button>`).join("")}</div>`;
 
 /* =========================================================
    ШАХТА (С КАРТИНКАМИ ЖИЛ И ДИНАМИЧЕСКИМ ФОНОМ ЗОНЫ)
@@ -292,7 +338,7 @@ function sellOre(o){const n=S.ore[o]||0;if(!n)return;const s=Math.round(n*ORE[o]
 R.shop=()=>{
   const ores=Object.keys(ORE).filter(o=>S.ore[o]>0);
   return `<h2>Скупка руды</h2>${ores.length?ores.map(o=>`<div class="card row"><div style="display:flex;align-items:center;gap:12px"><img class="ore-ico" src="${ORE[o][3]}" alt=""><div><b>${ORE[o][0]} × ${S.ore[o]}</b><div class="sm">${Math.round(ORE[o][1]*mk(o)*pm())} 🪙 за штуку</div></div></div><button class="btn" onclick="sellOre('${o}')">+${Math.round(S.ore[o]*ORE[o][1]*mk(o)*pm())} 🪙</button></div>`).join(""):`<div class="card sm">Руды нет. Добудь её в шахте.</div>`}
-  <h2>Одежда и инструменты</h2>${ITEMS.filter(i=>!i.co).map(i=>`<div class="card row"><div class="ir">${ico(i)}<div><b>${i.n}</b><div class="sm">${i.r} · ${SL[i.s]}</div></div></div>${S.own.includes(i.id)?`<span class="sm">Куплено</span>`:`<button class="btn" onclick="buy('${i.id}')">${pr(i)} 🪙</button>`}</div>`).join("")}`;
+  <h2>Одежда и инструменты</h2>${ITEMS.filter(i=>!i.co&&(!i.se||i.se===SEAS()[0])).map(i=>`<div class="card row"><div class="ir">${ico(i)}<div><b>${i.n}</b><div class="sm">${i.r} · ${SL[i.s]}</div></div></div>${S.own.includes(i.id)?`<span class="sm">Куплено</span>`:`<button class="btn" onclick="buy('${i.id}')">${pr(i)} 🪙</button>`}</div>`).join("")}`;
 };
 
 /* =========================================================
@@ -458,7 +504,7 @@ R.mech=()=>gate(6)||jobList("mech");
 function lotBuy(id){const i=item(id),c=Math.round(i.p*1.2);if(S.coins<c)return toast("Недостаточно монет");S.coins-=c;S.own.push(id);inc("bought");toast("Куплено на аукционе: "+i.n);save();draw()}
 function sellItem(id){const i=item(id),g=Math.round(i.p*.6);S.own=S.own.filter(x=>x!==id);if(S.eq[i.s]===id)delete S.eq[i.s];S.coins+=g;toast("Продано: "+i.n+" +"+g+" 🪙");save();draw()}
 R.auction=()=>{
-  const k=day()%3,lots=ITEMS.filter(i=>!S.own.includes(i.id)&&!i.co).slice(k,k+4);
+  const k=day()%3,lots=ITEMS.filter(i=>!S.own.includes(i.id)&&!i.co&&!i.se).slice(k,k+4);
   return `<h2>Лоты дня</h2>${lots.length?lots.map(i=>`<div class="card row"><div><b>${i.n}</b><div class="sm">${i.r} · ${SL[i.s]}</div></div><button class="btn" onclick="lotBuy('${i.id}')">${Math.round(i.p*1.2)} 🪙</button></div>`).join(""):`<div class="card sm">Лотов нет.</div>`}
   <h2>Ваши предметы</h2>${S.own.length?S.own.map(id=>{const i=item(id);return `<div class="card row"><div><b>${i.n}</b><div class="sm">${i.r}</div></div><button class="chip" onclick="dis('${id}')">Разобрать</button><button class="btn" onclick="sellItem('${id}')">Продать ${Math.round(i.p*.6)} 🪙</button></div>`}).join(""):`<div class="card sm">Предметов нет.</div>`}`;
 };
@@ -740,6 +786,129 @@ R.cal=()=>{
   +`<h2>Выходные</h2>`+evRow("Сб–Вс","Ярмарка","Условий нет. Пропуск события не штрафуется")
   +`<h2>Завершённые</h2>`+evRow(hm((sl-1)*6e5)+"–"+hm(sl*6e5),pv.n,"Завершено")};
 Object.assign(TI,{cal:"📅"});Object.assign(TT,{cal:"Календарь"});Object.assign(LOC,{cal:"city"});
+
+/* =========================================================
+   СОВМЕСТНАЯ ЭКСПЕДИЦИЯ В ШАХТУ
+   Отряд из вас и двух напарников уходит на 20 секунд (⚡10)
+   на выбранный участок шахты и приносит в 1,5 раза больше руды.
+   ========================================================= */
+const EXP_T=2e4;
+function expGo(){if(S.ex)return;if(S.energy<10)return toast("Нужно 10 энергии");S.energy-=10;S.ex={z:S.zone,at:Date.now()};toast("Отряд ушёл: "+zone().n);save();draw()}
+function expTake(){
+  const e=S.ex;if(!e||Date.now()-e.at<EXP_T)return;
+  const z=ZONES.find(x=>x.id===e.z),r={};let n=0;
+  for(let i=0;i<12;i++){const o=pick(z.w);r[o]=(r[o]||0)+1;n++}
+  Object.keys(r).forEach(o=>{S.ore[o]=(S.ore[o]||0)+r[o];S.found[o]=1});
+  inc("mined",n);gain(10);S.ex=null;toast("Экспедиция вернулась: "+Object.keys(r).map(o=>ORE[o][0]+" ×"+r[o]).join(", "));save();draw();
+}
+setInterval(()=>{if(cur==="exp")draw()},1000);
+R.exp=()=>{const e=S.ex,left=e?Math.max(0,Math.ceil((EXP_T-(Date.now()-e.at))/1000)):0;
+  return `<div class="card"><b>Совместная экспедиция</b><p class="sm">С вами идут два напарника: добыча в 1,5 раза больше обычной. Участок: ${zone().n}. Цена: ⚡10.</p>${e?`<div class="bar"><i style="width:${100-left/(EXP_T/1000)*100}%"></i></div><button class="btn" style="margin-top:10px" ${left?"disabled":""} onclick="expTake()">${left?"Возвращаются через "+left+" с":"Забрать добычу"}</button>`:`<button class="btn" style="margin-top:10px" onclick="expGo()">Отправить отряд</button>`}</div>`};
+
+/* =========================================================
+   СОРЕВНОВАНИЕ ПРОФЕССИЙ
+   Рейтинг по профессиональному опыту. За места 1–3 раз в неделю
+   выдаётся награда. Соперники пока имитируются.
+   ========================================================= */
+const NPC=["Артём","Лика","Игорь","Мила","Тимур"];
+let rsel="mine";
+const rkTab=k=>{rsel=k;draw()};
+const rk=k=>{const d=day()%1000,l=NPC.map((n,i)=>[n,Math.round(80+i*95+(d%7)*12+(d%(i+3))*8)]);l.push(["Вы",Math.round((S.px||{})[k]||0)]);return l.sort((a,b)=>b[1]-a[1])};
+function rkClaim(){const l=rk(rsel),i=l.findIndex(x=>x[0]==="Вы"),key=rsel+Math.floor(day()/7);S.rw=S.rw||{};if(i>2)return toast("Награда только за места 1–3");if(S.rw[key])return toast("Награда за эту неделю получена");S.rw[key]=1;const r=[800,500,300][i];S.coins+=r;toast("Награда за место "+(i+1)+": +"+r+" 🪙");save();draw()}
+R.rank=()=>{const l=rk(rsel);
+  return `<div class="chips">${PROF.map((p,i)=>`<button class="chip${PK2[i]===rsel?" on":""}" onclick="rkTab('${PK2[i]}')">${p[0]}</button>`).join("")}</div>`
+  +l.map((x,i)=>`<div class="card row" style="${x[0]==="Вы"?"border-color:var(--a)":""}"><b>${i+1}. ${x[0]}</b><span>${x[1]} оч.</span></div>`).join("")
+  +`<button class="btn" onclick="rkClaim()">Получить недельную награду</button><p class="sm">Опыт профессии копится там, где вы работаете.</p>`};
+
+/* =========================================================
+   КЛУБ: ЗАКРЫТЫЕ МЕРОПРИЯТИЯ
+   Показ мод (редкость надетого и бонус за полный комплект),
+   выставка коллекций и встреча предпринимателей. Раз в сутки.
+   ========================================================= */
+const RP={"Обычный":1,"Необычный":2,"Редкий":4};
+const look=()=>{const e=S.eq;let s=Object.keys(e).filter(k=>k!=="tool"&&k!=="veh"&&item(e[k])).reduce((a,k)=>a+RP[item(e[k]).r],0);if(["head","body","legs","feet"].every(k=>e[k]))s+=3;return s};
+const clubR=n=>n===0?look()*25:n===1?Object.keys(S.found).length*40+S.own.length*15:Object.keys(S.biz).length*120+Object.keys(S.props).length*60;
+function club(n){const key="c"+n,r=clubR(n);if(S.dl[key]===day())return;if(!r)return toast("Пока нечего показать");S.dl[key]=day();S.coins+=r;toast("Награда: +"+r+" 🪙");save();draw()}
+R.club=()=>[["Показ мод","Образ оценивается по редкости надетого. Полный комплект (голова, торс, ноги, обувь) даёт бонус."],["Выставка коллекций","Награда за найденные руды и собранные предметы."],["Встреча предпринимателей","Награда за ваши бизнесы и недвижимость."]].map((c,n)=>`<div class="card"><div class="row"><div><b>${c[0]}</b><div class="sm">${c[1]}</div><div class="sm">Награда сейчас: ${clubR(n)} 🪙</div></div><button class="btn" ${S.dl["c"+n]===day()?"disabled":""} onclick="club(${n})">${S.dl["c"+n]===day()?"Сегодня было":"Участвовать"}</button></div></div>`).join("");
+
+/* =========================================================
+   ГОРОДСКИЕ ПРОИСШЕСТВИЯ
+   Каждые 15 минут появляется срочная ситуация (заказ, нехватка,
+   поломка). Награда выше обычной. Пропуск ничем не наказывается.
+   ========================================================= */
+const INC=[{n:"Срочный заказ: нужны 2 железных слитка",k:"iron_bar",q:2,r:380},{n:"Нехватка продовольствия: нужны 3 пшеницы",k:"wheat",q:3,r:260},{n:"Поломка на лесопилке: нужны 2 доски",k:"board",q:2,r:300},{n:"Срочная поставка: нужна 1 деталь",k:"part",q:1,r:420}];
+const slot=()=>Math.floor(Date.now()/9e5),curInc=()=>INC[slot()%INC.length];
+function incDo(){const c=curInc();if(S.ic===slot())return;if(have(c.k)<c.q)return toast("Не хватает: "+nm(c.k)+" ×"+c.q);S.mats[c.k]-=c.q;S.ic=slot();S.coins+=c.r;inc("incidents");gain(6);toast("Происшествие устранено: +"+c.r+" 🪙");save();draw()}
+const _ev5=R.events;
+R.events=()=>`<h2>Городское происшествие</h2><div class="card row"><div><b>${curInc().n}</b><div class="sm">Награда ${curInc().r} 🪙 · осталось ${Math.ceil(((slot()+1)*9e5-Date.now())/6e4)} мин</div></div><button class="btn" ${S.ic===slot()?"disabled":""} onclick="incDo()">${S.ic===slot()?"Готово":"Помочь"}</button></div>`+_ev5();
+
+/* =========================================================
+   СЕЗОННЫЕ ТОВАРЫ И АУКЦИОН ВЫХОДНОГО ДНЯ
+   Сезонная одежда продаётся только в свой сезон.
+   В выходные на аукционе серверный лот со скидкой 20%.
+   ========================================================= */
+ITEMS.push({id:"santa",n:"Шапка Деда Мороза",s:"head",p:500,c:"#d63a3a",r:"Редкий",se:"Новый год"},{id:"wreath",n:"Цветочный венок",s:"head",p:350,c:"#e08ab0",r:"Необычный",se:"Весна"},{id:"panama",n:"Панама",s:"head",p:300,c:"#e8d9a0",r:"Обычный",se:"Лето"},{id:"pumpvest",n:"Тыквенный жилет",s:"body",p:450,c:"#e0771f",r:"Необычный",se:"Осень"});
+function wkBuy(){const i=item("pick3"),c=Math.round(i.p*.8);if(S.own.includes("pick3"))return;if(S.coins<c)return toast("Недостаточно монет");S.coins-=c;S.own.push("pick3");inc("bought");toast("Куплено: "+i.n);save();draw()}
+const _au=R.auction;
+R.auction=()=>([0,6].includes(new Date().getDay())?`<h2>Аукцион выходного дня</h2>`+(S.own.includes("pick3")?`<div class="card sm">Серверный лот уже у вас.</div>`:`<div class="card row"><div class="ir">${ico(item("pick3"))}<div><b>Серебряная кирка</b><div class="sm">Серверный лот · −20% · только в выходные</div></div></div><button class="btn" onclick="wkBuy()">${Math.round(item("pick3").p*.8)} 🪙</button></div>`):"")+_au();
+Object.assign(TI,{exp:"🧭",club:"🎭",rank:"🏅"});Object.assign(TT,{exp:"Экспедиция",club:"Клуб",rank:"Рейтинг"});Object.assign(LOC,{exp:"mine",club:"city",rank:"work"});
+
+/* =========================================================
+   ЛЕСОРУБ: ЛЕСОРУБКА НА ТОЧНОСТЬ
+   Маркер ходит по шкале. Удар в зелёную зону — 1 урон, в золотую
+   центральную — 2 урона, промах тратит энергию впустую. Три удачных
+   удара подряд дают лишнее бревно. Деревья разные: сосна, дуб
+   (с шансом смолы) и берёза. Дерево падает с анимацией, летят щепки.
+   ========================================================= */
+Object.assign(MAT,{resin:["Смола",60]});
+const TREES=[{n:"Сосна",hp:4,w:2,e:"🌲"},{n:"Дуб",hp:6,w:4,e:"🌳"},{n:"Берёза",hp:3,w:2,e:"🌳",f:"hue-rotate(40deg) brightness(1.35)"}];
+let tr=null,wst=0;
+function newTree(){const k=Math.random(),t=TREES[k<.5?0:k<.8?1:2];tr={t,hp:t.hp,fall:0,fx:"",n:0}}
+const mpos=()=>50+50*Math.sin(performance.now()/330);
+function strike(){
+  if(!tr)newTree();
+  if(tr.fall)return;
+  if(S.energy<2)return toast("Недостаточно энергии");
+  S.energy-=2;
+  const d=Math.abs(mpos()-50),q=d<=7?"p":d<=18?"g":"m",dmg=q==="p"?2:q==="g"?1:0;
+  if(q==="m")wst=0;else wst++;
+  tr.hp-=dmg;tr.fx=q;tr.n++;
+  setTimeout(()=>{if(tr)tr.fx=""},500);
+  if(dmg)gain(1);
+  if(tr.hp<=0){
+    const w=tr.t.w+(wst>=3?1:0)+(plv("wood")>=3?1:0);
+    S.mats.wood=(S.mats.wood||0)+w;let m="Срублено: +"+w+" бревна";
+    if(tr.t.hp>=6&&Math.random()<.2){S.mats.resin=(S.mats.resin||0)+1;m+=" и смола"}
+    inc("chopped",w);gain(5);toast(m);tr.fall=1;
+    setTimeout(()=>{newTree();if(cur==="wood")draw()},1000);
+  }
+  save();draw();
+}
+R.wood=()=>{
+  if(S.lv<3)return gate(3);
+  if(!tr)newTree();
+  const t=tr.t,fx=tr.fx,show=fx&&!tr.fall;
+  return `<div class="forest"><i class="leaf" style="left:12%"></i><i class="leaf" style="left:45%;animation-delay:1.3s"></i><i class="leaf" style="left:78%;animation-delay:2.4s"></i><div class="sun"></div><div class="gnd"></div>
+  <div class="tree2${tr.fall?" fall":""}${show&&fx!=="m"?" hit"+fx:""}${tr.n===0&&!tr.fall?" new":""}" style="filter:${t.f?t.f+" ":""}drop-shadow(0 8px 6px #0009)">${t.e}</div>
+  ${show?`<div class="pop ${fx}">${{p:"Идеально!",g:"Хорошо",m:"Мимо"}[fx]}</div>`:""}
+  ${show&&fx!=="m"?[0,1,2,3,4,5].map(i=>`<b class="wc" style="--dx:${(i-2.5)*22}px;--dy:${-30-i%3*14}px"></b>`).join(""):""}</div>
+  <div class="card"><div class="row"><b>${t.n}</b><span class="sm">Прочность ${Math.max(0,tr.hp)}/${t.hp}${wst>=3?" · серия "+wst:""}</span></div><div class="bar"><i style="width:${Math.max(0,tr.hp/t.hp*100)}%"></i></div></div>
+  <div class="gauge"><i class="gz"></i><i class="gz p"></i><i id="mk"></i></div>
+  <button class="btn" style="width:100%;padding:13px" onclick="strike()">Рубить · ⚡2</button>
+  <p class="sm" style="margin-top:8px">Бей, когда маркер в зелёной зоне: в золотой центральной — двойной удар. Бревна: ${S.mats.wood||0}, доски: ${S.mats.board||0}, смола: ${S.mats.resin||0}.</p>`};
+(function tick(){const m=document.getElementById("mk");if(m)m.style.left=mpos()+"%";requestAnimationFrame(tick)})();
+
+/* =========================================================
+   АНИМАЦИИ ИНТЕРФЕЙСА
+   Всплывающее изменение монет над балансом, подпрыгивание суммы
+   и вспышка при повышении уровня.
+   ========================================================= */
+let pc=S.coins;
+function bump(){
+  const d=S.coins-pc;
+  if(d){const b=document.getElementById("bc"),s=document.createElement("span");s.className="dlt "+(d>0?"up":"dn");s.textContent=(d>0?"+":"")+num(d);b.parentNode.appendChild(s);setTimeout(()=>s.remove(),1100);b.classList.remove("bp");void b.offsetWidth;b.classList.add("bp");pc=S.coins}
+}
+function flash(){const d=document.createElement("div");d.className="lvfx";d.textContent="Уровень "+S.lv;document.body.appendChild(d);setTimeout(()=>d.remove(),1500)}
 
 /* =========================================================
    ЗАПУСК
