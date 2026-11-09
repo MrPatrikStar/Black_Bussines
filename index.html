@@ -168,6 +168,42 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;background:rad
 .rel{border-left:3px solid var(--a)}
 .cg{display:grid;grid-template-columns:1fr 1fr;gap:8px}.cg .card{margin:0;text-align:center}
 @media (prefers-reduced-motion:reduce){.torch.on{animation:none}}
+
+/* Шахта: свет фонаря и рельсы */
+.scene::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 12% 18%,#ffb34766,transparent 40%);pointer-events:none}
+.scene::after{content:"";position:absolute;left:0;right:0;bottom:0;height:26px;pointer-events:none;background:linear-gradient(#0000 0 7px,#8a8f99 7px 9px,#0000 9px 17px,#8a8f99 17px 19px,#0000 19px),repeating-linear-gradient(90deg,#5a4026 0 8px,#0000 8px 34px)}
+/* Фотограф: студия, видоискатель, вспышка */
+.studio{position:relative;height:230px;border-radius:16px;border:1px solid var(--l);overflow:hidden;margin-bottom:10px;background:linear-gradient(var(--sk),#0d1018 70%,var(--gr) 70%)}
+.subj{position:absolute;top:52%;left:50%;transform:translate(-50%,-50%);line-height:1;filter:drop-shadow(0 8px 6px #000a)}
+.vf{position:absolute;left:25%;right:25%;top:12%;bottom:18%;border:1px dashed #ffffff55;pointer-events:none}
+.vf::before,.vf::after{content:"";position:absolute;left:50%;top:50%;background:#ffffffaa}
+.vf::before{width:16px;height:1px;margin-left:-8px}.vf::after{width:1px;height:16px;margin-top:-8px}
+.flash{position:absolute;inset:0;background:#fff;animation:flsh .4s forwards;pointer-events:none}
+@keyframes flsh{to{opacity:0}}
+.polaroid{animation:dropin .6s ease-out}
+@keyframes dropin{from{transform:translateY(-30px) rotate(-4deg);opacity:0}}
+/* Ферма: небо, трава, грунт, грядки */
+.field{position:relative;border-radius:16px;border:1px solid var(--l);overflow:hidden;margin-bottom:10px;padding:128px 10px 12px;background:linear-gradient(#8fd3ff,#d9f3ff 50px,#7bc96f 105px,#3f8a3b 125px,#5a3d27 125px)}
+.sun2{position:absolute;right:14%;top:10px;width:38px;height:38px;border-radius:50%;background:radial-gradient(#fffbd0,#ffd35a 65%,#0000 70%);box-shadow:0 0 30px #ffd35a}
+.cloud{position:absolute;top:16px;left:-90px;width:74px;height:22px;border-radius:20px;background:#fff;opacity:.85;animation:drift 26s linear infinite}
+.cloud.c2{top:44px;animation-duration:38s;animation-delay:-14s}
+@keyframes drift{to{left:110%}}
+.scare{position:absolute;left:8%;top:70px;font-size:40px}
+.plots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;background:repeating-linear-gradient(0deg,#0003 0 2px,#0000 2px 16px)}
+.plot{position:relative;height:92px;border:0;border-radius:14px;background:radial-gradient(ellipse at 50% 30%,#7a5636,#4a3220);box-shadow:inset 0 -6px 10px #0007,0 3px 6px #0006;overflow:hidden}
+.plot.wet{background:radial-gradient(ellipse at 50% 30%,#5a3f28,#2c1d12)}
+.pl{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);line-height:1}
+.pl.ready{animation:bnc 1.2s ease-in-out infinite;filter:drop-shadow(0 0 8px #ffd35a)}
+@keyframes bnc{50%{transform:translate(-50%,-62%)}}
+.weedt{position:absolute;right:8px;top:6px;font-size:22px}
+.pb{position:absolute;left:8px;right:8px;bottom:6px;height:4px;border-radius:2px;background:#0008}.pb i{display:block;height:100%;border-radius:2px;background:#7bd07a}
+.seedf{position:absolute;left:50%;width:8px;height:8px;border-radius:50%;background:#e7c27d;animation:sdrop .5s ease-in forwards}
+@keyframes sdrop{from{top:-20px;opacity:0}to{top:55%;opacity:1}}
+.dropw{position:absolute;top:-20px;font-size:16px;animation:dr .6s ease-in forwards}
+@keyframes dr{to{top:70%;opacity:.2}}
+.flyp{position:absolute;left:50%;top:30%;font-size:34px;transform:translateX(-50%);animation:fly .7s ease-out forwards}
+@keyframes fly{to{transform:translate(-50%,-70px) scale(1.4);opacity:0}}
+@media (prefers-reduced-motion:reduce){.cloud,.pl.ready,.flash,.polaroid{animation:none!important}}
 </style>
 </head>
 <body data-loc="home">
@@ -294,7 +330,7 @@ R.home=()=>`<div class="stage"><div class="rail">${rail(LEFT)}</div><div class="
 /* =========================================================
    ГОРОД
    ========================================================= */
-R.city=()=>banner()+`<div class="grid">${[["work","Профессии","Работа и развитие","#17406a"],["factory","Завод","Плавка и детали","#33295f"],["market","Торговая площадка","Цены руды","#4a3a2a"],["events","События","Бонусы и проекты","#4a2a5a"],["pass","Game Pass","Месяц бонусов","#2a3a5a"],["cases","Кейсы","Рулетка и редкости","#5a2a2a"],["auction","Аукцион","Лоты и продажа","#4a2a2a"],["gov","Городская артель","Работа для новичков","#2a4a4a"],["trade","Торговля","Рынок игроков и обмен","#4a4a2a"],["cal","Календарь","События и награды","#3a2a4a"],["exp","Экспедиция","Отряд в шахту","#0f3a4a"],["club","Клуб","Показы и выставки","#4a2a4a"],["rank","Рейтинг","Соревнование профессий","#3a3a1a"],...(S.proj>=10?[["mall","Торговый центр","−5% на одежду","#3a2a5a"]]:[])].map(b=>`<button class="tile" style="--c:${b[3]}" onclick="go('${b[0]}')"><span class="tic">${TI[b[0]]||""}</span><b>${b[1]}</b><div class="sm">${b[2]}</div></button>`).join("")}</div>`;
+R.city=()=>banner()+`<div class="grid">${[["factory","Завод","Плавка и детали","#33295f"],["market","Торговая площадка","Цены руды","#4a3a2a"],["events","События","Бонусы и проекты","#4a2a5a"],["pass","Game Pass","Месяц бонусов","#2a3a5a"],["cases","Кейсы","Рулетка и редкости","#5a2a2a"],["auction","Аукцион","Лоты и продажа","#4a2a2a"],["gov","Городская артель","Работа для новичков","#2a4a4a"],["trade","Торговля","Рынок игроков и обмен","#4a4a2a"],["cal","Календарь","События и награды","#3a2a4a"],["exp","Экспедиция","Отряд в шахту","#0f3a4a"],["club","Клуб","Показы и выставки","#4a2a4a"],["rank","Рейтинг","Соревнование профессий","#3a3a1a"],...(S.proj>=10?[["mall","Торговый центр","−5% на одежду","#3a2a5a"]]:[])].map(b=>`<button class="tile" style="--c:${b[3]}" onclick="go('${b[0]}')"><span class="tic">${TI[b[0]]||""}</span><b>${b[1]}</b><div class="sm">${b[2]}</div></button>`).join("")}</div>`;
 
 /* =========================================================
    ШАХТА (С КАРТИНКАМИ ЖИЛ И ДИНАМИЧЕСКИМ ФОНОМ ЗОНЫ)
@@ -483,7 +519,7 @@ const gate=l=>S.lv<l?`<div class="card sm">Профессия открывает
 function inc(k,n=1){S.st[k]=(S.st[k]||0)+n}
 function plant(i,id){const c=CROPS.find(x=>x.id===id);if(S.farm[i]||S.coins<c.c)return toast("Недостаточно монет");S.coins-=c.c;S.farm[i]={c:id,at:Date.now()};toast("Посажено: "+c.n);save();draw()}
 function harvest(i){const f=S.farm[i],c=f&&CROPS.find(x=>x.id===f.c);if(!f||Date.now()-f.at<c.t*1000)return toast("Ещё растёт");S.mats[c.id]=(S.mats[c.id]||0)+3;inc("harvested",3);S.farm[i]=null;gain(4);toast("Собрано: "+c.n+" ×3");save();draw()}
-setInterval(()=>{if(cur==="farm")draw()},5000);
+
 R.farm=()=>gate(5)||S.farm.map((f,i)=>{const c=f&&CROPS.find(x=>x.id===f.c),left=f?Math.max(0,Math.ceil(c.t-(Date.now()-f.at)/1000)):0;return `<div class="card"><b>Грядка ${i+1}</b>${f?`<div class="row"><span class="sm">${c.n}: ${left?"осталось "+left+" с":"готово"}</span><button class="btn" ${left?"disabled":""} onclick="harvest(${i})">Собрать</button></div>`:`<div class="chips" style="margin:8px 0 0">${CROPS.map(c=>`<button class="chip" onclick="plant(${i},'${c.id}')">${c.n} · ${c.c} 🪙 · ${c.t} с</button>`).join("")}</div>`}</div>`}).join("");
 
 /* =========================================================
@@ -590,6 +626,7 @@ function ico(i){const c=i.c||"#9aa7b5",g={
  acc:`<rect x="3" y="14" width="14" height="10" rx="3" fill="none" stroke="#ccd" stroke-width="3"/><rect x="23" y="14" width="14" height="10" rx="3" fill="none" stroke="#ccd" stroke-width="3"/><path d="M17 18h6" stroke="#ccd" stroke-width="3"/>`,
  back:`<rect x="8" y="5" width="24" height="30" rx="8" fill="${c}"/><rect x="13" y="20" width="14" height="9" rx="3" fill="#0004"/>`,
  tool:`<path d="M6 10a18 18 0 0128 0l-3 3a14 14 0 00-22 0z" fill="#aab"/><rect x="18" y="12" width="4" height="26" fill="#8a5a2b"/>`,
+ cam:`<rect x="5" y="12" width="30" height="20" rx="4" fill="#445"/><circle cx="20" cy="22" r="7" fill="#9cf"/>`,
  veh:`<rect x="3" y="14" width="34" height="12" rx="4" fill="${i.v>.4?"#c0562b":"#3b6fb6"}"/><circle cx="12" cy="29" r="5" fill="#222"/><circle cx="28" cy="29" r="5" fill="#222"/>`}[i.s]||"";
  return `<svg width="42" height="42" viewBox="0 0 40 40" style="flex:none;filter:drop-shadow(0 0 6px ${RC[i.r]})">${g}</svg>`}
 let ry=0;
@@ -882,9 +919,9 @@ function strike(){
   if(tr.fall)return;
   if(S.energy<2)return toast("Недостаточно энергии");
   S.energy-=2;
-  const d=Math.abs(mpos()-50),q=d<=7?"p":d<=18?"g":"m",dmg=q==="p"?2:q==="g"?1:0;
+  const d=Math.abs(mpos()-tc),q=d<=7?"p":d<=18?"g":"m",dmg=q==="p"?2:q==="g"?1:0;
   if(q==="m")wst=0;else wst++;
-  tr.hp-=dmg;tr.fx=q;tr.n++;
+  tr.hp-=dmg;tr.fx=q;tr.n++;tc=22+Math.random()*56;
   setTimeout(()=>{if(tr)tr.fx=""},500);
   if(dmg)gain(1);
   if(tr.hp<=0){
@@ -905,7 +942,7 @@ R.wood=()=>{
   ${show?`<div class="pop ${fx}">${{p:"Идеально!",g:"Хорошо",m:"Мимо"}[fx]}</div>`:""}
   ${show&&fx!=="m"?[0,1,2,3,4,5].map(i=>`<b class="wc" style="--dx:${(i-2.5)*22}px;--dy:${-30-i%3*14}px"></b>`).join(""):""}</div>
   <div class="card"><div class="row"><b>${t.n}</b><span class="sm">Прочность ${Math.max(0,tr.hp)}/${t.hp}${wst>=3?" · серия "+wst:""}</span></div><div class="bar"><i style="width:${Math.max(0,tr.hp/t.hp*100)}%"></i></div></div>
-  <div class="gauge"><i class="gz"></i><i class="gz p"></i><i id="mk"></i></div>
+  <div class="gauge"><i class="gz" style="left:${tc-18}%"></i><i class="gz p" style="left:${tc-7}%"></i><i id="mk"></i></div>
   <button class="btn" style="width:100%;padding:13px" onclick="strike()">Рубить · ⚡2</button>
   <p class="sm" style="margin-top:8px">Бей, когда маркер в зелёной зоне: в золотой центральной — двойной удар. Бревна: ${S.mats.wood||0}, доски: ${S.mats.board||0}, смола: ${S.mats.resin||0}.</p>`};
 (function tick(){const m=document.getElementById("mk");if(m)m.style.left=mpos()+"%";requestAnimationFrame(tick)})();
@@ -1022,6 +1059,104 @@ R.dig=()=>{
 PROF.push(["Сварщик","Сваривает конструкции из слитков",4],["Исследователь","Исследует монеты и артефакты",2]);
 PK2.push("weld","dig");PI.push("🔥","🔎");
 Object.assign(TT,{weld:"Сварщик",dig:"Исследователь"});Object.assign(LOC,{weld:"work",dig:"work"});
+
+/* =========================================================
+   ЛЕСОРУБ: ПОДВИЖНАЯ ЗОНА УДАРА
+   После каждого удара (попадание или промах) зелёная зона
+   перемещается в новое место шкалы.
+   ========================================================= */
+let tc=50;
+
+/* =========================================================
+   ФОТОГРАФ: СЪЁМКА ПО ЗАКАЗУ
+   Заказ задаёт ракурс и масштаб. Объект движется по сцене и
+   «плывёт» в фокусе: нажмите «Снять», когда он в центре рамки и
+   резкий. Оценка: ракурс 30, масштаб 20, композиция 30, чёткость 20.
+   Профессиональная камера повышает резкость.
+   ========================================================= */
+SL.cam="Камера";
+ITEMS.push({id:"cam2",n:"Профессиональная камера",s:"cam",p:2500,r:"Необычный",pk:{focus:.25}});
+const PO=[
+ {n:"Реклама автомобиля",e:"🚗",loc:"Автосалон",ang:"front",zoom:"mid",r:300,sky:"#2a2f45",gr:"#1a1c26"},
+ {n:"Портрет шахтёра",e:"🧑‍🏭",loc:"Шахта",ang:"left",zoom:"close",r:240,sky:"#3a2a22",gr:"#1b130e"},
+ {n:"Панорама площади",e:"🏛",loc:"Городская площадь",ang:"front",zoom:"wide",r:200,sky:"#3a5a8a",gr:"#2a3a2a"},
+ {n:"Лодка на закате",e:"⛵",loc:"Озеро",ang:"right",zoom:"wide",r:260,sky:"#d9733a",gr:"#123a63"}];
+const ANG={left:"слева",front:"спереди",right:"справа"},ZM={wide:"общий",mid:"средний",close:"крупный"},ZS={wide:40,mid:72,close:116};
+let po=null,pa="front",pz="mid",ph=null,pfl=0;
+function pPick(i){po=PO[i];pa="front";pz="mid";ph=null;draw()}
+function pSet(k,v){if(k==="a")pa=v;else pz=v;draw()}
+function pShoot(){
+  if(S.energy<3)return toast("Нужно 3 энергии");
+  S.energy-=3;
+  const t=performance.now(),dx=Math.abs(36*Math.sin(t/900)),b=Math.abs(Math.sin(t/650))*5*(1-Math.min(.6,eqPerk("focus")));
+  const near=(pz==="mid")||(po.zoom==="mid");
+  const sc={ang:pa===po.ang?30:0,zoom:pz===po.zoom?20:(near?8:0),comp:Math.max(0,Math.round(30-dx*1.2)),focus:Math.max(0,Math.round(20-b*5))};
+  const tot=sc.ang+sc.zoom+sc.comp+sc.focus,pay=Math.round(po.r*tot/100);
+  S.coins+=pay;gain(Math.max(1,Math.round(tot/10)));inc("photos");
+  ph={o:po,pa,pz,sc,tot,pay};po=null;pfl=1;setTimeout(()=>{pfl=0},500);
+  toast("Снимок оценён: "+tot+"/100, +"+pay+" 🪙");save();draw();
+}
+(function pl(){const s=document.getElementById("subj");if(s&&po){const t=performance.now();s.style.left=(50+36*Math.sin(t/900))+"%";s.style.filter="blur("+(Math.abs(Math.sin(t/650))*5*(1-Math.min(.6,eqPerk("focus"))))+"px) drop-shadow(0 8px 6px #000a)"}requestAnimationFrame(pl)})();
+R.photo=()=>{
+  if(S.lv<3)return gate(3);
+  if(po){
+    const rot=pa==="left"?"rotateY(-40deg)":pa==="right"?"rotateY(40deg)":"";
+    return `<div class="card sm"><b>${po.n}</b> · ${po.loc}. Нужно: ракурс ${ANG[po.ang]}, масштаб ${ZM[po.zoom]}. Сняв кадр, нажмите, когда объект в центре рамки и резкий.</div>
+    <div class="studio" style="--sk:${po.sky};--gr:${po.gr}"><div class="subj" id="subj" style="font-size:${ZS[pz]}px;transform:translate(-50%,-50%) perspective(300px) ${rot}">${po.e}</div><div class="vf"></div>${pfl?'<div class="flash"></div>':""}</div>
+    <div class="chips">${Object.keys(ANG).map(k=>`<button class="chip${pa===k?" on":""}" onclick="pSet('a','${k}')">Ракурс: ${ANG[k]}</button>`).join("")}</div>
+    <div class="chips">${Object.keys(ZM).map(k=>`<button class="chip${pz===k?" on":""}" onclick="pSet('z','${k}')">Масштаб: ${ZM[k]}</button>`).join("")}</div>
+    <button class="btn" style="width:100%;padding:13px" onclick="pShoot()">Снять · ⚡3</button>`;
+  }
+  const r=ph?`<div class="studio" style="height:64px;--sk:${ph.o.sky};--gr:${ph.o.gr}">${pfl?'<div class="flash"></div>':""}</div><div class="card polaroid"><div class="row"><b>${ph.o.e} ${ph.o.n}: ${ph.tot}/100</b><span>+${ph.pay} 🪙</span></div><div class="sm">Ракурс ${ph.sc.ang}/30 (${ph.pa===ph.o.ang?"верно":"нужен "+ANG[ph.o.ang]}) · Масштаб ${ph.sc.zoom}/20 (${ph.pz===ph.o.zoom?"верно":"нужен "+ZM[ph.o.zoom]}) · Композиция ${ph.sc.comp}/30 (объект ${ph.sc.comp>=24?"в центре кадра":"смещён от центра"}) · Чёткость ${ph.sc.focus}/20 (${ph.sc.focus>=15?"резкий":"смазан"})</div></div>`:"";
+  return r+`<h2>Заказы</h2>`+PO.map((o,i)=>`<div class="card row"><div class="ir"><span class="pi">${o.e}</span><div><b>${o.n}</b><div class="sm">${o.loc} · ракурс ${ANG[o.ang]}, масштаб ${ZM[o.zoom]} · до ${o.r} 🪙</div></div></div><button class="btn" onclick="pPick(${i})">Взять</button></div>`).join("");
+};
+
+/* =========================================================
+   ФЕРМА: ГРЯДКИ, ПОСЕВ, ПОЛИВ, ПРОПОЛКА, СБОР
+   Выберите семена и нажимайте на пустую грядку (посев). Лейка
+   ускоряет рост на 25% и даёт +1 к урожаю. Сорняки появляются
+   сами: если не выдернуть за 10 секунд, урожай уменьшится.
+   Растения проходят стадии роста; готовые светятся и просятся в сбор.
+   ========================================================= */
+const FD=6,CE={wheat:"🌾",veg:"🥕",flax:"🌸"};
+const fd=()=>(S.fd&&S.fd.length===FD)?S.fd:(S.fd=Array(FD).fill(null));
+let ft="wheat",fxp=null,fsig="";
+const gp=p=>Math.min(1,(Date.now()-p.at)/(CROPS.find(c=>c.id===p.c).t*1000*(p.w?.75:1)));
+function fTool(k){ft=k;draw()}
+function fTap(i){
+  const f=fd(),p=f[i];
+  if(p&&p.wd){p.wd=0;if(Date.now()-p.ws>1e4)p.pen=1;fxp={i,k:"weed"};gain(1);toast("Сорняк выдернут")}
+  else if(!p){
+    if(ft==="water")return toast("Сначала посейте семена");
+    const c=CROPS.find(x=>x.id===ft);if(S.coins<c.c)return toast("Недостаточно монет");
+    S.coins-=c.c;f[i]={c:ft,at:Date.now(),w:0,wd:0,pen:0};fxp={i,k:"seed"};
+  }
+  else if(gp(p)>=1){
+    const n=Math.max(1,3+(p.w?1:0)-(p.pen?1:0));
+    S.mats[p.c]=(S.mats[p.c]||0)+n;inc("harvested",n);gain(4);fxp={i,k:"pick",e:CE[p.c]};f[i]=null;toast("Собрано: "+MAT[p.c][0]+" ×"+n);
+  }
+  else if(ft==="water"&&!p.w){p.w=1;fxp={i,k:"water"};toast("Полито: рост быстрее, урожай больше")}
+  else return;
+  setTimeout(()=>{fxp=null},700);save();draw();
+}
+setInterval(()=>{
+  if(cur!=="farm")return;
+  fd().forEach(p=>{if(p&&!p.wd&&gp(p)<1&&Math.random()<.04){p.wd=1;p.ws=Date.now()}});
+  const sg=fd().map(p=>p?(p.wd?"w":"")+Math.floor(gp(p)*3)+(p.w?"v":""):"-").join();
+  if(sg!==fsig){fsig=sg;draw()}
+},1000);
+R.farm=()=>{
+  if(S.lv<5)return gate(5);
+  const f=fd();
+  return `<div class="field"><div class="sun2"></div><i class="cloud"></i><i class="cloud c2"></i><div class="scare">🧑‍🌾</div><div class="plots">${f.map((p,i)=>{
+    const x=fxp&&fxp.i===i?fxp:null;let h="";
+    if(p){const g=gp(p);h=g>=1?`<span class="pl ready" style="font-size:40px">${CE[p.c]}</span>`:`<span class="pl" style="font-size:${22+g*18}px">${g<.34?"🌱":"🌿"}</span><div class="pb"><i style="width:${g*100}%"></i></div>`;if(p.wd)h+=`<span class="weedt">🍂</span>`}
+    if(x&&x.k==="seed")h+=`<b class="seedf"></b>`;
+    if(x&&x.k==="water")h+=[20,50,75].map((l,j)=>`<span class="dropw" style="left:${l}%;animation-delay:${j*.08}s">💧</span>`).join("");
+    if(x&&x.k==="pick")h+=`<span class="flyp">${x.e}</span>`;
+    return `<button class="plot${p&&p.w?" wet":""}" aria-label="Грядка ${i+1}" onclick="fTap(${i})">${h}</button>`}).join("")}</div></div>
+  <div class="chips">${CROPS.map(c=>`<button class="chip${ft===c.id?" on":""}" onclick="fTool('${c.id}')">${CE[c.id]} ${c.n} · ${c.c} 🪙</button>`).join("")}<button class="chip${ft==="water"?" on":""}" onclick="fTool('water')">💧 Лейка</button></div>
+  <div class="card sm">Выберите семена и нажмите на пустую грядку. «Лейка» поливает растущее растение. Готовое растение светится — нажмите, чтобы собрать. Сорняк 🍂 нужно выдернуть касанием.</div>`};
 
 /* =========================================================
    ЗАПУСК
