@@ -156,6 +156,18 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;background:rad
 .gz.p{left:43%;width:14%;background:#ffd35aaa}
 #mk{position:absolute;top:-2px;bottom:-2px;width:6px;margin-left:-3px;border-radius:3px;background:#fff;box-shadow:0 0 10px #fff}
 @media (prefers-reduced-motion:reduce){.leaf,.tile,.vein,.dlt,.tree2{animation:none!important}}
+
+/* Новые сцены: особое месторождение, сварка, исследование находок */
+.vein.sp{outline:2px solid #ffd35a;box-shadow:0 0 28px #ffd35a,0 0 10px var(--vc)}
+.weldscene{position:relative;height:150px;border-radius:16px;border:1px solid var(--l);background:radial-gradient(60% 80% at 50% 70%,#ff8a3d44,transparent),linear-gradient(#1a1d26,#0a0b10);overflow:hidden;margin-bottom:10px;display:grid;place-items:center}
+.torch{font-size:54px;filter:grayscale(.8);transition:filter .2s}.torch.on{filter:none;animation:shk2 .3s}
+@keyframes shk2{50%{transform:scale(1.2) rotate(6deg)}}
+.seams{position:absolute;bottom:12px;display:flex;gap:10px}
+.seams i{width:46px;height:8px;border-radius:4px;background:#2a3140}
+.seams i.ok{background:#ffd35a;box-shadow:0 0 10px #ffb347}.seams i.mid{background:#e0a458}.seams i.bad{background:#7a3030}
+.rel{border-left:3px solid var(--a)}
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:8px}.cg .card{margin:0;text-align:center}
+@media (prefers-reduced-motion:reduce){.torch.on{animation:none}}
 </style>
 </head>
 <body data-loc="home">
@@ -289,26 +301,26 @@ R.city=()=>banner()+`<div class="grid">${[["work","Профессии","Рабо
    ========================================================= */
 const pick=w=>{let t=Object.values(w).reduce((a,b)=>a+b,0)*Math.random();for(const k in w){t-=w[k];if(t<=0)return k}return Object.keys(w)[0]};
 const zone=()=>ZONES.find(x=>x.id===S.zone);
-const newVein=()=>({o:pick(zone().w),x:8+Math.random()*74,y:8+Math.random()*70});
+const newVein=()=>({o:pick(zone().w),x:8+Math.random()*74,y:8+Math.random()*70,sp:Math.random()<.07});
 function newVeins(){veins=[0,1,2,3,4].map(newVein)}
 function setZone(id){S.zone=id;newVeins();save();draw()}
 function mineVein(i){
   const z=zone();
   if(S.energy<ec(z))return toast("Недостаточно энергии. Отдохни.");
   S.energy-=ec(z);
-  const o=veins[i].o,t=item(S.eq.tool),b=t?t.b:0;
-  const n=1+(Math.random()<.2+.1*b+(S.eq.back?.1:0)?1:0);
+  const o=veins[i].o,b=toolB(),sp=veins[i].sp;wear();
+  const n=(1+(Math.random()<.2+.1*b+(S.eq.back?.1:0)?1:0))*(sp?3:1);
   S.ore[o]=(S.ore[o]||0)+n;S.found[o]=1;S.st.mined+=n;gain(2+z.lv);
   lastMsg=`+${n} ${ORE[o][0]}`;
-  if(Math.random()<.03+.02*b+Math.min(.04,.01*(plv("mine")-1))){S.ore.crystal=(S.ore.crystal||0)+1;S.found.crystal=1;S.st.mined++;lastMsg+=" · редкая находка: кристалл!"}
-  veins[i]=newVein();save();draw();
+  if(Math.random()<.03+.02*b+Math.min(.04,.01*(plv("mine")-1))+Math.min(.1,eqPerk("rare"))){S.ore.crystal=(S.ore.crystal||0)+1;S.found.crystal=1;S.st.mined++;lastMsg+=" · редкая находка: кристалл!"}
+  if(sp)lastMsg+=" · особое месторождение ×3!";if(Math.random()<.04){addRel(0);lastMsg+=" · найден древний предмет (раздел «Исследователь»)"}veins[i]=newVein();save();draw();
 }
 function rest(){if(S.coins<20)return toast("Недостаточно монет");S.coins-=20;S.energy=Math.min(100,S.energy+30);save();draw()}
 R.mine=()=>{
   const z=zone();
   return `<div class="chips">${ZONES.map(x=>`<button class="chip${x.id===S.zone?" on":""}" ${S.lv<x.lv?"disabled":""} onclick="setZone('${x.id}')">${x.n}${S.lv<x.lv?" · ур. "+x.lv:""}</button>`).join("")}</div>
 <div class="scene" style="background-image:linear-gradient(rgba(0,0,0,0.25),rgba(0,0,0,0.6)),url('${z.bg}');">
-  ${veins.map((v,i)=>`<button class="vein" aria-label="${ORE[v.o][0]}" style="--vc:${ORE[v.o][2]};left:${v.x}%;top:${v.y}%" onclick="mineVein(${i})"><img src="${ORE[v.o][3]}" alt="${ORE[v.o][0]}"></button>`).join("")}
+  ${veins.map((v,i)=>`<button class="vein${v.sp?" sp":""}" aria-label="${ORE[v.o][0]}" style="--vc:${ORE[v.o][2]};left:${v.x}%;top:${v.y}%" onclick="mineVein(${i})"><img src="${ORE[v.o][3]}" alt="${ORE[v.o][0]}"></button>`).join("")}
 </div>
 <div class="card row"><div><b>${lastMsg||"Нажми на светящуюся жилу"}</b><div class="sm">Энергия за добычу: ${z.en}</div></div><button class="btn" onclick="rest()">Отдых +30 · 20 🪙</button></div>`;
 };
@@ -363,7 +375,7 @@ R.ward=()=>{
    ========================================================= */
 const rate=()=>Math.round(BIZ.reduce((s,b)=>s+bnet(b),0)+PROP.reduce((s,b)=>s+(S.props[b.id]?b.i*(S.tn&&S.tn[b.id]?1.3:1):0),0));
 const pend=()=>Math.floor(rate()*Math.min(Date.now()-S.bizT,43200000)/3600000);
-function collect(){S.coins+=pend();S.bizT=Date.now()}
+function collect(){S.coins+=pend();const h=Math.min(Date.now()-S.bizT,43200000)/36e5;S.bs=S.bs||{};BIZ.forEach(b=>{if(S.biz[b.id])S.bs[b.id]=Math.max(0,(S.bs[b.id]||0)-h*S.biz[b.id])});S.bizT=Date.now()}
 function bizBuy(id){
   const b=BIZ.find(x=>x.id===id),lv=S.biz[id]||0,cost=lv?Math.round(b.p*lv*.75):b.p;
   if(lv>=10)return;
@@ -514,7 +526,7 @@ R.auction=()=>{
    3 неэкипированных предмета одной редкости → случайный новый
    предмет следующей редкости.
    ========================================================= */
-const RAR=["Обычный","Необычный","Редкий"];
+const RAR=["Обычный","Необычный","Редкий","Эпический","Легендарный"];
 function merge(r){
   const k=RAR.indexOf(r),h=ITEMS.filter(i=>i.r===r&&S.own.includes(i.id)&&S.eq[i.s]!==i.id);
   if(h.length<3)return toast("Нужно 3 неэкипированных предмета");
@@ -524,7 +536,7 @@ function merge(r){
   const n=pool[Math.floor(Math.random()*pool.length)];S.own.push(n.id);toast("Объединение: получен "+n.n);save();draw();
 }
 const _cases=R.cases;
-R.cases=()=>_cases()+`<h2>Объединение предметов</h2>`+RAR.slice(0,2).map(r=>`<div class="card row"><div><b>3 × ${r}</b><div class="sm">→ предмет редкостью выше</div></div><button class="btn" onclick="merge('${r}')">Объединить</button></div>`).join("");
+R.cases=()=>_cases()+`<h2>Объединение предметов</h2>`+RAR.slice(0,4).map(r=>`<div class="card row"><div><b>5 × ${r}</b><div class="sm">→ предмет редкостью выше</div></div><button class="btn" onclick="merge('${r}')">Объединить</button></div>`).join("");
 
 /* =========================================================
    КАЛЕНДАРЬ СОБЫТИЙ
@@ -569,7 +581,7 @@ R.cases=()=>_c2()+`<h2>Рулетка</h2><div class="card row"><div><b>Коле
    значки зданий города, вращение персонажа перетаскиванием.
    ========================================================= */
 const TI={mine:"⛏",shop:"🛍",biz:"💼",work:"🧰",factory:"🏭",farm:"🌾",market:"📈",estate:"🏠",events:"🎉",pass:"🎫",cases:"🎁",auction:"🔨"};
-const RC={"Обычный":"#8fa1b5","Необычный":"#3fd1b0","Редкий":"#b07bff"};
+const RC={"Обычный":"#8fa1b5","Необычный":"#3fd1b0","Редкий":"#b07bff","Эпический":"#ff9d3b","Легендарный":"#ff4d6d"};
 function ico(i){const c=i.c||"#9aa7b5",g={
  head:`<path d="M6 24a14 14 0 0128 0z" fill="${c}"/><rect x="3" y="23" width="34" height="5" rx="2" fill="${c}"/>`,
  body:`<path d="M12 6l-8 8 5 5 3-3v20h16V16l3 3 5-5-8-8-6 4z" fill="${c}"/>`,
@@ -605,7 +617,7 @@ ITEMS.push({id:"jacket_c",n:"Куртка Мастера",s:"body",p:700,c:"#2f9
    Опыт профессии копится в разделе, где игрок работает;
    высокий уровень шахтёра повышает шанс редкой находки.
    ========================================================= */
-function dis(id){const i=item(id),f={"Обычный":3,"Необычный":6,"Редкий":12}[i.r];S.own=S.own.filter(x=>x!==id);if(S.eq[i.s]===id)delete S.eq[i.s];S.frag+=f;toast("Разобрано: "+i.n+" → +"+f+" фрагментов");save();draw()}
+function dis(id){const i=item(id),f={"Обычный":3,"Необычный":6,"Редкий":12,"Эпический":25,"Легендарный":50}[i.r];S.own=S.own.filter(x=>x!==id);if(S.eq[i.s]===id)delete S.eq[i.s];S.frag+=f;toast("Разобрано: "+i.n+" → +"+f+" фрагментов");save();draw()}
 const PK=["mine","photo","factory","farm","mech","drive"];
 const plv=k=>Math.floor(Math.sqrt(((S.px||{})[k]||0)/20))+1;
 
@@ -750,7 +762,7 @@ R.estate=()=>`<div class="card sm">Бонусы действуют постоя�
    дохода. Обслуживание оборудования — 10% дохода в час. Доход
    считается чистым: деньги из воздуха не печатаются.
    ========================================================= */
-const bnet=b=>{const lv=S.biz[b.id]||0,n=(S.bw||{})[b.id]||0;return lv?lv*b.i*(1+.2*n)-n*b.i*lv*.12-b.i*.1:0};
+const bnet=b=>{const lv=S.biz[b.id]||0,n=(S.bw||{})[b.id]||0;return lv?lv*b.i*(1+.2*n)*sf(b)*dmd()-n*b.i*lv*.12-b.i*.1:0};
 function hire(id){const b=BIZ.find(x=>x.id===id);S.bw=S.bw||{};if(!S.biz[id])return toast("Сначала купите бизнес");if((S.bw[id]||0)>=3)return toast("Максимум 3 сотрудника");collect();const c=Math.round(b.p*.25);if(S.coins<c)return toast("Недостаточно монет");S.coins-=c;S.bw[id]=(S.bw[id]||0)+1;toast("Нанят сотрудник: "+b.n);save();draw()}
 const _biz=R.biz;
 R.biz=()=>_biz()+`<h2>Расходы и персонал</h2>`+BIZ.map(b=>{const n=(S.bw||{})[b.id]||0;return `<div class="card row"><div><b>${b.n}</b><div class="sm">Сотрудников ${n}/3 · зарплаты и обслуживание учтены · чистый доход ${num(Math.round(bnet(b)))} 🪙/ч</div></div><button class="btn" ${S.biz[b.id]&&n<3?"":"disabled"} onclick="hire('${b.id}')">Нанять · ${num(Math.round(b.p*.25))}</button></div>`}).join("");
@@ -825,7 +837,7 @@ R.rank=()=>{const l=rk(rsel);
    Показ мод (редкость надетого и бонус за полный комплект),
    выставка коллекций и встреча предпринимателей. Раз в сутки.
    ========================================================= */
-const RP={"Обычный":1,"Необычный":2,"Редкий":4};
+const RP={"Обычный":1,"Необычный":2,"Редкий":4,"Эпический":8,"Легендарный":16};
 const look=()=>{const e=S.eq;let s=Object.keys(e).filter(k=>k!=="tool"&&k!=="veh"&&item(e[k])).reduce((a,k)=>a+RP[item(e[k]).r],0);if(["head","body","legs","feet"].every(k=>e[k]))s+=3;return s};
 const clubR=n=>n===0?look()*25:n===1?Object.keys(S.found).length*40+S.own.length*15:Object.keys(S.biz).length*120+Object.keys(S.props).length*60;
 function club(n){const key="c"+n,r=clubR(n);if(S.dl[key]===day())return;if(!r)return toast("Пока нечего показать");S.dl[key]=day();S.coins+=r;toast("Награда: +"+r+" 🪙");save();draw()}
@@ -909,6 +921,107 @@ function bump(){
   if(d){const b=document.getElementById("bc"),s=document.createElement("span");s.className="dlt "+(d>0?"up":"dn");s.textContent=(d>0?"+":"")+num(d);b.parentNode.appendChild(s);setTimeout(()=>s.remove(),1100);b.classList.remove("bp");void b.offsetWidth;b.classList.add("bp");pc=S.coins}
 }
 function flash(){const d=document.createElement("div");d.className="lvfx";d.textContent="Уровень "+S.lv;document.body.appendChild(d);setTimeout(()=>d.remove(),1500)}
+
+/* =========================================================
+   ВЕРСИЯ 2.0: РЕДКОСТЬ, ПЕРКИ, ИЗНОС, ОБЪЕДИНЕНИЕ
+   Пять уровней редкости. Перки привязаны к предмету и действуют,
+   пока он надет. Кирка изнашивается и чинится. Пять предметов
+   одной редкости дают шанс 70% на предмет редкостью выше.
+   ========================================================= */
+ITEMS.push({id:"top",n:"Цилиндр магната",s:"head",p:9000,c:"#1d1d2e",r:"Эпический",co:1,pk:{rare:.03}},{id:"cloak",n:"Плащ Чёрного Бизнеса",s:"body",p:30000,c:"#0e0e14",r:"Легендарный",co:1,pk:{rare:.04,wear:.3}});
+const eqPerk=k=>Object.keys(S.eq).reduce((a,s)=>a+(((item(S.eq[s])||{}).pk||{})[k]||0),0);
+const MAXD=60;
+const toolB=()=>{const t=item(S.eq.tool);return t&&(S.dur||{})[t.id]!==0?t.b:0};
+function wear(){const t=item(S.eq.tool);if(!t||Math.random()<Math.min(.5,eqPerk("wear")))return;S.dur=S.dur||{};const d=Math.max(0,(S.dur[t.id]??MAXD)-1);S.dur[t.id]=d;if(d===0)toast(t.n+" сломана: почините в «Инвентаре»")}
+function repair(id){const i=item(id),c=Math.round(i.p*.1);if(S.coins<c)return toast("Недостаточно монет");S.coins-=c;S.dur=S.dur||{};S.dur[id]=MAXD;toast("Отремонтировано: "+i.n);save();draw()}
+const _inv=R.inv;
+R.inv=()=>_inv()+`<h2>Состояние инструментов</h2>`+(ITEMS.filter(i=>i.s==="tool"&&S.own.includes(i.id)).map(i=>{const d=(S.dur||{})[i.id]??MAXD;return `<div class="card"><div class="row"><div><b>${i.n}</b><div class="sm">Прочность ${d}/${MAXD}${d?"":" · сломана"}</div></div><button class="btn" ${d>=MAXD?"disabled":""} onclick="repair('${i.id}')">Починить · ${Math.round(i.p*.1)} 🪙</button></div><div class="bar"><i style="width:${d/MAXD*100}%"></i></div></div>`}).join("")||`<div class="card sm">Инструментов нет. Обычная кирка не изнашивается.</div>`);
+function merge(r){
+  const k=RAR.indexOf(r),h=ITEMS.filter(i=>i.r===r&&S.own.includes(i.id)&&S.eq[i.s]!==i.id);
+  if(h.length<5)return toast("Нужно 5 неэкипированных предметов");
+  const pool=ITEMS.filter(i=>i.r===RAR[k+1]&&!S.own.includes(i.id));
+  if(!pool.length)return toast("Нет новых предметов выше редкостью");
+  const out=h.slice(0,5).map(i=>i.id);S.own=S.own.filter(x=>!out.includes(x));
+  if(Math.random()<.7){const n=pool[Math.floor(Math.random()*pool.length)];S.own.push(n.id);toast("Объединение удалось: "+n.n)}else{S.frag+=10;toast("Объединение не удалось: +10 фрагментов")}
+  save();draw();
+}
+WH.push(["Предмет",()=>{const l=ITEMS.filter(i=>!S.own.includes(i.id)&&!i.co&&!i.se&&i.r==="Обычный");if(l.length)S.own.push(l[Math.floor(Math.random()*l.length)].id);else S.frag+=5}],["Железный слиток",()=>S.mats.iron_bar=(S.mats.iron_bar||0)+1]);
+const _ward2=R.ward;
+R.ward=()=>_ward2()+`<div class="card sm">Перки надетого: ${[eqPerk("rare")&&"+"+Math.round(Math.min(.1,eqPerk("rare"))*100)+"% к редким находкам",eqPerk("wear")&&"−"+Math.round(Math.min(.5,eqPerk("wear"))*100)+"% износа"].filter(Boolean).join(" · ")||"нет"}. Бонус действует, пока предмет надет.</div>`;
+
+/* =========================================================
+   БИЗНЕС ЗАВИСИТ ОТ СЫРЬЯ И СПРОСА
+   Без сырья доход падает до 40%. Спрос меняется каждый час
+   (±10%). Запас тратится по уровню бизнеса в час.
+   ========================================================= */
+const sf=b=>(!S.biz[b.id]||(S.bs&&S.bs[b.id]>0))?1:.4;
+const dmd=()=>.9+.2*Math.abs(Math.sin(Math.floor(Date.now()/36e5)));
+function bsBuy(id){const b=BIZ.find(x=>x.id===id),c=Math.round(b.p*.03);if(!S.biz[id])return toast("Сначала купите бизнес");collect();if(S.coins<c)return toast("Недостаточно монет");S.coins-=c;S.bs=S.bs||{};S.bs[id]=(S.bs[id]||0)+24*S.biz[id];toast("Закуплено сырьё на 24 часа: "+b.n);save();draw()}
+const _biz3=R.biz;
+R.biz=()=>_biz3()+`<h2>Сырьё и спрос</h2><div class="card sm">Спрос сейчас: ${Math.round(dmd()*100)}% от обычного. Без сырья бизнес работает на 40%.</div>`+BIZ.map(b=>{const lv=S.biz[b.id]||0,h=lv?Math.floor(((S.bs||{})[b.id]||0)/lv):0;return `<div class="card row"><div><b>${b.n}</b><div class="sm">Запас сырья: ${h} ч</div></div><button class="btn" ${lv?"":"disabled"} onclick="bsBuy('${b.id}')">Закупить · ${num(Math.round(b.p*.03))}</button></div>`}).join("");
+
+/* =========================================================
+   СВАРЩИК
+   Заказ → выбор работы → подготовка материалов → четыре шва
+   (удар в нужный момент) → контроль качества → награда.
+   Сварные изделия нужны механику. Брак: материалы теряются.
+   ========================================================= */
+Object.assign(MAT,{weld_frame:["Сварная рама",260],weld_rail:["Перила",200],weld_clamp:["Скоба",110]});
+JOBS.push({p:"mech",n:"Замена рамы",i:{weld_frame:1,part:1},r:900});
+const WT=[{n:"Рама",i:{iron_bar:2},o:"weld_frame",r:260},{n:"Перила",i:{iron_bar:1,copper_bar:1},o:"weld_rail",r:200},{n:"Скоба",i:{copper_bar:1},o:"weld_clamp",r:110}];
+let wd=null,wlast="";
+function wStart(i){const w=WT[i];if(S.energy<4)return toast("Нужно 4 энергии");if(!Object.keys(w.i).every(k=>have(k)>=w.i[k]))return toast("Не хватает материалов");Object.keys(w.i).forEach(k=>S.mats[k]-=w.i[k]);S.energy-=4;wd={i,s:[],fx:""};save();draw()}
+function wSeam(){
+  if(!wd)return;
+  const d=Math.abs(mpos()-50),q=d<=7?1:d<=18?.6:.2,w=WT[wd.i];
+  wd.s.push(q);wd.fx=q>=1?"p":q>.5?"g":"m";setTimeout(()=>{if(wd)wd.fx=""},500);
+  if(wd.s.length>=4){
+    const a=wd.s.reduce((x,y)=>x+y,0)/4,qp=Math.round(a*100);
+    if(a>=.5){const r=Math.round(w.r*(.4+a*.8));S.mats[w.o]=(S.mats[w.o]||0)+1;S.coins+=r;gain(8);inc("welded");wlast=`${w.n}: качество ${qp}%, награда +${r} 🪙`}
+    else wlast=`${w.n}: брак (${qp}%), материалы потеряны`;
+    toast(wlast);wd=null;
+  }
+  save();draw();
+}
+R.weld=()=>{
+  if(S.lv<4)return gate(4);
+  if(!wd)return `<div class="card sm">Выберите работу, подготовьте материалы и выполните четыре шва. ${wlast}</div>`+WT.map((w,i)=>`<div class="card row"><div><b>${w.n}</b><div class="sm">${ds(w.i)} · награда до ${Math.round(w.r*1.2)} 🪙 · ⚡4</div></div><button class="btn" onclick="wStart(${i})">Начать</button></div>`).join("");
+  const f=wd.fx;
+  return `<div class="weldscene"><div class="torch${f?" on":""}">🔥</div>${f?`<div class="pop ${f}">${{p:"Чистый шов!",g:"Нормально",m:"Прожог"}[f]}</div>`:""}${f&&f!=="m"?[0,1,2,3,4].map(i=>`<b class="wc" style="--dx:${(i-2)*26}px;--dy:${-36-i%2*16}px;background:#ffd35a;bottom:70px"></b>`).join(""):""}<div class="seams">${[0,1,2,3].map(i=>`<i class="${i<wd.s.length?(wd.s[i]>=1?"ok":wd.s[i]>.5?"mid":"bad"):""}"></i>`).join("")}</div></div>
+  <div class="gauge"><i class="gz"></i><i class="gz p"></i><i id="mk"></i></div><button class="btn" style="width:100%;padding:13px" onclick="wSeam()">Сварить шов ${wd.s.length+1}/4</button>`};
+
+/* =========================================================
+   ИССЛЕДОВАТЕЛЬ МОНЕТ И АРТЕФАКТОВ
+   Находки из шахты — отдельные предметы: регистрация, очистка,
+   исследование в реальном времени (20 с), заключение о редкости,
+   затем коллекция или продажа. Заказы клиента (NPC): предмет
+   остаётся собственностью клиента и возвращается за плату.
+   ========================================================= */
+const ARTS=[["Старинная монета","Чеканка забытой республики"],["Бронзовый амулет","Оберег рудокопов прошлого"],["Глиняная табличка","Запись о первых торговцах города"],["Кристальная реликвия","Светится в темноте шахты"],["Серебряный кубок","Из него пили основатели города"],["Древний компас","Стрелка указывает на богатые жилы"]];
+const RT=2e4,RVAL=[40,90,200,500,1400];
+const rel=()=>S.rel||(S.rel=[]);
+function addRel(npc){rel().push({a:Math.floor(Math.random()*ARTS.length),st:0,at:0,r:0,npc:npc?1:0})}
+const rw=()=>{const b=plv("dig")-1;return Number(pick({0:Math.max(20,50-b*3),1:28,2:14+b,3:6+b,4:2+b/2}))};
+function npcOrder(){if(rel().filter(x=>x.npc).length>=2)return toast("Клиентов уже достаточно");addRel(1);toast("Клиент принёс предмет на исследование");save();draw()}
+function relClean(i){if(S.energy<2)return toast("Недостаточно энергии");S.energy-=2;rel()[i].st=1;toast("Предмет очищен");save();draw()}
+function relStudy(i){rel()[i].st=2;rel()[i].at=Date.now();toast("Исследование началось");save();draw()}
+function relDone(i){const r=rel()[i];if(Date.now()-r.at<RT)return;r.r=rw();r.st=3;gain(6);inc("studied");toast("Заключение готово: "+RAR[r.r]);save();draw()}
+function relKeep(i){const r=rel()[i];S.coll=S.coll||{};S.coll[r.a]=Math.max(S.coll[r.a]??-1,r.r);rel().splice(i,1);toast("В коллекцию: "+ARTS[r.a][0]);if(Object.keys(S.coll).length>=ARTS.length&&!S.cd){S.cd=1;if(!S.own.includes("top"))S.own.push("top");toast("Коллекция собрана! Награда: Цилиндр магната")}save();draw()}
+function relSell(i){const v=RVAL[rel()[i].r];S.coins+=v;rel().splice(i,1);toast("Продано: +"+v+" 🪙");save();draw()}
+function relRet(i){const v=100+rel()[i].r*90;S.coins+=v;inc("npcdone");rel().splice(i,1);toast("Предмет возвращён клиенту: +"+v+" 🪙");save();draw()}
+setInterval(()=>{if(cur==="dig")draw()},1000);
+R.dig=()=>{
+  if(S.lv<2)return gate(2);
+  const l=rel(),c=S.coll||{};
+  return `<div class="card row"><div><b>Лаборатория</b><div class="sm">Находки из шахты и заказы клиентов. Исследовано: ${S.st.studied||0}</div></div><button class="btn" onclick="npcOrder()">Принять заказ клиента</button></div>`
+  +(l.length?l.map((r,i)=>{const left=Math.max(0,Math.ceil((RT-(Date.now()-r.at))/1000));
+    const nm2=r.st?ARTS[r.a][0]:"Неопознанная находка",sub=r.st>=3?RAR[r.r]+" · "+ARTS[r.a][1]:["Не обследована","Очищена","Исследуется…"][r.st];
+    const act=r.st===0?`<button class="btn" onclick="relClean(${i})">Очистить · ⚡2</button>`:r.st===1?`<button class="btn" onclick="relStudy(${i})">Исследовать</button>`:r.st===2?`<button class="btn" ${left?"disabled":""} onclick="relDone(${i})">${left?left+" с":"Заключение"}</button>`:r.npc?`<button class="btn" onclick="relRet(${i})">Вернуть · ${100+r.r*90} 🪙</button>`:`<button class="btn" onclick="relKeep(${i})">В коллекцию</button><button class="chip" onclick="relSell(${i})">Продать ${RVAL[r.r]}</button>`;
+    return `<div class="card rel"><div class="row"><div><b>${r.npc?"Клиент: ":""}${nm2}</b><div class="sm">${sub}</div></div><div>${act}</div></div></div>`}).join(""):`<div class="card sm">Находок нет. Их можно найти в шахте или взять заказ клиента.</div>`)
+  +`<h2>Коллекция артефактов</h2><div class="cg">${ARTS.map((a,i)=>`<div class="card"><b>${c[i]!==undefined?a[0]:"???"}</b><div class="sm">${c[i]!==undefined?RAR[c[i]]:"не найдено"}</div></div>`).join("")}</div>`};
+PROF.push(["Сварщик","Сваривает конструкции из слитков",4],["Исследователь","Исследует монеты и артефакты",2]);
+PK2.push("weld","dig");PI.push("🔥","🔎");
+Object.assign(TT,{weld:"Сварщик",dig:"Исследователь"});Object.assign(LOC,{weld:"work",dig:"work"});
 
 /* =========================================================
    ЗАПУСК
