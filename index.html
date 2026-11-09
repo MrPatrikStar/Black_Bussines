@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b1118">
-<title>BLACK BUSINESS</title>
+<title>BLACK BUSINESS 5.2</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -225,44 +225,6 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;background:rad
 .route i.done{background:linear-gradient(90deg,#3fd1b0,#8b7bd8);box-shadow:0 0 8px #3fd1b066}
 @media(max-width:380px){.work-actions{grid-template-columns:1fr 1fr}.work-object{font-size:48px}}
 
-
-/* Расширенные сцены профессий — изолированные классы, экран персонажа не затрагивают. */
-.wood-hits{position:absolute;inset:0;z-index:3;pointer-events:none}
-.wood-hit{position:absolute;display:block;width:13px;height:5px;border-radius:8px;background:linear-gradient(#f4d4a0,#8d542b);box-shadow:0 1px 2px #160d08;transform:rotate(-24deg)}
-.wood-hit.p{height:7px;width:18px;background:linear-gradient(#ffe0a4,#bd7136);box-shadow:0 0 8px #ffd35a88}
-.wood-hit.w{width:8px;opacity:.65}
-.wood-cut-progress{position:absolute;z-index:4;left:calc(50% - 43px);bottom:13px;width:86px;height:7px;border-radius:8px;background:#07120b99;overflow:hidden;border:1px solid #ffffff44}
-.wood-cut-progress i{display:block;height:100%;background:linear-gradient(90deg,#b9783c,#f2c27c);transition:width .25s}
-.pop.w{color:#e7c27d}.pop.m{color:#9aa7b5}
-.pro-water{isolation:isolate}
-.water-rings{position:absolute;left:49%;top:58%;width:14px;height:14px;border:2px solid #d6f4ff99;border-radius:50%;animation:fishrings 2.1s ease-out infinite;z-index:1}
-@keyframes fishrings{0%{transform:scale(.3);opacity:.85}100%{transform:scale(7);opacity:0}}
-.fish-silhouette{position:absolute;left:50%;top:57%;transform:translate(-50%,-50%);font-size:30px;opacity:.4;filter:blur(1px);z-index:1}
-.water-caption{position:absolute;right:10px;bottom:8px;color:#ffffffbb;font-size:11px;z-index:2}
-.pro-water .bob{z-index:3}
-.farm-stage{display:inline-block;transition:transform .25s,filter .25s}
-.farm-stage.s2{filter:drop-shadow(0 2px 3px #76be5a88)}
-.farm-stage.s3{filter:drop-shadow(0 3px 5px #70c66a99);transform:scale(1.1)}
-.farm-stage.s4{filter:drop-shadow(0 0 9px #ffd35a);animation:readycrop 1.5s ease-in-out infinite alternate}
-@keyframes readycrop{to{transform:scale(1.12);filter:drop-shadow(0 0 14px #ffd35a)}}
-.farm-crop-tag{position:absolute;left:3px;right:3px;bottom:2px;font-size:9px;color:#ffffffb8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none}
-.farm-sort-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.farm-sort-actions{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
-.farm-sort-actions .chip{font-size:11px;padding:7px 9px}
-.mech-scene{background:radial-gradient(45% 45% at 50% 55%,#6a89a655,transparent),linear-gradient(145deg,#293847,#111923 65%,#090e14)}
-.mech-part-label{position:relative;z-index:1;text-align:center;margin-top:12px;padding:6px 10px;border-radius:10px;background:#07101b99;color:#fff;font-weight:700}
-.mech-result{border-color:#3fd1b066}
-.drive-scene{background:radial-gradient(55% 70% at 50% 50%,#527d9c66,transparent),linear-gradient(145deg,#283d4e,#101923 65%,#090e14)}
-.drive-checks{display:grid;grid-template-columns:1fr;gap:8px;margin-top:10px}
-.drive-checks .chip{width:100%;text-align:left;white-space:normal;min-height:44px}
-.drive-route{width:100%;display:flex;align-items:center;gap:10px;text-align:left;margin:7px 0;background:#131f2b;border:1px solid var(--l);color:var(--t)}
-.drive-route-icon{font-size:27px}
-.drive-route .sm{display:block;margin-top:3px}
-.drive-road{height:18px;background:repeating-linear-gradient(90deg,#263648 0 18px,#334d60 18px 22px);border-radius:5px;padding:5px}
-.drive-road i{height:6px}
-@media(max-width:380px){.farm-sort-row{align-items:flex-start;flex-direction:column}.farm-sort-actions{justify-content:flex-start}}
-@media(prefers-reduced-motion:reduce){.water-rings,.farm-stage.s4{animation:none!important}}
-
 </style>
 </head>
 <body data-loc="home">
@@ -365,6 +327,7 @@ Object.keys(STUB).forEach(k=>{TT[k]=STUB[k][0];LOC[k]="city";R[k]=()=>`<div clas
    ГЛАВНЫЙ ЭКРАН И ПЕРСОНАЖ
    ========================================================= */
 const LEFT=[["inv","🎒","Инвентарь"],["ward","👕","Гардероб"],["ach","🏆","Достижения"],["col","💎","Коллекции"],["log","📜","Журнал"]];
+LEFT.push(["profile","🪪","Профиль"]);
 const RIGHT=[["city","🏙","Город"],["work","⛏","Профессии"],["tasks","📋","Задания"],["biz","💼","Бизнес"],["shop","🛍","Магазин"],["estate","🏠","Недвижимость"]];
 const rail=a=>a.map(b=>`<button onclick="go('${b[0]}')"><b>${b[1]}</b>${b[2]}</button>`).join("");
 function hero(){
@@ -971,10 +934,7 @@ Object.assign(TI,{exp:"🧭",club:"🎭",rank:"🏅"});Object.assign(TT,{exp:"Э
 Object.assign(MAT,{resin:["Смола",60]});
 const TREES=[{n:"Сосна",hp:4,w:2,e:"🌲",hardness:1,kind:"Мягкая древесина"},{n:"Берёза",hp:3,w:2,e:"🌳",hardness:1.3,kind:"Средняя древесина",f:"hue-rotate(40deg) brightness(1.35)"},{n:"Дуб",hp:6,w:4,e:"🌳",hardness:2.2,kind:"Твёрдая древесина"}];
 let tr=null,wst=0,tw=20;
-function newTree(){
-  const k=Math.random(),t=TREES[k<.5?0:k<.8?1:2];
-  tr={t,hp:t.hp,fall:0,fx:"",n:0,scars:[]};wst=0;
-}
+function newTree(){const k=Math.random(),t=TREES[k<.5?0:k<.8?1:2];tr={t,hp:t.hp,fall:0,fx:"",n:0}}
 const mpos=()=>{const h=tr?.t?.hardness||1;const skill=plv("wood");const period=Math.max(210,390-h*35-skill*8);return 50+50*Math.sin(performance.now()/period)};
 function strike(){
   if(!tr)newTree();
@@ -984,15 +944,10 @@ function strike(){
   const tool=Math.max(0,toolB()||0),skill=plv("wood");
   const base=Math.max(8,Math.min(29,25-tr.t.hardness*5+(skill-1)*1.4+tool*1.5));
   tw=base;
-  const d=Math.abs(mpos()-tc),perfect=Math.max(2,tw*.19),good=tw*.5,weak=tw*.82;
-  const q=d<=perfect?"p":d<=good?"g":d<=weak?"w":"m";
-  const dmg=q==="p"?2:q==="g"?1:0;
-  if(q==="p"||q==="g")wst++;else wst=0;
-  tr.hp-=dmg;tr.fx=q;tr.n++;
-  if(q!=="m")tr.scars.push({q,x:Math.max(38,Math.min(62,50+(Math.random()-.5)*16)),y:64+Math.random()*13});
-  if(tr.scars.length>7)tr.scars.shift();
-  /* A new target is selected only after the hit, never mid-swing. */
-  tc=Math.max(tw/2+2,Math.min(98-tw/2,18+Math.random()*64));
+  const d=Math.abs(mpos()-tc),perfect=Math.max(2,tw*.19),good=tw*.5;
+  const q=d<=perfect?"p":d<=good?"g":"m",dmg=q==="p"?2:q==="g"?1:0;
+  if(q==="m")wst=0;else wst++;
+  tr.hp-=dmg;tr.fx=q;tr.n++;tc=Math.max(tw/2+2,Math.min(98-tw/2,18+Math.random()*64));
   tw=Math.max(7,Math.min(30,tw+(Math.random()-.5)*7));
   if(typeof wear==="function"&&toolB()>0)wear();
   setTimeout(()=>{if(tr)tr.fx=""},500);
@@ -1003,26 +958,21 @@ function strike(){
     if(tr.t.hp>=6&&Math.random()<.2){S.mats.resin=(S.mats.resin||0)+1;m+=" и смола"}
     inc("chopped",w);gain(5);toast(m);tr.fall=1;
     setTimeout(()=>{newTree();tw=20;if(cur==="wood")draw()},1000);
-  }else if(q==="w")toast("Слабый удар: ствол повреждён незначительно. Нужен ещё один точный удар.");
-  else if(q==="m")toast("Промах: дерево не потеряно. Попробуй ещё раз.");
+  }else if(q==="m")toast("Промах: дерево не потеряно. Попробуй ещё раз.");
   save();draw();
 }
 R.wood=()=>{
   if(S.lv<3)return gate(3);
   if(!tr)newTree();
-  const t=tr.t,fx=tr.fx,show=fx&&!tr.fall,damage=Math.max(0,Math.min(100,(t.hp-tr.hp)/t.hp*100));
-  const quality={p:"Идеально!",g:"Хорошо",w:"Слабый удар",m:"Мимо"};
+  const t=tr.t,fx=tr.fx,show=fx&&!tr.fall;
   return `<div class="forest"><i class="leaf" style="left:12%"></i><i class="leaf" style="left:45%;animation-delay:1.3s"></i><i class="leaf" style="left:78%;animation-delay:2.4s"></i><div class="sun"></div><div class="gnd"></div>
-  <div class="tree2${tr.fall?" fall":""}${show&&(fx==="p"||fx==="g")?" hit"+fx:""}${tr.n===0&&!tr.fall?" new":""}" style="filter:${t.f?t.f+" ":""}drop-shadow(0 8px 6px #0009)">${t.e}</div>
-  <div class="wood-hits">${tr.scars.map((h,i)=>`<i class="wood-hit ${h.q}" style="left:${h.x}%;top:${h.y}%"></i>`).join("")}</div>
-  <div class="wood-cut-progress"><i style="width:${damage}%"></i></div>
-  ${show?`<div class="pop ${fx}">${quality[fx]}</div>`:""}
-  ${show&&(fx==="p"||fx==="g")?[0,1,2,3,4,5].map(i=>`<b class="wc" style="--dx:${(i-2.5)*22}px;--dy:${-30-i%3*14}px"></b>`).join(""):""}</div>
-  <div class="card"><div class="row"><b>${t.n}</b><span class="sm">Прочность ${Math.max(0,tr.hp)}/${t.hp} · ${t.kind}${wst>=3?" · серия "+wst:""}</span></div><div class="bar"><i style="width:${Math.max(0,tr.hp/t.hp*100)}%"></i></div><div class="sm">Состояние ствола: ${Math.round(damage)}% повреждений · следов ударов: ${tr.scars.length}</div></div>
+  <div class="tree2${tr.fall?" fall":""}${show&&fx!=="m"?" hit"+fx:""}${tr.n===0&&!tr.fall?" new":""}" style="filter:${t.f?t.f+" ":""}drop-shadow(0 8px 6px #0009)">${t.e}</div>
+  ${show?`<div class="pop ${fx}">${{p:"Идеально!",g:"Хорошо",m:"Мимо"}[fx]}</div>`:""}
+  ${show&&fx!=="m"?[0,1,2,3,4,5].map(i=>`<b class="wc" style="--dx:${(i-2.5)*22}px;--dy:${-30-i%3*14}px"></b>`).join(""):""}</div>
+  <div class="card"><div class="row"><b>${t.n}</b><span class="sm">Прочность ${Math.max(0,tr.hp)}/${t.hp} · ${t.kind}${wst>=3?" · серия "+wst:""}</span></div><div class="bar"><i style="width:${Math.max(0,tr.hp/t.hp*100)}%"></i></div></div>
   <div class="gauge"><i class="gz" style="left:${Math.max(0,tc-tw/2)}%;width:${tw}%"></i><i class="gz p" style="left:${Math.max(0,tc-tw*.19)}%;width:${tw*.38}%"></i><i id="mk"></i></div>
   <button class="btn" style="width:100%;padding:13px" onclick="strike()">Рубить · ⚡2</button>
-  <p class="sm" style="margin-top:8px">Идеальный удар наносит 2 урона, хороший — 1, слабый и промах не повреждают дерево. Зона меняет ширину и положение только между ударами. Порода, инструмент и опыт влияют на сложность. Бревна: ${S.mats.wood||0}, доски: ${S.mats.board||0}, смола: ${S.mats.resin||0}.</p>`;
-};
+  <p class="sm" style="margin-top:8px">Зона меняет ширину и положение после ударов. Золотой центр даёт двойной урон. Порода, инструмент и опыт влияют на сложность. Бревна: ${S.mats.wood||0}, доски: ${S.mats.board||0}, смола: ${S.mats.resin||0}.</p>`};
 (function tick(){const m=document.getElementById("mk");if(m)m.style.left=mpos()+"%";requestAnimationFrame(tick)})();
 
 /* =========================================================
@@ -1190,48 +1140,28 @@ R.photo=()=>{
 };
 
 /* =========================================================
-   BLACK BUSINESS 5.1 — РАСШИРЕННЫЕ ЦИКЛЫ ПРОФЕССИЙ
-   Интеграция точечно поверх существующих систем.
-   Награды, цены, расход энергии, списки заказов и job() не меняются.
+   ФЕРМА: ГРЯДКИ, ПОСЕВ, ПОЛИВ, ПРОПОЛКА, СБОР
+   Выберите семена и нажимайте на пустую грядку (посев). Лейка
+   ускоряет рост на 25% и даёт +1 к урожаю. Сорняки появляются
+   сами: если не выдернуть за 10 секунд, урожай уменьшится.
+   Растения проходят стадии роста; готовые светятся и просятся в сбор.
    ========================================================= */
-
-/* ФЕРМА: сохраняем 6 грядок, исходные расходы/урожай/тайминги.
-   Дополнительные визуальные разновидности овощных культур используют
-   существующий ресурс «Овощи» и экономику исходной культуры veg. */
 const FD=6,CE={wheat:"🌾",veg:"🥕",flax:"🌸"};
 const fd=()=>(S.fd&&S.fd.length===FD)?S.fd:(S.fd=Array(FD).fill(null));
-const FARM_CULTURES=[
- {id:"wheat",n:"Пшеница",e:"🌾",c:30,t:60,out:"wheat",group:"Зерновые"},
- {id:"veg",n:"Овощи",e:"🥕",c:60,t:120,out:"veg",group:"Овощи"},
- {id:"potato",n:"Картофель",e:"🥔",c:60,t:120,out:"veg",group:"Овощи"},
- {id:"carrot",n:"Морковь",e:"🥕",c:60,t:120,out:"veg",group:"Овощи"},
- {id:"tomato",n:"Томаты",e:"🍅",c:60,t:120,out:"veg",group:"Овощи"},
- {id:"cucumber",n:"Огурцы",e:"🥒",c:60,t:120,out:"veg",group:"Овощи"},
- {id:"corn",n:"Кукуруза",e:"🌽",c:60,t:120,out:"veg",group:"Овощи"}
-];
 let ft="wheat",fxp=null,fsig="";
-const farmCulture=id=>FARM_CULTURES.find(c=>c.id===id)||FARM_CULTURES.find(c=>c.id==="veg");
-const farmGrowth=p=>{const c=farmCulture(p.c);return Math.min(1,(Date.now()-p.at)/(c.t*1000*(p.w?.75:1)))};
-function fTool(k){if(k!=="water"&&!farmCulture(k))return;ft=k;draw()}
-function fSort(i,grade){
-  const q=S.farmSortQueue||[];if(!q[i]||q[i].grade)return;
-  q[i].grade=grade;S.farmSortQueue=q;save();toast("Партия отсортирована: "+(grade==="premium"?"отборный сорт":"стандартный сорт"));draw();
-}
+const gp=p=>Math.min(1,(Date.now()-p.at)/(CROPS.find(c=>c.id===p.c).t*1000*(p.w?.75:1)));
+function fTool(k){ft=k;draw()}
 function fTap(i){
   const f=fd(),p=f[i];
   if(p&&p.wd){p.wd=0;if(Date.now()-p.ws>1e4)p.pen=1;fxp={i,k:"weed"};gain(1);toast("Сорняк выдернут")}
   else if(!p){
     if(ft==="water")return toast("Сначала посейте семена");
-    const c=farmCulture(ft);if(!c)return;
-    if(S.coins<c.c)return toast("Недостаточно монет");
+    const c=CROPS.find(x=>x.id===ft);if(S.coins<c.c)return toast("Недостаточно монет");
     S.coins-=c.c;f[i]={c:ft,at:Date.now(),w:0,wd:0,pen:0};fxp={i,k:"seed"};
   }
-  else if(farmGrowth(p)>=1){
-    const c=farmCulture(p.c),n=Math.max(1,3+(p.w?1:0)-(p.pen?1:0));
-    S.mats[c.out]=(S.mats[c.out]||0)+n;inc("harvested",n);gain(4);fxp={i,k:"pick",e:c.e};f[i]=null;
-    S.farmSortQueue=Array.isArray(S.farmSortQueue)?S.farmSortQueue:[];
-    S.farmSortQueue.push({crop:c.n,out:MAT[c.out][0],qty:n,grade:null,at:Date.now()});
-    toast("Собрано: "+MAT[c.out][0]+" ×"+n+" · партия ждёт сортировки");
+  else if(gp(p)>=1){
+    const n=Math.max(1,3+(p.w?1:0)-(p.pen?1:0));
+    S.mats[p.c]=(S.mats[p.c]||0)+n;inc("harvested",n);gain(4);fxp={i,k:"pick",e:CE[p.c]};f[i]=null;toast("Собрано: "+MAT[p.c][0]+" ×"+n);
   }
   else if(ft==="water"&&!p.w){p.w=1;fxp={i,k:"water"};toast("Полито: рост быстрее, урожай больше")}
   else return;
@@ -1239,209 +1169,198 @@ function fTap(i){
 }
 setInterval(()=>{
   if(cur!=="farm")return;
-  fd().forEach(p=>{if(p&&!p.wd&&farmGrowth(p)<1&&Math.random()<.04){p.wd=1;p.ws=Date.now()}});
-  const sg=fd().map(p=>p?(p.wd?"w":"")+Math.floor(farmGrowth(p)*3)+(p.w?"v":"")+p.c:"-").join();
+  fd().forEach(p=>{if(p&&!p.wd&&gp(p)<1&&Math.random()<.04){p.wd=1;p.ws=Date.now()}});
+  const sg=fd().map(p=>p?(p.wd?"w":"")+Math.floor(gp(p)*3)+(p.w?"v":""):"-").join();
   if(sg!==fsig){fsig=sg;draw()}
 },1000);
 R.farm=()=>{
   if(S.lv<5)return gate(5);
-  const f=fd(),ready=f.filter(p=>p&&farmGrowth(p)>=1).length,occupied=f.filter(Boolean).length;
-  const sortQ=Array.isArray(S.farmSortQueue)?S.farmSortQueue:[];
-  const beds=f.map((p,i)=>{
+  const f=fd();
+  return `<div class="field"><div class="sun2"></div><i class="cloud"></i><i class="cloud c2"></i><div class="scare">🧑‍🌾</div><div class="plots">${f.map((p,i)=>{
     const x=fxp&&fxp.i===i?fxp:null;let h="";
-    if(p){
-      const g=farmGrowth(p),c=farmCulture(p.c),stage=g>=1?4:g<.18?0:g<.4?1:g<.68?2:3;
-      const plants=["🌱","🌱","🌿","🪴",c.e];
-      h=`<span class="pl farm-stage s${stage}${g>=1?" ready":""}" style="font-size:${stage===4?40:22+g*18}px">${plants[stage]}</span>`;
-      if(g<1)h+=`<div class="pb"><i style="width:${g*100}%"></i></div>`;
-      if(p.wd)h+=`<span class="weedt">🍂</span>`;
-      h+=`<span class="farm-crop-tag">${c.n}</span>`;
-    }
+    if(p){const g=gp(p);h=g>=1?`<span class="pl ready" style="font-size:40px">${CE[p.c]}</span>`:`<span class="pl" style="font-size:${22+g*18}px">${g<.34?"🌱":"🌿"}</span><div class="pb"><i style="width:${g*100}%"></i></div>`;if(p.wd)h+=`<span class="weedt">🍂</span>`}
     if(x&&x.k==="seed")h+=`<b class="seedf"></b>`;
     if(x&&x.k==="water")h+=[20,50,75].map((l,j)=>`<span class="dropw" style="left:${l}%;animation-delay:${j*.08}s">💧</span>`).join("");
     if(x&&x.k==="pick")h+=`<span class="flyp">${x.e}</span>`;
-    return `<button class="plot${p&&p.w?" wet":""}" aria-label="Грядка ${i+1}" onclick="fTap(${i})">${h}</button>`;
-  }).join("");
-  const crops=FARM_CULTURES.map(c=>`<button class="chip${ft===c.id?" on":""}" onclick="fTool('${c.id}')">${c.e} ${c.n} · ${c.c} 🪙 · ${c.t} с</button>`).join("");
-  const sorting=sortQ.map((q,i)=>`<div class="card farm-sort-row"><div><b>${q.crop}</b><div class="sm">${q.out} ×${q.qty} · ${q.grade?(q.grade==="premium"?"Отборный сорт":"Стандартный сорт"):"Не отсортировано"}</div></div>${q.grade?`<span class="sm">✓ Готово</span>`:`<div class="farm-sort-actions"><button class="chip" onclick="fSort(${i},'premium')">Отборный</button><button class="chip" onclick="fSort(${i},'standard')">Стандарт</button></div>`}</div>`).join("");
-  return `<div class="card row"><div><b>Фермерское хозяйство</b><div class="sm">Грядки: ${occupied}/${FD} · созрело: ${ready} · партии на сортировке: ${sortQ.filter(q=>!q.grade).length}</div></div><span>🌾</span></div>
-  <div class="field"><div class="sun2"></div><i class="cloud"></i><i class="cloud c2"></i><div class="scare">🧑‍🌾</div><div class="plots">${beds}</div></div>
-  <div class="chips">${crops}<button class="chip${ft==="water"?" on":""}" onclick="fTool('water')">💧 Лейка</button></div>
-  <div class="card sm">Цикл хозяйства: выбери культуру → посади → полей → удали сорняки → собери созревшее растение. Стадии роста меняются прямо на грядке. Новые овощные разновидности используют общие ресурсы, цены и выход существующих овощей 5.1.</div>
-  ${sortQ.length?`<h3>Сортировка урожая</h3><div class="card sm">Собранное уже поступило на склад в прежнем количестве. Сортировка фиксирует качество партии и не меняет цену или объём ресурсов.</div>${sorting}`:""}`;
-};
+    return `<button class="plot${p&&p.w?" wet":""}" aria-label="Грядка ${i+1}" onclick="fTap(${i})">${h}</button>`}).join("")}</div></div>
+  <div class="chips">${CROPS.map(c=>`<button class="chip${ft===c.id?" on":""}" onclick="fTool('${c.id}')">${CE[c.id]} ${c.n} · ${c.c} 🪙</button>`).join("")}<button class="chip${ft==="water"?" on":""}" onclick="fTool('water')">💧 Лейка</button></div>
+  <div class="card sm">Выберите семена и нажмите на пустую грядку. «Лейка» поливает растущее растение. Готовое растение светится — нажмите, чтобы собрать. Сорняк 🍂 нужно выдернуть касанием.</div>`};
 
-/* РЫБАК: существующее окно поклёвки и веса улова 60/30/10 сохранены.
-   Выбор места/наживки меняет характер сопротивления, а не вероятность рыбы. */
-const fishFight={tension:50,progress:0,power:1,catch:null,spot:"lake",bait:"worm"};
-const FISH_SPOTS=[
- {id:"lake",n:"Тихое озеро",e:"🏞️",res:1,desc:"Спокойная вода"},
- {id:"river",n:"Река",e:"🌊",res:1.08,desc:"Течение усиливает рывки"},
- {id:"shore",n:"Берег",e:"🌅",res:.94,desc:"Более спокойная борьба"}
-];
-const FISH_BAITS=[
- {id:"worm",n:"Червь",e:"🪱",res:1,desc:"Универсальная наживка"},
- {id:"corn",n:"Кукуруза",e:"🌽",res:.96,desc:"Мягче рывки"},
- {id:"spoon",n:"Блесна",e:"✨",res:1.08,desc:"Резкие рывки хищной рыбы"}
-];
-const FISH_INFO={carp:{n:"Карась",e:"🐟",min:.4,max:1.8,power:.86,rarity:"Обычная",habitat:"озеро, тихая заводь"},pike:{n:"Щука",e:"🐊",min:1,max:5,power:1.08,rarity:"Редкая",habitat:"река, озеро"},gcarp:{n:"Золотой карп",e:"🐠",min:.5,max:2,power:1.22,rarity:"Особая",habitat:"озеро"}};
-function fishSetup(kind,id){
-  if(fs.st!==0)return;
-  if(kind==="spot"&&FISH_SPOTS.some(x=>x.id===id))fishFight.spot=id;
-  if(kind==="bait"&&FISH_BAITS.some(x=>x.id===id))fishFight.bait=id;
-  draw();
-}
-function fishReset(){fs.st=0;fishFight.catch=null;fishFight.progress=0;fishFight.tension=50}
+/* =========================================================
+   BLACK BUSINESS 5.1 — ИНТЕРАКТИВНЫЕ ЦИКЛЫ ПРОФЕССИЙ
+   Сохранены существующие награды, цены, требования и списки заказов.
+   Новые сцены используют те же игровые ресурсы и функции завершения.
+   ========================================================= */
+
+/* Рыбак: поклёвка и управляемое вываживание без пассивного таймера */
+const fishFight={tension:50,progress:0,power:1};
 function fishAct(){
   if(fs.st===0){
     if(S.energy<2)return toast("Недостаточно энергии");
-    S.energy-=2;
-    fishFight.catch=pick({carp:60,pike:30,gcarp:10});
-    const picked=FISH_INFO[fishFight.catch];fishFight.weight=picked.min+Math.random()*(picked.max-picked.min);
-    fishFight.progress=0;fishFight.tension=50;
-    fs.st=1;
-    fs.tm=setTimeout(()=>{if(fs.st!==1)return;fs.st=2;if(cur==="fish")draw();fs.tm=setTimeout(()=>{if(fs.st===2){fishReset();toast("Рыба сорвалась");if(cur==="fish")draw()}},2200)},1200+Math.random()*2500);
-  }else if(fs.st===1){clearTimeout(fs.tm);fishReset();toast("Слишком рано — рыба ушла")}
-  else if(fs.st===2){clearTimeout(fs.tm);fs.st=3;fishFight.tension=48;fishFight.progress=0;fishFight.power=FISH_INFO[fishFight.catch]?.power||1;toast("Рыба на крючке! Контролируй натяжение лески.")}
+    S.energy-=2;fs.st=1;
+    fs.tm=setTimeout(()=>{if(fs.st!==1)return;fs.st=2;if(cur==="fish")draw();fs.tm=setTimeout(()=>{if(fs.st===2){fs.st=0;toast("Рыба сорвалась");if(cur==="fish")draw()}},2200)},1200+Math.random()*2500);
+  }else if(fs.st===1){clearTimeout(fs.tm);fs.st=0;toast("Слишком рано — рыба ушла")}
+  else if(fs.st===2){clearTimeout(fs.tm);fs.st=3;fishFight.tension=48;fishFight.progress=0;fishFight.power=1;toast("Рыба на крючке! Контролируй натяжение лески.")}
   draw();
 }
 function fishControl(action){
   if(fs.st!==3)return;
-  const spot=FISH_SPOTS.find(x=>x.id===fishFight.spot)||FISH_SPOTS[0];
-  const bait=FISH_BAITS.find(x=>x.id===fishFight.bait)||FISH_BAITS[0];
-  const resistance=fishFight.power*spot.res*bait.res;
-  if(action==="pull"){
-    fishFight.tension+=14*resistance;
-    fishFight.progress+=fishFight.tension>=35&&fishFight.tension<=72?23:8;
-  }else if(action==="ease"){
-    fishFight.tension-=12*resistance;
-    fishFight.progress+=fishFight.tension>=30&&fishFight.tension<=70?16:5;
-  }
+  if(action==="pull"){fishFight.tension+=17;fishFight.progress+=fishFight.tension>=35&&fishFight.tension<=72?24:9}
+  else if(action==="ease"){fishFight.tension-=14;fishFight.progress+=fishFight.tension>=30&&fishFight.tension<=70?17:5}
   fishFight.tension=Math.max(0,Math.min(100,fishFight.tension));
-  if(fishFight.tension>=96){fishReset();toast("Леска оборвалась — рыба ушла");draw();return}
-  if(fishFight.tension<=4){fishReset();toast("Слишком слабое натяжение — рыба сорвалась");draw();return}
+  if(fishFight.tension>=96){fs.st=0;toast("Леска оборвалась — рыба ушла");draw();return}
+  if(fishFight.tension<=4){fs.st=0;toast("Слишком слабое натяжение — рыба сорвалась");draw();return}
   if(fishFight.progress>=100){
-    const f=fishFight.catch||pick({carp:60,pike:30,gcarp:10});
-    S.mats[f]=(S.mats[f]||0)+1;inc("fished");gain(4);
-    toast("Поймано: "+MAT[f][0]);fishReset();save();draw();return;
+    fs.st=0;const f=pick({carp:60,pike:30,gcarp:10});S.mats[f]=(S.mats[f]||0)+1;inc("fished");gain(4);toast("Поймано: "+MAT[f][0]);save();draw();return;
   }
   draw();
 }
 R.fish=()=>{
   const locked=gate(2);if(locked)return locked;
-  const spot=FISH_SPOTS.find(x=>x.id===fishFight.spot)||FISH_SPOTS[0];
-  const bait=FISH_BAITS.find(x=>x.id===fishFight.bait)||FISH_BAITS[0];
-  const caught=FISH_INFO[fishFight.catch];
-  const caughtWeight=fishFight.weight?fishFight.weight.toFixed(2).replace(".",",")+" кг":"";
-  const bg=spot.id==="river"?"linear-gradient(#4b9dcc,#164a70 58%,#092b43)":spot.id==="shore"?"linear-gradient(#e5a86d,#397eaa 55%,#123b58)":"linear-gradient(#5aa7e8,#123a63 55%,#08213b)";
-  const scene=`<div class="water pro-water" style="background:${bg}"><div class="water-rings"></div><div class="fish-silhouette">${fs.st===3?(caught?.e||"🐟"):"🐟"}</div><div class="fish-line" style="transform:rotate(${fs.st===3?(fishFight.tension-50)/5:8}deg)"></div><div class="bob ${fs.st===1?"w":fs.st>=2?"b":""}">🎣</div><div class="water-caption">${spot.e} ${spot.n}</div></div>`;
-  if(fs.st===3)return scene+`<div class="card fish-ui"><div class="row"><b>${caught?.n||"Рыба"} · ${caught?.rarity||"Улов"}</b><span class="sm">${caughtWeight||""}</span></div><div class="row"><b>Натяжение лески</b><b>${Math.round(fishFight.tension)}%</b></div><div class="fish-meter tension-meter"><i style="width:${fishFight.tension}%"></i></div><div class="row"><b>Вываживание</b><b>${Math.min(100,fishFight.progress)}%</b></div><div class="bar"><i style="width:${Math.min(100,fishFight.progress)}%"></i></div><p class="sm">${spot.desc}. Предпочитаемое место вида: ${caught?.habitat||"водоём"}. Наживка: ${bait.n}. Сильные рывки требуют чередовать подтягивание и ослабление лески.</p><div class="work-actions"><button class="btn" onclick="fishControl('pull')">Подтянуть леску</button><button class="btn" onclick="fishControl('ease')">Ослабить леску</button></div></div>`;
-  const setup=fs.st===0?`<div class="card"><b>Место ловли</b><div class="chips">${FISH_SPOTS.map(x=>`<button class="chip${fishFight.spot===x.id?" on":""}" onclick="fishSetup('spot','${x.id}')">${x.e} ${x.n}</button>`).join("")}</div><b>Наживка</b><div class="chips">${FISH_BAITS.map(x=>`<button class="chip${fishFight.bait===x.id?" on":""}" onclick="fishSetup('bait','${x.id}')">${x.e} ${x.n}</button>`).join("")}</div></div>`:"";
-  const status=["Забрось удочку","Поплавок движется…","Поклёвка! Подсекай!"][fs.st];
-  return scene+setup+`<div class="card row"><div><b>${status}</b><div class="sm">Улов: ${S.st.fished||0} · карась, щука, золотой карп</div></div><button class="btn" onclick="fishAct()">${["Забросить · ⚡2","Подсекать","Подсечь!"][fs.st]}</button></div><div class="card sm">Следи за поплавком и кругами на воде. Вероятности видов рыбы сохранены как в исходной 5.1 (60/30/10); место и наживка меняют сопротивление при вываживании, а не шансы выпадения.</div>`;
+  const names=["Забрось удочку","Ждём поклёвку…","Клюёт! Подсекай!","Вываживай рыбу"];
+  const scene=`<div class="water"><div class="fish-line" style="transform:rotate(${fs.st===3?(fishFight.tension-50)/5:8}deg)"></div><div class="bob ${fs.st===1?"w":fs.st>=2?"b":""}">🎣</div></div>`;
+  if(fs.st===3)return scene+`<div class="card fish-ui"><div class="row"><b>Натяжение лески</b><b>${Math.round(fishFight.tension)}%</b></div><div class="fish-meter"><i style="width:${fishFight.tension}%"></i></div><div class="row"><b>Вываживание</b><b>${Math.min(100,fishFight.progress)}%</b></div><div class="bar"><i style="width:${Math.min(100,fishFight.progress)}%"></i></div><p class="sm">Держи натяжение примерно в средней зоне. Слишком сильное порвёт леску, слишком слабое позволит рыбе уйти.</p><div class="work-actions"><button class="btn" onclick="fishControl('pull')">Подтянуть леску</button><button class="btn" onclick="fishControl('ease')">Ослабить леску</button></div></div>`;
+  return scene+`<div class="card row"><div><b>${names[fs.st]}</b><div class="sm">Улов: ${S.st.fished||0} · карась, щука, редкий золотой карп</div></div><button class="btn" onclick="fishAct()">${["Забросить · ⚡2","Ждём…","Подсечь!"][fs.st]}</button></div><div class="card sm">Выбери момент подсечки по движению поплавка и кругам на воде. После подсечки начнётся вываживание.</div>`;
 };
 
-/* МЕХАНИК: три сценария ремонта с разными узлами и правильной
-   последовательностью. Используются только два исходных заказа.
-   Для ремонта тормозов применяется тот же заказ/расход/награда,
-   что и для ремонта грузовика: новые экономические позиции не добавлены. */
-let mechRun=null,mechNote="",mechLast=null;
-const MECH_SCENARIOS={
- wheel:{job:3,n:"Замена колеса",e:"🛞",node:"Колесо и крепёж",steps:[
-  {n:"Выбор неисправного колеса",e:"🚘",hint:"Сверь заказ и выбери колесо с повреждением.",opts:["Выбрать повреждённое колесо","Снимать исправное колесо","Начать с двигателя"],ok:0},
-  {n:"Подъём автомобиля",e:"🏗️",hint:"Зафиксируй автомобиль на подъёмнике перед снятием колеса.",opts:["Открыть капот","Поднять и зафиксировать автомобиль","Сразу опустить подъёмник"],ok:1},
-  {n:"Демонтаж",e:"🔩",hint:"Ослабь крепёж и сними неисправное колесо.",opts:["Снять колесо после ослабления гаек","Срезать тормозной шланг","Снять дверь"],ok:0},
-  {n:"Установка и закрепление",e:"🛞",hint:"Установи подходящее колесо и затяни крепёж крест-накрест.",opts:["Оставить гайки свободными","Поставить колесо без центровки","Установить колесо и затянуть крепёж крест-накрест"],ok:2},
-  {n:"Контрольная проверка",e:"✅",hint:"Опусти автомобиль и проверь фиксацию колеса.",opts:["Проверить затяжку после опускания","Уехать с поднятым автомобилем","Снять другое колесо без причины"],ok:0}
- ]},
- brakes:{job:3,n:"Ремонт тормозной системы",e:"🛠️",node:"Тормозной узел",steps:[
-  {n:"Осмотр тормозов",e:"🚘",hint:"Осмотри колодки, диск и магистраль.",opts:["Проверить износ колодок и диска","Сразу красить кузов","Проверить аудиосистему"],ok:0},
-  {n:"Подъём и снятие колеса",e:"🏗️",hint:"Зафиксируй машину и открой доступ к тормозному узлу.",opts:["Поднять машину и снять колесо","Снять аккумулятор","Открыть багажник"],ok:0},
-  {n:"Демонтаж изношенных деталей",e:"🔧",hint:"Сними изношенные колодки и проверь суппорт.",opts:["Снять исправный амортизатор","Снять изношенные колодки и осмотреть суппорт","Слить масло из двигателя"],ok:1},
-  {n:"Установка компонентов",e:"🧰",hint:"Установи новые колодки и собери узел.",opts:["Оставить старые колодки","Установить детали без фиксации","Установить и закрепить новые колодки"],ok:2},
-  {n:"Проверка торможения",e:"✅",hint:"Проверь ход педали и отсутствие утечек.",opts:["Проверить педаль и герметичность","Сразу выдать автомобиль без проверки","Отключить тормоза"],ok:0}
- ]},
- engine:{job:4,n:"Диагностика и ремонт двигателя",e:"⚙️",node:"Двигатель",steps:[
-  {n:"Открыть капот и осмотреть двигатель",e:"🚗",hint:"Начни с визуального осмотра и проверки соединений.",opts:["Открыть капот и осмотреть двигатель","Снять колесо","Запустить мойку салона"],ok:0},
-  {n:"Подключить диагностику",e:"📟",hint:"Подключи сканер к диагностическому разъёму.",opts:["Подключить сканер","Снять фару","Заменить шины"],ok:0},
-  {n:"Определить неисправность",e:"🔍",hint:"Считай показатели и сопоставь код неисправности.",opts:["Игнорировать код","Считать ошибки и проверить показатели","Сбросить всё без осмотра"],ok:1},
-  {n:"Подбор детали",e:"⚙️",hint:"Выбери деталь, соответствующую найденной неисправности.",opts:["Установить случайную деталь","Поставить декоративную накладку","Подобрать совместимую деталь"],ok:2},
-  {n:"Ремонт",e:"🔧",hint:"Заменить неисправный компонент и закрепить соединения.",opts:["Заменить компонент и проверить соединения","Оставить разъём отключённым","Снять исправный генератор"],ok:0},
-  {n:"Запуск и контроль",e:"✅",hint:"Запусти двигатель и повторно проверь показатели.",opts:["Не запускать двигатель","Провести контрольный запуск и повторную диагностику","Сразу закрыть капот без проверки"],ok:1}
- ]}
-};
-function mechStart(i,scenario){
-  const j=JOBS[i],sc=MECH_SCENARIOS[scenario];
-  if(!j||j.p!=="mech"||!sc||sc.job!==i)return;
-  if(S.dl[i]===day())return toast("Заказ уже выполнен сегодня");
-  if(!Object.keys(j.i).every(k=>have(k)>=j.i[k]))return toast("Не хватает деталей для этого ремонта");
-  mechRun={i,scenario,step:0,quality:100,mistakes:0};mechNote="";mechLast=null;draw();
-}
-function mechAction(choice){
-  if(!mechRun)return;
-  const sc=MECH_SCENARIOS[mechRun.scenario],st=sc.steps[mechRun.step];
-  if(choice!==st.ok){mechRun.quality=Math.max(40,mechRun.quality-12);mechRun.mistakes++;mechNote="Неверный инструмент или порядок. Этап не засчитан — проверь подсказку."}
-  else{mechNote="Выполнено: "+st.n;mechRun.step++}
-  if(mechRun.step>=sc.steps.length){
-    const i=mechRun.i;mechLast={name:sc.n,quality:mechRun.quality,mistakes:mechRun.mistakes};
-    mechRun=null;mechNote="Ремонт завершён. Все узлы проверены.";job(i);return;
-  }
-  draw();
-}
-function mechCancel(){mechRun=null;mechNote="Сценарий отменён. Заказ и материалы не списаны.";draw()}
+/* Механик: последовательность диагностических и ремонтных действий */
+let mechRun=null,mechNote="";
+const MECH_STEPS=[
+ {n:"Осмотр автомобиля",e:"🚘",hint:"Осмотри машину и найди неисправный узел.",opts:["Осмотреть автомобиль","Сразу выдать ключи"],ok:0},
+ {n:"Подъём и фиксация",e:"🔧",hint:"Подними автомобиль и зафиксируй его перед ремонтом.",opts:["Поднять на подъёмнике","Проверить радио"],ok:0},
+ {n:"Демонтаж и замена",e:"⚙️",hint:"Подбери деталь и установи её на место.",opts:["Установить нужную деталь","Покрасить кузов"],ok:0},
+ {n:"Контрольная проверка",e:"🧰",hint:"Проверь результат и убедись, что неисправность устранена.",opts:["Проверить узел","Завершить без проверки"],ok:0}
+];
+function mechStart(i){const j=JOBS[i];if(!j||j.p!=="mech")return;if(!Object.keys(j.i).every(k=>have(k)>=j.i[k]))return toast("Не хватает деталей для этого ремонта");mechRun={i,step:0,quality:100};mechNote="";draw()}
+function mechAction(choice){if(!mechRun)return;const st=MECH_STEPS[mechRun.step];if(choice!==st.ok){mechRun.quality=Math.max(40,mechRun.quality-15);mechNote="Неверное действие. Проверь этап и продолжай."}else{mechNote="Этап выполнен: "+st.n;mechRun.step++}if(mechRun.step>=MECH_STEPS.length){const i=mechRun.i;mechRun=null;mechNote="Ремонт завершён. Результат принят.";job(i);return}draw()}
+function mechCancel(){mechRun=null;mechNote="Заказ отменён до начала ремонта.";draw()}
 R.mech=()=>{
   if(S.lv<6)return gate(6);
-  if(mechRun){
-    const sc=MECH_SCENARIOS[mechRun.scenario],st=sc.steps[mechRun.step];
-    const progress=Math.round(mechRun.step/sc.steps.length*100);
-    return `<div class="work-scene mech-scene"><div class="work-object">${sc.e} ${st.e}</div><div class="work-step">АВТОСЕРВИС · ${sc.node} · этап ${mechRun.step+1}/${sc.steps.length}</div><div class="mech-part-label">${st.n}</div></div>
-    <div class="card"><b>${sc.n}</b><p class="sm">${st.hint}</p><div class="bar"><i style="width:${progress}%"></i></div><div class="row sm"><span>Качество ремонта</span><b>${mechRun.quality}%</b></div><div class="sm">Ошибок на этапах: ${mechRun.mistakes}</div></div>
-    <div class="work-actions">${st.opts.map((o,i)=>`<button class="btn" onclick="mechAction(${i})">${o}</button>`).join("")}</div><p class="sm">${esc(mechNote)}</p><button class="chip" onclick="mechCancel()">Отменить сценарий</button>`;
-  }
+  if(mechRun){const st=MECH_STEPS[mechRun.step];return `<div class="work-scene"><div class="work-object">${st.e}</div><div class="work-step">Ремонтный бокс · этап ${mechRun.step+1} из ${MECH_STEPS.length}</div></div><div class="card"><b>${st.n}</b><p class="sm">${st.hint}</p><div class="bar"><i style="width:${mechRun.quality}%"></i></div><div class="sm">Качество выполнения: ${mechRun.quality}%</div></div><div class="work-actions">${st.opts.map((o,i)=>`<button class="btn" onclick="mechAction(${i})">${o}</button>`).join("")}</div><p class="sm" style="margin-top:8px">${esc(mechNote)}</p><button class="chip" style="margin-top:8px" onclick="mechCancel()">Отменить сценарий</button>`}
   const list=JOBS.map((j,i)=>[j,i]).filter(x=>x[0].p==="mech");
-  const last=mechLast?`<div class="card mech-result"><b>Последний ремонт: ${mechLast.name}</b><div class="sm">Качество: ${mechLast.quality}% · ошибок: ${mechLast.mistakes} · оплата/опыт начислены по исходному заказу</div></div>`:"";
-  return `<div class="work-scene mech-scene"><div class="work-object">🚗 🔧 🛞</div><div class="work-step">АВТОСЕРВИС · подъёмник · диагностический пост · склад деталей</div></div>
-  <div class="card sm">Выбери исходный заказ и конкретную ремонтную операцию. Каждая операция имеет свой набор деталей, инструментов и проверок. Ошибка снижает оценку, но не списывает дополнительные ресурсы. Расход и награда остаются в точности по заказу 5.1.</div>
-  ${list.map(([j,i])=>{
-    const ready=Object.keys(j.i).every(k=>have(k)>=j.i[k]),done=S.dl[i]===day();
-    const scenarios=Object.keys(MECH_SCENARIOS).filter(k=>MECH_SCENARIOS[k].job===i);
-    return `<div class="card"><div class="row"><div><b>${j.n}</b><div class="sm">${Object.keys(j.i).map(k=>nm(k)+" "+have(k)+"/"+j.i[k]).join(" · ")} · ${j.r} 🪙</div></div><span class="sm">${done?"Выполнено сегодня":ready?"Материалы есть":"Нужны детали"}</span></div><div class="chips">${scenarios.map(k=>`<button class="chip" ${!ready||done?"disabled":""} onclick="mechStart(${i},'${k}')">${MECH_SCENARIOS[k].e} ${MECH_SCENARIOS[k].n}</button>`).join("")}</div></div>`;
-  }).join("")}${last}<p class="sm">${esc(mechNote)}</p>`;
+  return `<div class="work-scene"><div class="work-object">🚗 🔧</div><div class="work-step">АВТОСЕРВИС · диагностический пост · подъёмник · склад деталей</div></div><div class="card sm">Выбери заказ. В ремонте будет четыре этапа: осмотр, фиксация, замена деталей и проверка. Награда и расход материалов остаются по текущим правилам заказа.</div>`+list.map(([j,i])=>`<div class="card row"><div><b>${j.n}</b><div class="sm">${Object.keys(j.i).map(k=>nm(k)+" "+have(k)+"/"+j.i[k]).join(" · ")} · ${j.r} 🪙</div></div><button class="btn" onclick="mechStart(${i})">Начать ремонт</button></div>`).join("")+`<p class="sm">${esc(mechNote)}</p>`;
 };
 
-/* ВОДИТЕЛЬ: техосмотр → погрузка/крепление → выбор маршрута → дорожная
-   ситуация → выгрузка. job(i) по-прежнему единственная точка списания
-   груза и начисления оплаты/опыта. Топливного ресурса в 5.1 нет — он
-   не выдумывается и не списывается. */
-const VEHICLES=[{id:"van",n:"Фургон",e:"🚐",cap:6,type:"малые поставки"},{id:"truck",n:"Грузовик",e:"🚚",cap:30,type:"крупный груз"}];
-const DRIVE_ROUTES=[
- {id:"city",n:"Городской маршрут",e:"🏙️",desc:"Короткие улицы и светофоры",hazard:"Красный сигнал перед перекрёстком",actions:["Остановиться перед стоп-линией","Проскочить перекрёсток"],ok:0},
- {id:"bypass",n:"Объездная дорога",e:"🛣️",desc:"Свободнее, но есть крутые повороты",hazard:"Резкий поворот на съезде",actions:["Резко ускориться","Снизить скорость перед поворотом"],ok:1},
- {id:"highway",n:"Шоссе",e:"🌉",desc:"Ровное покрытие и высокая скорость потока",hazard:"Плотный поток впереди",actions:["Соблюдать дистанцию","Прижаться к впереди идущему грузовику"],ok:0}
-];
+/* Водитель: выбор транспорта, проверка груза, маршрут и выгрузка */
 let driveRun=null,driveNote="";
-function driveStart(i,v){
-  const j=JOBS[i],vehicle=VEHICLES.find(x=>x.id===v);
-  if(!j||j.p!=="drive")return;
-  if(S.dl[i]===day())return toast("Заказ уже выполнен сегодня");
-  const qty=Object.values(j.i).reduce((a,b)=>a+b,0);
-  if(!vehicle||vehicle.cap<qty)return toast("Этот транспорт не подходит по грузоподъёмности");
-  if(!Object.keys(j.i).every(k=>have(k)>=j.i[k]))return toast("Не хватает груза для заказа");
-  driveRun={i,v,step:0,checks:{vehicle:false,cargo:false},route:null,event:null};driveNote="";draw();
+const VEHICLES=[{id:"van",n:"Фургон",e:"🚐",cap:6},{id:"truck",n:"Грузовик",e:"🚚",cap:30}];
+function driveStart(i,v){const j=JOBS[i];if(!j||j.p!=="drive")return;const qty=Object.values(j.i).reduce((a,b)=>a+b,0),vehicle=VEHICLES.find(x=>x.id===v);if(!vehicle||vehicle.cap<qty)return toast("Этот транспорт не подходит по грузоподъёмности");if(!Object.keys(j.i).every(k=>have(k)>=j.i[k]))return toast("Не хватает груза для заказа");driveRun={i,v,step:0,route:0};driveNote="";draw()}
+function driveStep(){if(!driveRun)return;driveRun.step++;if(driveRun.step>=3){const i=driveRun.i;driveRun=null;driveNote="Доставка завершена и подтверждена.";job(i);return}draw()}
+function driveCancel(){driveRun=null;driveNote="Перевозка отменена до отправления.";draw()}
+R.drive=()=>{
+  if(S.lv<7)return gate(7);
+  if(driveRun){const j=JOBS[driveRun.i],v=VEHICLES.find(x=>x.id===driveRun.v),st=["Груз принят на складе","Маршрут пройден","Груз выгружен и проверен"][driveRun.step];return `<div class="work-scene"><div class="work-object">${v.e} 📦</div><div class="work-step">Логистический терминал · ${v.n} · вместимость ${v.cap}</div></div><div class="card"><b>${j.n}</b><p class="sm">${st}. Следи за сохранностью груза и заверши этап перевозки.</p><div class="route">${[0,1,2].map((x)=>`<i class="${x<=driveRun.step?"done":""}"></i>`).join("")}</div><div class="sm">Этап ${driveRun.step+1} из 3</div></div><button class="btn" style="width:100%" onclick="driveStep()">${["Подтвердить погрузку","Прибыть по маршруту","Подтвердить выгрузку"][driveRun.step]}</button><button class="chip" style="margin-top:8px" onclick="driveCancel()">Отменить заказ</button>`}
+  const list=JOBS.map((j,i)=>[j,i]).filter(x=>x[0].p==="drive");
+  return `<div class="work-scene"><div class="work-object">🚚 📦</div><div class="work-step">СКЛАДСКОЙ ТЕРМИНАЛ · зона погрузки · контроль отправления</div></div><div class="card sm">Выбери заказ и подходящий транспорт. Грузоподъёмность проверяется до начала перевозки. Доставка использует существующие ресурсы и оплату заказа.</div>`+list.map(([j,i])=>{const qty=Object.values(j.i).reduce((a,b)=>a+b,0);return `<div class="card"><b>${j.n}</b><div class="sm">${Object.keys(j.i).map(k=>nm(k)+" "+have(k)+"/"+j.i[k]).join(" · ")} · ${j.r} 🪙 · груз ${qty}</div><div class="chips" style="margin:8px 0 0">${VEHICLES.map(v=>`<button class="chip" ${v.cap<qty?"disabled":""} onclick="driveStart(${i},'${v.id}')">${v.e} ${v.n} · ${v.cap} ед.</button>`).join("")}</div></div>`}).join("")+`<p class="sm">${esc(driveNote)}</p>`;
+};
+
+/* Переключатель лесоруба: динамическая версия по умолчанию,
+   прежняя простая рубка сохранена для сравнения и отката. */
+let woodMode51="dynamic";
+function setWoodMode51(mode){woodMode51=mode;draw()}
+const _wood51=R.wood;
+R.wood=()=>woodMode51==="legacy"?gate(3)||`<div class="card"><div class="row"><b>Старая версия рубки</b><button class="chip" onclick="setWoodMode51(\'dynamic\')">Вернуться к динамической</button></div><p class="sm">Исходная механика: три удара по дереву, без движущейся зоны.</p><div style="text-align:center">${trees.map((h,i)=>`<button class="tree" style="font-size:${34+h*10}px" aria-label="Дерево" onclick="chop(${i})">🌲</button>`).join("")}</div><p class="sm">Бревна: ${S.mats.wood||0} · доски: ${S.mats.board||0}</p></div>`:`${_wood51()}<button class="chip" style="width:100%;margin-top:8px" onclick="setWoodMode51(\'legacy\')">Сравнить со старой рубкой</button>`;
+
+/* Фермерский экран уже содержит посев, рост, полив, сорняки и сбор.
+   Добавляем ясную панель состояния участка без изменения темпов и урожая. */
+const _farm51=R.farm;
+R.farm=()=>`<div class="card row"><div><b>Фермерское хозяйство</b><div class="sm">Участков занято: ${fd().filter(Boolean).length}/${FD} · готово к сбору: ${fd().filter(p=>p&&gp(p)>=1).length}</div></div><span>🌾</span></div>`+_farm51();
+
+/* Кейс-центр: наглядное описание и предпросмотр содержимого; цена и шансы не меняются. */
+const _cases51=R.cases;
+R.cases=()=>`<div class="work-scene" style="background:radial-gradient(60% 80% at 50% 45%,#8b7bd855,transparent),linear-gradient(145deg,#20243a,#0b1118)"><div class="work-object">📦</div><div class="work-step">BLACK BUSINESS · LOOT & COLLECTION</div></div>`+_cases51();
+
+/* =========================================================
+   BLACK BUSINESS 5.2 — ПРОФИЛЬ, ПРОГРЕСС И РЕЗЕРВНОЕ СОХРАНЕНИЕ
+   Дополнительные инструменты не меняют цены, шансы, награды,
+   требования профессий или баланс существующих игровых циклов.
+   ========================================================= */
+const BB_VERSION="5.2";
+TT.profile="Профиль игрока"; LOC.profile="home";
+function bbStats(){
+  const st=S.st||{},px=S.px||{},skills=Object.keys(px).filter(k=>px[k]>0).length;
+  return {skills,ore:st.mined||0,sold:st.sold||0,crafted:st.crafted||0,harvested:st.harvested||0,
+    fished:st.fished||0,chopped:st.chopped||0,photos:st.photos||0,delivered:st.delivered||0,
+    jobs:S.jobs||0,businesses:Object.values(S.biz||{}).filter(x=>x>0).length,
+    estate:Object.values(S.props||{}).filter(Boolean).length,items:(S.own||[]).length,
+    artifacts:Object.keys(S.coll||{}).length};
 }
-function driveCheck(kind){
-  if(!driveRun||driveRun.step!==0)return;
-  if(kind==="vehicle")driveRun.checks.vehicle=true;
-  if(kind==="cargo")driveRun.checks.cargo=true;
-  if(driveRun.checks.vehicle&&driveRun.checks.cargo){driveRun.step=1;driveNote="Транспорт проверен, груз закреплён. Выбери маршрут."}
+R.profile=()=>{
+  const a=bbStats(),xp=Math.max(0,Math.min(100,S.xp/xpNeed()*100));
+  const professions=PROF.map((p,i)=>({name:p[0],key:PK2[i],level:plv(PK2[i]),progress:plvp(PK2[i])}));
+  return `<div class="profile-head"><div class="profile-avatar">${hero()}</div><div><div class="sm">BLACK BUSINESS · ИГРОВОЙ ПРОФИЛЬ</div><h2>${esc(pname)}</h2><b>Уровень ${S.lv}</b><div class="sm">${num(S.xp)} / ${num(xpNeed())} опыта</div><div class="bar"><i style="width:${xp}%"></i></div><div class="sm" style="margin-top:7px">Локальная версия ${BB_VERSION}</div></div></div>
+  <div class="profile-grid"><div class="card"><b>${num(S.coins)} 🪙</b><div class="sm">Баланс</div></div><div class="card"><b>${S.energy}/100 ⚡</b><div class="sm">Энергия</div></div><div class="card"><b>${a.items}</b><div class="sm">Предметов</div></div><div class="card"><b>${a.businesses+a.estate}</b><div class="sm">Активов</div></div></div>
+  <h2>Статистика карьеры</h2><div class="profile-grid">${[[a.ore,"Добыто руды"],[a.crafted,"Создано изделий"],[a.harvested,"Собрано урожая"],[a.fished,"Поймано рыбы"],[a.chopped,"Добыто брёвен"],[a.photos,"Фотозаказов"],[a.delivered,"Доставок"],[a.jobs,"Заказов фотографа"],[a.artifacts,"Артефактов"],[a.skills,"Развитых профессий"]].map(x=>`<div class="card"><b>${num(x[0])}</b><div class="sm">${x[1]}</div></div>`).join("")}</div>
+  <h2>Развитие профессий</h2>${professions.map(x=>`<div class="card"><div class="row"><b>${x.name}</b><span class="sm">Ур. ${x.level}</span></div><div class="bar"><i style="width:${x.progress}%"></i></div></div>`).join("")}
+  <h2>Сохранение прогресса</h2><div class="card"><p class="sm">Создай резервную копию локального прогресса перед обновлением игры или переносом на другое устройство. Файл содержит только данные сохранения этого прототипа.</p><div class="work-actions"><button class="btn" onclick="bbExport()">Скачать резервную копию</button><label class="btn" style="display:inline-block">Восстановить копию<input type="file" accept="application/json,.json" hidden onchange="bbImport(this)"></label></div><p class="sm" style="margin-top:8px">Важно: это локальное сохранение браузера. Оно не синхронизирует аккаунт между игроками и устройствами.</p></div>`;
+};
+function bbExport(){
+  try{
+    const payload={app:"BLACK_BUSINESS",version:BB_VERSION,exportedAt:new Date().toISOString(),state:S};
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+    const url=URL.createObjectURL(blob),a=document.createElement("a");
+    a.href=url;a.download="black-business-backup-"+new Date().toISOString().slice(0,10)+".json";
+    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    toast("Резервная копия подготовлена");
+  }catch(e){console.error(e);toast("Не удалось создать копию")}
+}
+function bbNormalize(raw){
+  const d=def(),v=raw&&raw.state?raw.state:raw;
+  if(!v||typeof v!=="object"||Array.isArray(v))throw new Error("Некорректный файл сохранения");
+  const out=Object.assign(d,v);
+  ["ore","found","eq","biz","st","mats","props","dl","dur","px","bs","bw","coll"].forEach(k=>{if(!out[k]||typeof out[k]!=="object"||Array.isArray(out[k]))out[k]=d[k]||{};});
+  ["own","claimed","log","farm"].forEach(k=>{if(!Array.isArray(out[k]))out[k]=d[k]||[];});
+  ["coins","energy","xp","lv","jobs","frag"].forEach(k=>{out[k]=Number.isFinite(Number(out[k]))?Math.max(0,Number(out[k])):d[k];});
+  out.energy=Math.min(100,out.energy);out.lv=Math.max(1,Math.floor(out.lv));
+  return out;
+}
+function bbImport(input){
+  const file=input&&input.files&&input.files[0];if(!file)return;
+  if(file.size>2*1024*1024){toast("Файл слишком большой");input.value="";return}
+  const reader=new FileReader();
+  reader.onload=()=>{try{
+    const data=JSON.parse(String(reader.result||""));
+    if(data.app!=="BLACK_BUSINESS")throw new Error("Это не резервная копия BLACK BUSINESS");
+    if(!confirm("Восстановить сохранение из файла? Текущий локальный прогресс будет заменён."))return;
+    S=bbNormalize(data);save();toast("Сохранение восстановлено");go("profile");
+  }catch(e){console.error(e);toast(e.message||"Не удалось прочитать сохранение")}
+  finally{input.value=""}};
+  reader.onerror=()=>{toast("Ошибка чтения файла");input.value=""};reader.readAsText(file);
+}
+
+/* Доступность: корректное описание текущего раздела и поддержка узких экранов. */
+(function bbA11y(){
+  const style=document.createElement("style");
+  style.textContent=`.profile-head{display:grid;grid-template-columns:108px 1fr;gap:14px;align-items:center;background:linear-gradient(135deg,#27364a,#111a26);border:1px solid var(--l);border-radius:16px;padding:12px;margin-bottom:12px}.profile-avatar{width:108px;height:150px;overflow:hidden}.profile-avatar svg{width:100%;height:100%}.profile-head h2{margin:3px 0}.profile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.profile-grid .card{margin:0}.profile-grid b{font-size:17px}.work-actions{display:flex;gap:8px;flex-wrap:wrap}.work-actions>*{flex:1;text-align:center}@media(max-width:380px){.profile-head{grid-template-columns:78px 1fr}.profile-avatar{width:78px;height:120px}.profile-grid b{font-size:15px}}`;
+  document.head.appendChild(style);
+})();
+
+/* =========================================================
+   ЗАПУСК
+   ========================================================= */
+async function startGame(){
+  tg?.ready();tg?.expand();
+  draw();
+  const st=document.getElementById("st"),initData=tg?.initData;
+  if(!initData){st.textContent="Вне Telegram";return}
+  try{
+    st.textContent="Вход…";
+    const a=await sbClient.functions.invoke("telegram-auth",{body:{initData}});
+    if(a.error)throw a.error;
+    if(a.data?.error)throw new Error(a.data.error);
+    const g=await sbClient.functions.invoke("game-state",{body:{initData}});
+    if(g.error)throw g.error;
+    if(g.data?.error)throw new Error(g.data.error);
+    pname=g.data?.player?.display_name||tg?.initDataUnsafe?.user?.first_name||"Игрок";
+    st.textContent="Сервер подключён";
+  }catch(e){
+    console.error(e);
+    pname=tg?.initDataUnsafe?.user?.first_name||"Игрок";
+    st.textContent="Сервер недоступен";
+  }
   draw();
 }
-function driveRoute(id){
-  if(!driveRun||driveRun.step!==1)return;
-  if(!DRIVE_ROUTES.some(r=>r.id===id))return;
-  driveRun.route=id;driveRun.step=2;driveNote="Маршрут построен. В пути соблюдай правила движения.";draw();
-}
-function driveEvent(choice){
-  if(!driveRun||driveRun.step!==2)return;
-  const route=DRIVE_ROUTES.find(r=>r.id===driveRun.route);
-  if(choice!==route.ok){driveNote="Рис
+startGame();
+</script>
+</body>
+</html>
