@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b1118">
-<title>BLACK BUSINESS 5.2</title>
+<title>BLACK BUSINESS 5.2 STABLE</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -225,6 +225,37 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;background:rad
 .route i.done{background:linear-gradient(90deg,#3fd1b0,#8b7bd8);box-shadow:0 0 8px #3fd1b066}
 @media(max-width:380px){.work-actions{grid-template-columns:1fr 1fr}.work-object{font-size:48px}}
 
+
+/* BLACK BUSINESS 5.2 STABLE — безопасные дополнения интерфейса */
+.avatar-model{display:flex;justify-content:center;align-items:center;transform-style:preserve-3d;will-change:transform;touch-action:pan-y;transition:transform .25s ease}
+.avatar-model svg{display:block;max-width:240px}
+.avatar-label{position:relative;z-index:2;text-align:center;transform:none!important;backface-visibility:visible}
+.loot-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:10px 0 14px}
+.loot-tabs button{min-width:0;white-space:normal;padding:9px 4px;font-size:12px}
+.case-open-stage{position:fixed;inset:0;z-index:30;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at 50% 35%,#6652a766,transparent 48%),rgba(4,8,14,.94);backdrop-filter:blur(12px);animation:caseFade .25s ease both}
+.case-open-panel{width:min(100%,420px);text-align:center;border:1px solid #ffffff28;border-radius:24px;padding:24px 18px;background:linear-gradient(160deg,#25334a,#111925 72%);box-shadow:0 24px 80px #000b,inset 0 1px 0 #ffffff20}
+.case-crate{font-size:92px;line-height:1.2;filter:drop-shadow(0 12px 20px #0009);transform-origin:50% 80%}
+.case-open-stage.opening .case-crate{animation:crateOpen 1.8s cubic-bezier(.2,.8,.2,1) both}
+.case-open-stage.opening .case-aura{animation:auraPulse .7s ease-in-out infinite alternate}
+.case-aura{position:absolute;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle,#b79aff55,transparent 68%);filter:blur(8px);pointer-events:none}
+.case-result{position:relative;animation:resultRise .55s cubic-bezier(.2,.8,.2,1) both}
+.case-result-icon{font-size:64px;margin:12px auto;filter:drop-shadow(0 0 18px var(--rarity,#8fa1b5))}
+.case-result-rarity{display:inline-block;padding:5px 12px;border:1px solid var(--rarity,#8fa1b5);border-radius:20px;color:var(--rarity,#8fa1b5);font-size:12px;font-weight:800;letter-spacing:.06em}
+.case-open-panel .btn{margin-top:10px}
+.pass-track{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.pass-prize{min-width:0;text-align:center;border:1px solid var(--l);background:#0b1420;border-radius:12px;padding:10px 6px}
+.pass-prize.ready{border-color:#ffd35a;box-shadow:0 0 16px #ffd35a22}
+.pass-prize.claimed{border-color:#3fd1b0;opacity:.8}
+.pass-prize .pi{display:block;width:auto;font-size:25px;margin:0 auto 4px}
+.pass-task{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+.pass-task .btn{white-space:normal}
+@keyframes caseFade{from{opacity:0}to{opacity:1}}
+@keyframes crateOpen{0%{transform:translateY(20px) scale(.72) rotate(-8deg);opacity:.4}35%{transform:translateY(-8px) scale(1.06) rotate(5deg);opacity:1}65%{transform:translateY(0) scale(.98) rotate(-3deg)}100%{transform:translateY(0) scale(1) rotate(0);filter:drop-shadow(0 0 28px #b79aff)}}
+@keyframes auraPulse{from{transform:scale(.75);opacity:.35}to{transform:scale(1.25);opacity:1}}
+@keyframes resultRise{from{transform:translateY(24px) scale(.85);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+@media(max-width:360px){.loot-tabs button{font-size:11px;padding:8px 2px}.pass-track{gap:5px}.pass-prize{padding:8px 3px}}
+@media(prefers-reduced-motion:reduce){.case-open-stage,.case-crate,.case-result,.case-aura{animation:none!important}}
+
 </style>
 </head>
 <body data-loc="home">
@@ -294,8 +325,18 @@ const STUB={farm:["Ферма","Фермеры выращивают продук
    СОСТОЯНИЕ ПРОТОТИПА
    ========================================================= */
 const KEY="bb_proto_v1";
-const def=()=>({coins:1000,energy:100,xp:0,lv:1,ore:{},found:{},own:[],eq:{},biz:{},bizT:Date.now(),zone:"z1",st:{mined:0,bought:0,sold:0},claimed:[],mats:{},log:[],pass:0,daily:0,streak:0,proj:0,props:{},frag:0,jobs:0,farm:[null,null,null],dl:{}});
-function load(){try{return Object.assign(def(),JSON.parse(localStorage.getItem(KEY)||"{}"))}catch(e){return def()}}
+const def=()=>({coins:1000,energy:100,xp:0,lv:1,ore:{},found:{},own:[],eq:{},biz:{},bizT:Date.now(),zone:"z1",st:{mined:0,bought:0,sold:0},claimed:[],mats:{},log:[],pass:0,passBase:null,passClaims:[],passPoints:0,passRewardClaims:[],casePending:null,daily:0,streak:0,proj:0,props:{},frag:0,jobs:0,farm:[null,null,null],dl:{}});
+function load(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(KEY)||"{}");
+    const base=def();
+    Object.assign(base,raw&&typeof raw==="object"?raw:{});
+    base.st=Object.assign(def().st,raw?.st||{});
+    for(const k of ["ore","found","eq","biz","props","mats","dl"])base[k]=Object.assign({},def()[k],raw?.[k]||{});
+    for(const k of ["own","claimed","log","passClaims","passRewardClaims"])base[k]=Array.isArray(raw?.[k])?raw[k]:def()[k];
+    return base;
+  }catch(e){return def()}
+}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 let S=load(),cur="home",pname="Игрок",veins=[],lastMsg="";
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -327,7 +368,6 @@ Object.keys(STUB).forEach(k=>{TT[k]=STUB[k][0];LOC[k]="city";R[k]=()=>`<div clas
    ГЛАВНЫЙ ЭКРАН И ПЕРСОНАЖ
    ========================================================= */
 const LEFT=[["inv","🎒","Инвентарь"],["ward","👕","Гардероб"],["ach","🏆","Достижения"],["col","💎","Коллекции"],["log","📜","Журнал"]];
-LEFT.push(["profile","🪪","Профиль"]);
 const RIGHT=[["city","🏙","Город"],["work","⛏","Профессии"],["tasks","📋","Задания"],["biz","💼","Бизнес"],["shop","🛍","Магазин"],["estate","🏠","Недвижимость"]];
 const rail=a=>a.map(b=>`<button onclick="go('${b[0]}')"><b>${b[1]}</b>${b[2]}</button>`).join("");
 function hero(){
@@ -347,7 +387,7 @@ function hero(){
   ${S.eq.head==="helmet"?`<circle cx="60" cy="14" r="4" fill="#fff6c8"/>`:""}
   </svg>`;
 }
-R.home=()=>`<div class="stage"><div class="rail">${rail(LEFT)}</div><div class="hero" style="transform:perspective(700px) rotateY(${ry}deg)">${hero()}<div><b>${esc(pname)}</b></div><div class="sm">Опыт ${S.xp}/${xpNeed()}</div><div class="bar"><i style="width:${Math.min(100,S.xp/xpNeed()*100)}%"></i></div></div><div class="rail">${rail(RIGHT)}</div></div>`;
+R.home=()=>`<div class="stage"><div class="rail">${rail(LEFT)}</div><div class="hero"><div class="avatar-model" style="transform:perspective(700px) rotateY(${ry}deg)">${hero()}</div><div class="avatar-label"><b>${esc(pname)}</b></div><div class="avatar-label sm">Опыт ${S.xp}/${xpNeed()}</div><div class="bar"><i style="width:${Math.min(100,S.xp/xpNeed()*100)}%"></i></div></div><div class="rail">${rail(RIGHT)}</div></div>`;
 
 /* =========================================================
    ГОРОД
@@ -498,8 +538,57 @@ R.estate=()=>PROP.map(p=>`<div class="card row"><div><b>${p.n}</b><div class="sm
 /* =========================================================
    МЕСЯЧНЫЙ GAME PASS
    ========================================================= */
-function buyPass(){if(S.pass>Date.now())return;if(S.coins<5000)return toast("Недостаточно монет");S.coins-=5000;S.pass=Date.now()+30*864e5;toast("Game Pass активирован на 30 дней");save();draw()}
-R.pass=()=>`<div class="card"><b>Месячный Game Pass</b><p class="sm">+10% к продаже руды и изделий, энергия восстанавливается вдвое быстрее, ежедневный бонус ×2.</p>${S.pass>Date.now()?`<p>Активен до ${new Date(S.pass).toLocaleDateString("ru-RU")}</p>`:`<button class="btn" onclick="buyPass()">Купить · 5 000 🪙</button>`}</div>`;
+function passSnapshot(){return {mined:S.st.mined||0,crafted:S.st.crafted||0,harvested:S.st.harvested||0,delivered:S.st.delivered||0,sold:S.st.sold||0}}
+function ensurePassState(){
+  if(S.pass>Date.now()&&!S.passBase){S.passBase=passSnapshot();S.passClaims=[];S.passPoints=0;S.passRewardClaims=[];save()}
+  if(!Array.isArray(S.passClaims))S.passClaims=[];
+  if(!Array.isArray(S.passRewardClaims))S.passRewardClaims=[];
+  if(!Number.isFinite(S.passPoints))S.passPoints=S.passClaims.length;
+}
+function buyPass(){
+  if(S.pass>Date.now())return toast("Game Pass уже активен");
+  if(S.coins<5000)return toast("Недостаточно монет");
+  S.coins-=5000;S.pass=Date.now()+30*864e5;
+  S.passBase=passSnapshot();S.passClaims=[];S.passPoints=0;S.passRewardClaims=[];
+  toast("Game Pass активирован на 30 дней");save();draw();
+}
+const PASS_TASKS=[
+ {id:"mine20",n:"Старатель",d:"Добудь 20 единиц руды",k:"mined",need:20},
+ {id:"craft2",n:"Мастерская",d:"Создай 2 изделия на заводе",k:"crafted",need:2},
+ {id:"harvest6",n:"Урожай",d:"Собери 6 единиц урожая",k:"harvested",need:6},
+ {id:"delivery1",n:"Логистика",d:"Заверши 1 заказ ремонта или доставки",k:"delivered",need:1},
+ {id:"sales500",n:"Торговец",d:"Продай товаров на 500 монет",k:"sold",need:500}
+];
+const PASS_PRIZES=[
+ {points:2,id:"vest",name:"Рабочий жилет",icon:"🦺"},
+ {points:4,id:"helmet",name:"Шахтёрская каска",icon:"⛑️"},
+ {points:5,id:"bag",name:"Рюкзак",icon:"🎒"}
+];
+function passProgress(t){ensurePassState();const base=S.passBase||{};return Math.max(0,(S.st[t.k]||0)-(base[t.k]||0))}
+function passClaimTask(id){
+  if(S.pass<=Date.now())return toast("Game Pass не активен");
+  const t=PASS_TASKS.find(x=>x.id===id);if(!t||S.passClaims.includes(id))return;
+  if(passProgress(t)<t.need)return toast("Задание ещё не выполнено");
+  S.passClaims.push(id);S.passPoints=(S.passPoints||0)+1;
+  toast("Задание Game Pass выполнено · +1 очко пропуска");save();draw();
+}
+function passClaimPrize(points){
+  ensurePassState();const p=PASS_PRIZES.find(x=>x.points===points);
+  if(!p||S.passPoints<points||S.passRewardClaims.includes(points))return;
+  const it=item(p.id);if(!it)return toast("Награда временно недоступна");
+  const duplicate=S.own.includes(p.id);
+  if(duplicate)S.frag+=5;else S.own.push(p.id);
+  S.passRewardClaims.push(points);
+  toast(duplicate?"Повтор награды Game Pass: +5 фрагментов":"Награда Game Pass получена: "+p.name);
+  save();draw();
+}
+R.pass=()=>{
+  const active=S.pass>Date.now();if(active)ensurePassState();
+  const base=S.passBase||{};
+  const tasks=active?PASS_TASKS.map(t=>{const p=Math.min(t.need,passProgress(t)),claimed=S.passClaims.includes(t.id);return `<div class="card pass-task"><div><b>${t.n}</b><div class="sm">${t.d}</div><div class="sm">${p}/${t.need}</div><div class="bar"><i style="width:${p/t.need*100}%"></i></div></div><button class="btn" ${claimed||p<t.need?"disabled":""} onclick="passClaimTask('${t.id}')">${claimed?"Получено":p>=t.need?"Забрать очко":"В процессе"}</button></div>`}).join(""):"";
+  const prizes=active?`<h2>Награды пропуска</h2><div class="pass-track">${PASS_PRIZES.map(p=>{const got=S.passRewardClaims.includes(p.points),ready=S.passPoints>=p.points;return `<div class="pass-prize ${got?"claimed":ready?"ready":""}"><span class="pi">${p.icon}</span><b>${p.name}</b><div class="sm">${p.points} очков</div><button class="chip" style="margin-top:7px;width:100%" ${!ready||got?"disabled":""} onclick="passClaimPrize(${p.points})">${got?"Получено":ready?"Забрать":"Закрыто"}</button></div>`}).join("")}</div>`:"";
+  return `<div class="work-scene" style="background:radial-gradient(60% 80% at 50% 45%,#d7a64b44,transparent),linear-gradient(145deg,#30271c,#0b1118)"><div class="work-object">🎫</div><div class="work-step">BLACK BUSINESS · MONTHLY PASS</div></div><div class="card"><div class="row"><b>Месячный Game Pass</b><b>${active?"АКТИВЕН":"30 ДНЕЙ"}</b></div><p class="sm">Стоимость и преимущества сохранены: 5 000 🪙 · 30 дней · +10% к продаже руды и изделий · ускоренное восстановление энергии · ежедневный бонус ×2.</p>${active?`<p style="margin-top:8px">Активен до ${new Date(S.pass).toLocaleDateString("ru-RU")}</p><div class="row" style="margin-top:8px"><b>Очки пропуска</b><b>${S.passPoints||0}/5</b></div><div class="bar"><i style="width:${Math.min(100,(S.passPoints||0)/5*100)}%"></i></div>`:`<button class="btn" style="margin-top:10px;width:100%" onclick="buyPass()">Активировать · 5 000 🪙</button>`}</div>${active?`<h2>Специальные задания</h2><p class="sm" style="margin-bottom:8px">Задания выполняются обычной игрой. Прогресс учитывается только после активации пропуска. За каждое выполненное задание выдаётся 1 очко пропуска.</p>${tasks}${prizes}`:`<div class="card sm">После активации откроются пять специальных заданий и три косметические награды из существующего каталога. Никакие игровые цены и шансы выпадения не меняются.</div>`}`;
+};
 
 /* =========================================================
    СОБЫТИЯ И ГЛОБАЛЬНЫЕ ПРОЕКТЫ
@@ -512,13 +601,37 @@ R.events=()=>{const t=800+S.proj;return `<div class="card row"><div><b>Ежед�
 /* =========================================================
    КЕЙСЫ И ФРАГМЕНТЫ
    ========================================================= */
+let caseUiStage="";
 function openCase(){
+  if(S.casePending)return toast("Сначала заверши текущее открытие");
   if(S.coins<300)return toast("Недостаточно монет");
-  S.coins-=300;const r=Math.random();let m;
-  if(r<.55){const c=100+Math.floor(Math.random()*301);S.coins+=c;m="монеты +"+c}
-  else if(r<.85){const o=pick(ZONES[1].w);S.ore[o]=(S.ore[o]||0)+4;S.found[o]=1;m=ORE[o][0]+" ×4"}
-  else{const i=ITEMS[Math.floor(Math.random()*ITEMS.length)];if(S.own.includes(i.id)){S.frag+=5;m=i.n+" уже есть, +5 фрагментов"}else{S.own.push(i.id);m="предмет "+i.n}}
-  toast("Кейс: "+m);save();draw();
+  S.coins-=300;
+  const r=Math.random();let result;
+  if(r<.55){
+    const c=100+Math.floor(Math.random()*301);S.coins+=c;
+    result={kind:"coins",title:"Монеты",detail:"+"+c+" 🪙",icon:"🪙",rarity:"Обычный",rarityColor:"#8fa1b5"};
+  }else if(r<.85){
+    const o=pick(ZONES[1].w);S.ore[o]=(S.ore[o]||0)+4;S.found[o]=1;
+    result={kind:"ore",title:ORE[o][0],detail:"×4",icon:"⛏️",rarity:"Материалы",rarityColor:ORE[o][2],ore:o};
+  }else{
+    const i=ITEMS[Math.floor(Math.random()*ITEMS.length)];
+    if(S.own.includes(i.id)){S.frag+=5;result={kind:"duplicate",title:i.n,detail:"Уже есть · +5 фрагментов",icon:"♻️",rarity:i.r,rarityColor:RC[i.r]||"#8fa1b5",itemId:i.id};}
+    else{S.own.push(i.id);result={kind:"item",title:i.n,detail:"Предмет добавлен в инвентарь",icon:"🎁",rarity:i.r,rarityColor:RC[i.r]||"#8fa1b5",itemId:i.id};}
+  }
+  /* Награда начисляется и сохраняется до анимации: перезагрузка не теряет и не дублирует приз. */
+  S.casePending={...result,createdAt:Date.now()};
+  caseUiStage="opening";
+  toast("Кейс открыт — награда уже сохранена");save();draw();
+  setTimeout(()=>{caseUiStage="reveal";if(cur==="cases")draw()},1900);
+}
+function caseClose(){S.casePending=null;caseUiStage="";save();draw()}
+function caseEquip(){const p=S.casePending;if(!p||p.kind!=="item"||!p.itemId)return;const id=p.itemId;S.casePending=null;caseUiStage="";equip(id)}
+function caseToInventory(){S.casePending=null;caseUiStage="";save();go("inv")}
+function caseOverlay(){
+  const p=S.casePending;if(!p)return "";
+  if(!caseUiStage)caseUiStage="reveal";
+  const opening=caseUiStage==="opening";
+  return `<div class="case-open-stage ${opening?"opening":"revealed"}" role="dialog" aria-modal="true" aria-label="Открытие кейса"><div class="case-open-panel"><div class="case-aura"></div>${opening?`<div class="case-crate">📦</div><h2 style="justify-content:center">Открываем кейс</h2><p class="sm">Награда уже зафиксирована. Подожди завершения анимации…</p><div class="bar"><i style="width:72%;animation:up 1.7s ease both"></i></div>`:`<div class="case-result"><div class="case-result-rarity" style="--rarity:${esc(p.rarityColor||"#8fa1b5")}">${esc(p.rarity||"Награда")}</div><div class="case-result-icon" style="--rarity:${esc(p.rarityColor||"#8fa1b5")}">${esc(p.icon||"🎁")}</div><h2 style="justify-content:center">${esc(p.title)}</h2><p class="sm">${esc(p.detail)}</p><p class="sm" style="margin-top:8px">Награда сохранена в профиле.</p>${p.kind==="item"?`<button class="btn" style="width:100%" onclick="caseEquip()">Надеть предмет</button><button class="chip" style="width:100%;margin-top:8px" onclick="caseToInventory()">Перейти в инвентарь</button>`:`<button class="btn" style="width:100%" onclick="caseClose()">Забрать награду</button>`}</div>`}</div></div>`;
 }
 function fragCraft(){if(S.frag<20)return;const l=ITEMS.filter(i=>!S.own.includes(i.id));if(!l.length)return toast("Все предметы собраны");S.frag-=20;const i=l[Math.floor(Math.random()*l.length)];S.own.push(i.id);toast("Создано: "+i.n);save();draw()}
 R.cases=()=>`<div class="card"><b>Кейс</b><p class="sm">Монеты, руда или предмет. Повторы превращаются в фрагменты.</p><button class="btn" onclick="openCase()">Открыть · 300 🪙</button></div><div class="card row"><div><b>Фрагменты: ${S.frag}</b><div class="sm">20 фрагментов — случайный новый предмет</div></div><button class="btn" ${S.frag<20?"disabled":""} onclick="fragCraft()">Создать</button></div>`;
@@ -653,11 +766,29 @@ function ico(i){const c=i.c||"#9aa7b5",g={
  return `<svg width="42" height="42" viewBox="0 0 40 40" style="flex:none;filter:drop-shadow(0 0 6px ${RC[i.r]})">${g}</svg>`}
 let ry=0;
 document.addEventListener("pointerdown",e=>{
-  const h=e.target.closest&&e.target.closest(".hero svg");if(!h)return;
-  const w=h.parentNode;let x=e.clientX;w.style.transition="none";
-  const mv=ev=>{ry+=(ev.clientX-x)*.8;x=ev.clientX;w.style.transform=`perspective(700px) rotateY(${ry}deg)`};
-  const up=()=>{removeEventListener("pointermove",mv);removeEventListener("pointerup",up);ry=Math.round(ry/180)*180;w.style.transition="transform .3s";w.style.transform=`perspective(700px) rotateY(${ry}deg)`};
-  addEventListener("pointermove",mv);addEventListener("pointerup",up);
+  const svg=e.target.closest&&e.target.closest(".avatar-model svg");
+  if(!svg)return;
+  const model=svg.parentElement;
+  let x=e.clientX, moved=false;
+  model.style.transition="none";
+  const mv=ev=>{
+    const dx=ev.clientX-x;
+    if(Math.abs(dx)>0)moved=true;
+    ry=(ry+dx*.8)%360;
+    x=ev.clientX;
+    model.style.transform=`perspective(700px) rotateY(${ry}deg)`;
+  };
+  const finish=()=>{
+    removeEventListener("pointermove",mv);
+    removeEventListener("pointerup",finish);
+    removeEventListener("pointercancel",finish);
+    ry=Math.round(ry/180)*180;
+    model.style.transition="transform .3s ease";
+    model.style.transform=`perspective(700px) rotateY(${ry}deg)`;
+  };
+  addEventListener("pointermove",mv,{passive:true});
+  addEventListener("pointerup",finish,{once:true});
+  addEventListener("pointercancel",finish,{once:true});
 });
 
 /* =========================================================
@@ -1270,71 +1401,9 @@ R.farm=()=>`<div class="card row"><div><b>Фермерское хозяйств�
 const _cases51=R.cases;
 R.cases=()=>`<div class="work-scene" style="background:radial-gradient(60% 80% at 50% 45%,#8b7bd855,transparent),linear-gradient(145deg,#20243a,#0b1118)"><div class="work-object">📦</div><div class="work-step">BLACK BUSINESS · LOOT & COLLECTION</div></div>`+_cases51();
 
-/* =========================================================
-   BLACK BUSINESS 5.2 — ПРОФИЛЬ, ПРОГРЕСС И РЕЗЕРВНОЕ СОХРАНЕНИЕ
-   Дополнительные инструменты не меняют цены, шансы, награды,
-   требования профессий или баланс существующих игровых циклов.
-   ========================================================= */
-const BB_VERSION="5.2";
-TT.profile="Профиль игрока"; LOC.profile="home";
-function bbStats(){
-  const st=S.st||{},px=S.px||{},skills=Object.keys(px).filter(k=>px[k]>0).length;
-  return {skills,ore:st.mined||0,sold:st.sold||0,crafted:st.crafted||0,harvested:st.harvested||0,
-    fished:st.fished||0,chopped:st.chopped||0,photos:st.photos||0,delivered:st.delivered||0,
-    jobs:S.jobs||0,businesses:Object.values(S.biz||{}).filter(x=>x>0).length,
-    estate:Object.values(S.props||{}).filter(Boolean).length,items:(S.own||[]).length,
-    artifacts:Object.keys(S.coll||{}).length};
-}
-R.profile=()=>{
-  const a=bbStats(),xp=Math.max(0,Math.min(100,S.xp/xpNeed()*100));
-  const professions=PROF.map((p,i)=>({name:p[0],key:PK2[i],level:plv(PK2[i]),progress:plvp(PK2[i])}));
-  return `<div class="profile-head"><div class="profile-avatar">${hero()}</div><div><div class="sm">BLACK BUSINESS · ИГРОВОЙ ПРОФИЛЬ</div><h2>${esc(pname)}</h2><b>Уровень ${S.lv}</b><div class="sm">${num(S.xp)} / ${num(xpNeed())} опыта</div><div class="bar"><i style="width:${xp}%"></i></div><div class="sm" style="margin-top:7px">Локальная версия ${BB_VERSION}</div></div></div>
-  <div class="profile-grid"><div class="card"><b>${num(S.coins)} 🪙</b><div class="sm">Баланс</div></div><div class="card"><b>${S.energy}/100 ⚡</b><div class="sm">Энергия</div></div><div class="card"><b>${a.items}</b><div class="sm">Предметов</div></div><div class="card"><b>${a.businesses+a.estate}</b><div class="sm">Активов</div></div></div>
-  <h2>Статистика карьеры</h2><div class="profile-grid">${[[a.ore,"Добыто руды"],[a.crafted,"Создано изделий"],[a.harvested,"Собрано урожая"],[a.fished,"Поймано рыбы"],[a.chopped,"Добыто брёвен"],[a.photos,"Фотозаказов"],[a.delivered,"Доставок"],[a.jobs,"Заказов фотографа"],[a.artifacts,"Артефактов"],[a.skills,"Развитых профессий"]].map(x=>`<div class="card"><b>${num(x[0])}</b><div class="sm">${x[1]}</div></div>`).join("")}</div>
-  <h2>Развитие профессий</h2>${professions.map(x=>`<div class="card"><div class="row"><b>${x.name}</b><span class="sm">Ур. ${x.level}</span></div><div class="bar"><i style="width:${x.progress}%"></i></div></div>`).join("")}
-  <h2>Сохранение прогресса</h2><div class="card"><p class="sm">Создай резервную копию локального прогресса перед обновлением игры или переносом на другое устройство. Файл содержит только данные сохранения этого прототипа.</p><div class="work-actions"><button class="btn" onclick="bbExport()">Скачать резервную копию</button><label class="btn" style="display:inline-block">Восстановить копию<input type="file" accept="application/json,.json" hidden onchange="bbImport(this)"></label></div><p class="sm" style="margin-top:8px">Важно: это локальное сохранение браузера. Оно не синхронизирует аккаунт между игроками и устройствами.</p></div>`;
-};
-function bbExport(){
-  try{
-    const payload={app:"BLACK_BUSINESS",version:BB_VERSION,exportedAt:new Date().toISOString(),state:S};
-    const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
-    const url=URL.createObjectURL(blob),a=document.createElement("a");
-    a.href=url;a.download="black-business-backup-"+new Date().toISOString().slice(0,10)+".json";
-    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
-    toast("Резервная копия подготовлена");
-  }catch(e){console.error(e);toast("Не удалось создать копию")}
-}
-function bbNormalize(raw){
-  const d=def(),v=raw&&raw.state?raw.state:raw;
-  if(!v||typeof v!=="object"||Array.isArray(v))throw new Error("Некорректный файл сохранения");
-  const out=Object.assign(d,v);
-  ["ore","found","eq","biz","st","mats","props","dl","dur","px","bs","bw","coll"].forEach(k=>{if(!out[k]||typeof out[k]!=="object"||Array.isArray(out[k]))out[k]=d[k]||{};});
-  ["own","claimed","log","farm"].forEach(k=>{if(!Array.isArray(out[k]))out[k]=d[k]||[];});
-  ["coins","energy","xp","lv","jobs","frag"].forEach(k=>{out[k]=Number.isFinite(Number(out[k]))?Math.max(0,Number(out[k])):d[k];});
-  out.energy=Math.min(100,out.energy);out.lv=Math.max(1,Math.floor(out.lv));
-  return out;
-}
-function bbImport(input){
-  const file=input&&input.files&&input.files[0];if(!file)return;
-  if(file.size>2*1024*1024){toast("Файл слишком большой");input.value="";return}
-  const reader=new FileReader();
-  reader.onload=()=>{try{
-    const data=JSON.parse(String(reader.result||""));
-    if(data.app!=="BLACK_BUSINESS")throw new Error("Это не резервная копия BLACK BUSINESS");
-    if(!confirm("Восстановить сохранение из файла? Текущий локальный прогресс будет заменён."))return;
-    S=bbNormalize(data);save();toast("Сохранение восстановлено");go("profile");
-  }catch(e){console.error(e);toast(e.message||"Не удалось прочитать сохранение")}
-  finally{input.value=""}};
-  reader.onerror=()=>{toast("Ошибка чтения файла");input.value=""};reader.readAsText(file);
-}
-
-/* Доступность: корректное описание текущего раздела и поддержка узких экранов. */
-(function bbA11y(){
-  const style=document.createElement("style");
-  style.textContent=`.profile-head{display:grid;grid-template-columns:108px 1fr;gap:14px;align-items:center;background:linear-gradient(135deg,#27364a,#111a26);border:1px solid var(--l);border-radius:16px;padding:12px;margin-bottom:12px}.profile-avatar{width:108px;height:150px;overflow:hidden}.profile-avatar svg{width:100%;height:100%}.profile-head h2{margin:3px 0}.profile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.profile-grid .card{margin:0}.profile-grid b{font-size:17px}.work-actions{display:flex;gap:8px;flex-wrap:wrap}.work-actions>*{flex:1;text-align:center}@media(max-width:380px){.profile-head{grid-template-columns:78px 1fr}.profile-avatar{width:78px;height:120px}.profile-grid b{font-size:15px}}`;
-  document.head.appendChild(style);
-})();
-
+/* Кейсы: навигация по четырём существующим направлениям и анимированное открытие. */
+const _cases52=R.cases;
+R.cases=()=>`<div class="loot-tabs"><button class="chip on" onclick="go('cases')">🎁 Кейсы</button><button class="chip" onclick="go('factory')">🛠 Крафт</button><button class="chip" onclick="go('cases');setTimeout(()=>document.getElementById('roulette-anchor')?.scrollIntoView({behavior:'smooth'}),80)">🎡 Рулетка</button><button class="chip" onclick="go('col')">💎 Коллекции</button></div>`+_cases52()+`<div id="roulette-anchor"></div>${caseOverlay()}`;
 /* =========================================================
    ЗАПУСК
    ========================================================= */
@@ -1344,23 +1413,4 @@ async function startGame(){
   const st=document.getElementById("st"),initData=tg?.initData;
   if(!initData){st.textContent="Вне Telegram";return}
   try{
-    st.textContent="Вход…";
-    const a=await sbClient.functions.invoke("telegram-auth",{body:{initData}});
-    if(a.error)throw a.error;
-    if(a.data?.error)throw new Error(a.data.error);
-    const g=await sbClient.functions.invoke("game-state",{body:{initData}});
-    if(g.error)throw g.error;
-    if(g.data?.error)throw new Error(g.data.error);
-    pname=g.data?.player?.display_name||tg?.initDataUnsafe?.user?.first_name||"Игрок";
-    st.textContent="Сервер подключён";
-  }catch(e){
-    console.error(e);
-    pname=tg?.initDataUnsafe?.user?.first_name||"Игрок";
-    st.textContent="Сервер недоступен";
-  }
-  draw();
-}
-startGame();
-</script>
-</body>
-</html>
+    st.textContent="Вход
