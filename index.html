@@ -204,6 +204,27 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;background:rad
 .flyp{position:absolute;left:50%;top:30%;font-size:34px;transform:translateX(-50%);animation:fly .7s ease-out forwards}
 @keyframes fly{to{transform:translate(-50%,-70px) scale(1.4);opacity:0}}
 @media (prefers-reduced-motion:reduce){.cloud,.pl.ready,.flash,.polaroid{animation:none!important}}
+
+/* BLACK BUSINESS 5.1 — расширенная обратная связь профессий */
+.gauge{height:22px;background:linear-gradient(90deg,#101923,#263648);box-shadow:inset 0 2px 5px #000b}
+.gz{border-radius:4px;background:linear-gradient(90deg,#2bbd91aa,#63e6b4cc);box-shadow:0 0 12px #3fd1b066}
+.gz.p{background:linear-gradient(90deg,#e7b94d,#fff0a6);box-shadow:0 0 12px #ffd35a99}
+#mk{width:5px;background:#fff;box-shadow:0 0 8px #fff,0 0 16px #8bdcff;z-index:2}
+.fish-ui{display:grid;gap:8px}
+.fish-meter{height:12px;border-radius:8px;background:#0009;overflow:hidden;border:1px solid #ffffff22}
+.fish-meter i{display:block;height:100%;background:linear-gradient(90deg,#3fd1b0,#ffd35a,#f06b72);transition:width .2s}
+.fish-line{position:absolute;left:50%;top:45px;height:95px;width:2px;background:#ffffff99;transform:rotate(8deg);transform-origin:top;box-shadow:0 0 6px #fff8}
+.work-scene{position:relative;min-height:170px;border:1px solid var(--l);border-radius:16px;overflow:hidden;margin-bottom:10px;padding:18px;background:linear-gradient(145deg,#28394a,#101923 65%,#090e14)}
+.work-scene:after{content:"";position:absolute;inset:auto 0 0;height:42px;background:repeating-linear-gradient(90deg,#283747 0 28px,#1a2633 28px 32px);opacity:.65}
+.work-object{position:relative;z-index:1;text-align:center;font-size:58px;filter:drop-shadow(0 8px 8px #0009)}
+.work-step{position:relative;z-index:1;margin-top:8px;text-align:center;color:var(--m);font-size:12px}
+.work-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.work-actions button{white-space:normal;min-height:44px}
+.route{display:flex;align-items:center;gap:5px;margin:12px 0}
+.route i{height:7px;flex:1;border-radius:5px;background:#263648}
+.route i.done{background:linear-gradient(90deg,#3fd1b0,#8b7bd8);box-shadow:0 0 8px #3fd1b066}
+@media(max-width:380px){.work-actions{grid-template-columns:1fr 1fr}.work-object{font-size:48px}}
+
 </style>
 </head>
 <body data-loc="home">
@@ -910,18 +931,24 @@ Object.assign(TI,{exp:"🧭",club:"🎭",rank:"🏅"});Object.assign(TT,{exp:"Э
    (с шансом смолы) и берёза. Дерево падает с анимацией, летят щепки.
    ========================================================= */
 Object.assign(MAT,{resin:["Смола",60]});
-const TREES=[{n:"Сосна",hp:4,w:2,e:"🌲"},{n:"Дуб",hp:6,w:4,e:"🌳"},{n:"Берёза",hp:3,w:2,e:"🌳",f:"hue-rotate(40deg) brightness(1.35)"}];
-let tr=null,wst=0;
+const TREES=[{n:"Сосна",hp:4,w:2,e:"🌲",hardness:1,kind:"Мягкая древесина"},{n:"Берёза",hp:3,w:2,e:"🌳",hardness:1.3,kind:"Средняя древесина",f:"hue-rotate(40deg) brightness(1.35)"},{n:"Дуб",hp:6,w:4,e:"🌳",hardness:2.2,kind:"Твёрдая древесина"}];
+let tr=null,wst=0,tw=20;
 function newTree(){const k=Math.random(),t=TREES[k<.5?0:k<.8?1:2];tr={t,hp:t.hp,fall:0,fx:"",n:0}}
-const mpos=()=>50+50*Math.sin(performance.now()/330);
+const mpos=()=>{const h=tr?.t?.hardness||1;const skill=plv("wood");const period=Math.max(210,390-h*35-skill*8);return 50+50*Math.sin(performance.now()/period)};
 function strike(){
   if(!tr)newTree();
   if(tr.fall)return;
   if(S.energy<2)return toast("Недостаточно энергии");
   S.energy-=2;
-  const d=Math.abs(mpos()-tc),q=d<=7?"p":d<=18?"g":"m",dmg=q==="p"?2:q==="g"?1:0;
+  const tool=Math.max(0,toolB()||0),skill=plv("wood");
+  const base=Math.max(8,Math.min(29,25-tr.t.hardness*5+(skill-1)*1.4+tool*1.5));
+  tw=base;
+  const d=Math.abs(mpos()-tc),perfect=Math.max(2,tw*.19),good=tw*.5;
+  const q=d<=perfect?"p":d<=good?"g":"m",dmg=q==="p"?2:q==="g"?1:0;
   if(q==="m")wst=0;else wst++;
-  tr.hp-=dmg;tr.fx=q;tr.n++;tc=22+Math.random()*56;
+  tr.hp-=dmg;tr.fx=q;tr.n++;tc=Math.max(tw/2+2,Math.min(98-tw/2,18+Math.random()*64));
+  tw=Math.max(7,Math.min(30,tw+(Math.random()-.5)*7));
+  if(typeof wear==="function"&&toolB()>0)wear();
   setTimeout(()=>{if(tr)tr.fx=""},500);
   if(dmg)gain(1);
   if(tr.hp<=0){
@@ -929,8 +956,8 @@ function strike(){
     S.mats.wood=(S.mats.wood||0)+w;let m="Срублено: +"+w+" бревна";
     if(tr.t.hp>=6&&Math.random()<.2){S.mats.resin=(S.mats.resin||0)+1;m+=" и смола"}
     inc("chopped",w);gain(5);toast(m);tr.fall=1;
-    setTimeout(()=>{newTree();if(cur==="wood")draw()},1000);
-  }
+    setTimeout(()=>{newTree();tw=20;if(cur==="wood")draw()},1000);
+  }else if(q==="m")toast("Промах: дерево не потеряно. Попробуй ещё раз.");
   save();draw();
 }
 R.wood=()=>{
@@ -941,10 +968,10 @@ R.wood=()=>{
   <div class="tree2${tr.fall?" fall":""}${show&&fx!=="m"?" hit"+fx:""}${tr.n===0&&!tr.fall?" new":""}" style="filter:${t.f?t.f+" ":""}drop-shadow(0 8px 6px #0009)">${t.e}</div>
   ${show?`<div class="pop ${fx}">${{p:"Идеально!",g:"Хорошо",m:"Мимо"}[fx]}</div>`:""}
   ${show&&fx!=="m"?[0,1,2,3,4,5].map(i=>`<b class="wc" style="--dx:${(i-2.5)*22}px;--dy:${-30-i%3*14}px"></b>`).join(""):""}</div>
-  <div class="card"><div class="row"><b>${t.n}</b><span class="sm">Прочность ${Math.max(0,tr.hp)}/${t.hp}${wst>=3?" · серия "+wst:""}</span></div><div class="bar"><i style="width:${Math.max(0,tr.hp/t.hp*100)}%"></i></div></div>
-  <div class="gauge"><i class="gz" style="left:${tc-18}%"></i><i class="gz p" style="left:${tc-7}%"></i><i id="mk"></i></div>
+  <div class="card"><div class="row"><b>${t.n}</b><span class="sm">Прочность ${Math.max(0,tr.hp)}/${t.hp} · ${t.kind}${wst>=3?" · серия "+wst:""}</span></div><div class="bar"><i style="width:${Math.max(0,tr.hp/t.hp*100)}%"></i></div></div>
+  <div class="gauge"><i class="gz" style="left:${Math.max(0,tc-tw/2)}%;width:${tw}%"></i><i class="gz p" style="left:${Math.max(0,tc-tw*.19)}%;width:${tw*.38}%"></i><i id="mk"></i></div>
   <button class="btn" style="width:100%;padding:13px" onclick="strike()">Рубить · ⚡2</button>
-  <p class="sm" style="margin-top:8px">Бей, когда маркер в зелёной зоне: в золотой центральной — двойной удар. Бревна: ${S.mats.wood||0}, доски: ${S.mats.board||0}, смола: ${S.mats.resin||0}.</p>`};
+  <p class="sm" style="margin-top:8px">Зона меняет ширину и положение после ударов. Золотой центр даёт двойной урон. Порода, инструмент и опыт влияют на сложность. Бревна: ${S.mats.wood||0}, доски: ${S.mats.board||0}, смола: ${S.mats.resin||0}.</p>`};
 (function tick(){const m=document.getElementById("mk");if(m)m.style.left=mpos()+"%";requestAnimationFrame(tick)})();
 
 /* =========================================================
@@ -1157,6 +1184,90 @@ R.farm=()=>{
     return `<button class="plot${p&&p.w?" wet":""}" aria-label="Грядка ${i+1}" onclick="fTap(${i})">${h}</button>`}).join("")}</div></div>
   <div class="chips">${CROPS.map(c=>`<button class="chip${ft===c.id?" on":""}" onclick="fTool('${c.id}')">${CE[c.id]} ${c.n} · ${c.c} 🪙</button>`).join("")}<button class="chip${ft==="water"?" on":""}" onclick="fTool('water')">💧 Лейка</button></div>
   <div class="card sm">Выберите семена и нажмите на пустую грядку. «Лейка» поливает растущее растение. Готовое растение светится — нажмите, чтобы собрать. Сорняк 🍂 нужно выдернуть касанием.</div>`};
+
+/* =========================================================
+   BLACK BUSINESS 5.1 — ИНТЕРАКТИВНЫЕ ЦИКЛЫ ПРОФЕССИЙ
+   Сохранены существующие награды, цены, требования и списки заказов.
+   Новые сцены используют те же игровые ресурсы и функции завершения.
+   ========================================================= */
+
+/* Рыбак: поклёвка и управляемое вываживание без пассивного таймера */
+const fishFight={tension:50,progress:0,power:1};
+function fishAct(){
+  if(fs.st===0){
+    if(S.energy<2)return toast("Недостаточно энергии");
+    S.energy-=2;fs.st=1;
+    fs.tm=setTimeout(()=>{if(fs.st!==1)return;fs.st=2;if(cur==="fish")draw();fs.tm=setTimeout(()=>{if(fs.st===2){fs.st=0;toast("Рыба сорвалась");if(cur==="fish")draw()}},2200)},1200+Math.random()*2500);
+  }else if(fs.st===1){clearTimeout(fs.tm);fs.st=0;toast("Слишком рано — рыба ушла")}
+  else if(fs.st===2){clearTimeout(fs.tm);fs.st=3;fishFight.tension=48;fishFight.progress=0;fishFight.power=1;toast("Рыба на крючке! Контролируй натяжение лески.")}
+  draw();
+}
+function fishControl(action){
+  if(fs.st!==3)return;
+  if(action==="pull"){fishFight.tension+=17;fishFight.progress+=fishFight.tension>=35&&fishFight.tension<=72?24:9}
+  else if(action==="ease"){fishFight.tension-=14;fishFight.progress+=fishFight.tension>=30&&fishFight.tension<=70?17:5}
+  fishFight.tension=Math.max(0,Math.min(100,fishFight.tension));
+  if(fishFight.tension>=96){fs.st=0;toast("Леска оборвалась — рыба ушла");draw();return}
+  if(fishFight.tension<=4){fs.st=0;toast("Слишком слабое натяжение — рыба сорвалась");draw();return}
+  if(fishFight.progress>=100){
+    fs.st=0;const f=pick({carp:60,pike:30,gcarp:10});S.mats[f]=(S.mats[f]||0)+1;inc("fished");gain(4);toast("Поймано: "+MAT[f][0]);save();draw();return;
+  }
+  draw();
+}
+R.fish=()=>{
+  const locked=gate(2);if(locked)return locked;
+  const names=["Забрось удочку","Ждём поклёвку…","Клюёт! Подсекай!","Вываживай рыбу"];
+  const scene=`<div class="water"><div class="fish-line" style="transform:rotate(${fs.st===3?(fishFight.tension-50)/5:8}deg)"></div><div class="bob ${fs.st===1?"w":fs.st>=2?"b":""}">🎣</div></div>`;
+  if(fs.st===3)return scene+`<div class="card fish-ui"><div class="row"><b>Натяжение лески</b><b>${Math.round(fishFight.tension)}%</b></div><div class="fish-meter"><i style="width:${fishFight.tension}%"></i></div><div class="row"><b>Вываживание</b><b>${Math.min(100,fishFight.progress)}%</b></div><div class="bar"><i style="width:${Math.min(100,fishFight.progress)}%"></i></div><p class="sm">Держи натяжение примерно в средней зоне. Слишком сильное порвёт леску, слишком слабое позволит рыбе уйти.</p><div class="work-actions"><button class="btn" onclick="fishControl('pull')">Подтянуть леску</button><button class="btn" onclick="fishControl('ease')">Ослабить леску</button></div></div>`;
+  return scene+`<div class="card row"><div><b>${names[fs.st]}</b><div class="sm">Улов: ${S.st.fished||0} · карась, щука, редкий золотой карп</div></div><button class="btn" onclick="fishAct()">${["Забросить · ⚡2","Ждём…","Подсечь!"][fs.st]}</button></div><div class="card sm">Выбери момент подсечки по движению поплавка и кругам на воде. После подсечки начнётся вываживание.</div>`;
+};
+
+/* Механик: последовательность диагностических и ремонтных действий */
+let mechRun=null,mechNote="";
+const MECH_STEPS=[
+ {n:"Осмотр автомобиля",e:"🚘",hint:"Осмотри машину и найди неисправный узел.",opts:["Осмотреть автомобиль","Сразу выдать ключи"],ok:0},
+ {n:"Подъём и фиксация",e:"🔧",hint:"Подними автомобиль и зафиксируй его перед ремонтом.",opts:["Поднять на подъёмнике","Проверить радио"],ok:0},
+ {n:"Демонтаж и замена",e:"⚙️",hint:"Подбери деталь и установи её на место.",opts:["Установить нужную деталь","Покрасить кузов"],ok:0},
+ {n:"Контрольная проверка",e:"🧰",hint:"Проверь результат и убедись, что неисправность устранена.",opts:["Проверить узел","Завершить без проверки"],ok:0}
+];
+function mechStart(i){const j=JOBS[i];if(!j||j.p!=="mech")return;if(!Object.keys(j.i).every(k=>have(k)>=j.i[k]))return toast("Не хватает деталей для этого ремонта");mechRun={i,step:0,quality:100};mechNote="";draw()}
+function mechAction(choice){if(!mechRun)return;const st=MECH_STEPS[mechRun.step];if(choice!==st.ok){mechRun.quality=Math.max(40,mechRun.quality-15);mechNote="Неверное действие. Проверь этап и продолжай."}else{mechNote="Этап выполнен: "+st.n;mechRun.step++}if(mechRun.step>=MECH_STEPS.length){const i=mechRun.i;mechRun=null;mechNote="Ремонт завершён. Результат принят.";job(i);return}draw()}
+function mechCancel(){mechRun=null;mechNote="Заказ отменён до начала ремонта.";draw()}
+R.mech=()=>{
+  if(S.lv<6)return gate(6);
+  if(mechRun){const st=MECH_STEPS[mechRun.step];return `<div class="work-scene"><div class="work-object">${st.e}</div><div class="work-step">Ремонтный бокс · этап ${mechRun.step+1} из ${MECH_STEPS.length}</div></div><div class="card"><b>${st.n}</b><p class="sm">${st.hint}</p><div class="bar"><i style="width:${mechRun.quality}%"></i></div><div class="sm">Качество выполнения: ${mechRun.quality}%</div></div><div class="work-actions">${st.opts.map((o,i)=>`<button class="btn" onclick="mechAction(${i})">${o}</button>`).join("")}</div><p class="sm" style="margin-top:8px">${esc(mechNote)}</p><button class="chip" style="margin-top:8px" onclick="mechCancel()">Отменить сценарий</button>`}
+  const list=JOBS.map((j,i)=>[j,i]).filter(x=>x[0].p==="mech");
+  return `<div class="work-scene"><div class="work-object">🚗 🔧</div><div class="work-step">АВТОСЕРВИС · диагностический пост · подъёмник · склад деталей</div></div><div class="card sm">Выбери заказ. В ремонте будет четыре этапа: осмотр, фиксация, замена деталей и проверка. Награда и расход материалов остаются по текущим правилам заказа.</div>`+list.map(([j,i])=>`<div class="card row"><div><b>${j.n}</b><div class="sm">${Object.keys(j.i).map(k=>nm(k)+" "+have(k)+"/"+j.i[k]).join(" · ")} · ${j.r} 🪙</div></div><button class="btn" onclick="mechStart(${i})">Начать ремонт</button></div>`).join("")+`<p class="sm">${esc(mechNote)}</p>`;
+};
+
+/* Водитель: выбор транспорта, проверка груза, маршрут и выгрузка */
+let driveRun=null,driveNote="";
+const VEHICLES=[{id:"van",n:"Фургон",e:"🚐",cap:6},{id:"truck",n:"Грузовик",e:"🚚",cap:30}];
+function driveStart(i,v){const j=JOBS[i];if(!j||j.p!=="drive")return;const qty=Object.values(j.i).reduce((a,b)=>a+b,0),vehicle=VEHICLES.find(x=>x.id===v);if(!vehicle||vehicle.cap<qty)return toast("Этот транспорт не подходит по грузоподъёмности");if(!Object.keys(j.i).every(k=>have(k)>=j.i[k]))return toast("Не хватает груза для заказа");driveRun={i,v,step:0,route:0};driveNote="";draw()}
+function driveStep(){if(!driveRun)return;driveRun.step++;if(driveRun.step>=3){const i=driveRun.i;driveRun=null;driveNote="Доставка завершена и подтверждена.";job(i);return}draw()}
+function driveCancel(){driveRun=null;driveNote="Перевозка отменена до отправления.";draw()}
+R.drive=()=>{
+  if(S.lv<7)return gate(7);
+  if(driveRun){const j=JOBS[driveRun.i],v=VEHICLES.find(x=>x.id===driveRun.v),st=["Груз принят на складе","Маршрут пройден","Груз выгружен и проверен"][driveRun.step];return `<div class="work-scene"><div class="work-object">${v.e} 📦</div><div class="work-step">Логистический терминал · ${v.n} · вместимость ${v.cap}</div></div><div class="card"><b>${j.n}</b><p class="sm">${st}. Следи за сохранностью груза и заверши этап перевозки.</p><div class="route">${[0,1,2].map((x)=>`<i class="${x<=driveRun.step?"done":""}"></i>`).join("")}</div><div class="sm">Этап ${driveRun.step+1} из 3</div></div><button class="btn" style="width:100%" onclick="driveStep()">${["Подтвердить погрузку","Прибыть по маршруту","Подтвердить выгрузку"][driveRun.step]}</button><button class="chip" style="margin-top:8px" onclick="driveCancel()">Отменить заказ</button>`}
+  const list=JOBS.map((j,i)=>[j,i]).filter(x=>x[0].p==="drive");
+  return `<div class="work-scene"><div class="work-object">🚚 📦</div><div class="work-step">СКЛАДСКОЙ ТЕРМИНАЛ · зона погрузки · контроль отправления</div></div><div class="card sm">Выбери заказ и подходящий транспорт. Грузоподъёмность проверяется до начала перевозки. Доставка использует существующие ресурсы и оплату заказа.</div>`+list.map(([j,i])=>{const qty=Object.values(j.i).reduce((a,b)=>a+b,0);return `<div class="card"><b>${j.n}</b><div class="sm">${Object.keys(j.i).map(k=>nm(k)+" "+have(k)+"/"+j.i[k]).join(" · ")} · ${j.r} 🪙 · груз ${qty}</div><div class="chips" style="margin:8px 0 0">${VEHICLES.map(v=>`<button class="chip" ${v.cap<qty?"disabled":""} onclick="driveStart(${i},'${v.id}')">${v.e} ${v.n} · ${v.cap} ед.</button>`).join("")}</div></div>`}).join("")+`<p class="sm">${esc(driveNote)}</p>`;
+};
+
+/* Переключатель лесоруба: динамическая версия по умолчанию,
+   прежняя простая рубка сохранена для сравнения и отката. */
+let woodMode51="dynamic";
+function setWoodMode51(mode){woodMode51=mode;draw()}
+const _wood51=R.wood;
+R.wood=()=>woodMode51==="legacy"?gate(3)||`<div class="card"><div class="row"><b>Старая версия рубки</b><button class="chip" onclick="setWoodMode51(\'dynamic\')">Вернуться к динамической</button></div><p class="sm">Исходная механика: три удара по дереву, без движущейся зоны.</p><div style="text-align:center">${trees.map((h,i)=>`<button class="tree" style="font-size:${34+h*10}px" aria-label="Дерево" onclick="chop(${i})">🌲</button>`).join("")}</div><p class="sm">Бревна: ${S.mats.wood||0} · доски: ${S.mats.board||0}</p></div>`:`${_wood51()}<button class="chip" style="width:100%;margin-top:8px" onclick="setWoodMode51(\'legacy\')">Сравнить со старой рубкой</button>`;
+
+/* Фермерский экран уже содержит посев, рост, полив, сорняки и сбор.
+   Добавляем ясную панель состояния участка без изменения темпов и урожая. */
+const _farm51=R.farm;
+R.farm=()=>`<div class="card row"><div><b>Фермерское хозяйство</b><div class="sm">Участков занято: ${fd().filter(Boolean).length}/${FD} · готово к сбору: ${fd().filter(p=>p&&gp(p)>=1).length}</div></div><span>🌾</span></div>`+_farm51();
+
+/* Кейс-центр: наглядное описание и предпросмотр содержимого; цена и шансы не меняются. */
+const _cases51=R.cases;
+R.cases=()=>`<div class="work-scene" style="background:radial-gradient(60% 80% at 50% 45%,#8b7bd855,transparent),linear-gradient(145deg,#20243a,#0b1118)"><div class="work-object">📦</div><div class="work-step">BLACK BUSINESS · LOOT & COLLECTION</div></div>`+_cases51();
 
 /* =========================================================
    ЗАПУСК
