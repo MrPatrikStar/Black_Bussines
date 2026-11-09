@@ -100,6 +100,16 @@ header::after{content:"";position:absolute;left:0;bottom:-1px;height:2px;width:v
 @keyframes bb{50%{transform:translate(-50%,6px)}}
 @media (prefers-reduced-motion:reduce){.pg>*,.bob{animation:none!important}}
 .tree{font-size:56px;background:none;border:0;padding:0 6px;filter:drop-shadow(0 6px 6px #0008)}
+
+/* Красота: акценты заголовков, блик на плитках, мягкое свечение панели */
+h2{display:flex;align-items:center;gap:8px}
+h2::before{content:"";width:4px;height:14px;border-radius:2px;background:var(--a);box-shadow:0 0 8px var(--a)}
+#bar{box-shadow:0 -8px 24px #0008}#bar b{text-shadow:0 0 10px var(--a)}
+.tile::before{content:"";position:absolute;top:-50%;left:-60%;width:40%;height:200%;background:linear-gradient(90deg,#0000,#ffffff22,#0000);transform:rotate(20deg);animation:sh 6s infinite;z-index:1;pointer-events:none}
+@keyframes sh{0%,60%{left:-60%}100%{left:130%}}
+.chip{transition:border-color .2s}.chip:not(:disabled):hover{border-color:var(--a)}
+.card:hover{border-color:#3b5169}
+@media (prefers-reduced-motion:reduce){.tile::before{animation:none}}
 </style>
 </head>
 <body data-loc="home">
@@ -226,7 +236,7 @@ R.home=()=>`<div class="stage"><div class="rail">${rail(LEFT)}</div><div class="
 /* =========================================================
    ГОРОД
    ========================================================= */
-R.city=()=>banner()+`<div class="grid">${[["mine","Шахта","Руда и минералы","#0f4a47"],["shop","Магазин","Одежда и инструменты","#5a1d36"],["biz","Бизнес","Пассивный доход","#5a4018"],["work","Профессии","Работа и развитие","#17406a"],["factory","Завод","Плавка и детали","#33295f"],["farm","Ферма","Урожай и доставка","#2f4a24"],["market","Торговая площадка","Цены руды","#4a3a2a"],["estate","Недвижимость","Аренда и доход","#2d3a52"],["events","События","Бонусы и проекты","#4a2a5a"],["pass","Game Pass","Месяц бонусов","#2a3a5a"],["cases","Кейсы","Рулетка и редкости","#5a2a2a"],["auction","Аукцион","Лоты и продажа","#4a2a2a"],["gov","Городская артель","Работа для новичков","#2a4a4a"],["trade","Торговля","Рынок игроков и обмен","#4a4a2a"],["fish","Озеро","Рыбалка","#1b4a7a"],["wood","Лесопилка","Древесина","#2a4a2a"],...(S.proj>=10?[["mall","Торговый центр","−5% на одежду","#3a2a5a"]]:[])].map(b=>`<button class="tile" style="--c:${b[3]}" onclick="go('${b[0]}')"><span class="tic">${TI[b[0]]||""}</span><b>${b[1]}</b><div class="sm">${b[2]}</div></button>`).join("")}</div>`;
+R.city=()=>banner()+`<div class="grid">${[["mine","Шахта","Руда и минералы","#0f4a47"],["shop","Магазин","Одежда и инструменты","#5a1d36"],["biz","Бизнес","Пассивный доход","#5a4018"],["work","Профессии","Работа и развитие","#17406a"],["factory","Завод","Плавка и детали","#33295f"],["farm","Ферма","Урожай и доставка","#2f4a24"],["market","Торговая площадка","Цены руды","#4a3a2a"],["estate","Недвижимость","Аренда и доход","#2d3a52"],["events","События","Бонусы и проекты","#4a2a5a"],["pass","Game Pass","Месяц бонусов","#2a3a5a"],["cases","Кейсы","Рулетка и редкости","#5a2a2a"],["auction","Аукцион","Лоты и продажа","#4a2a2a"],["gov","Городская артель","Работа для новичков","#2a4a4a"],["trade","Торговля","Рынок игроков и обмен","#4a4a2a"],["fish","Озеро","Рыбалка","#1b4a7a"],["wood","Лесопилка","Древесина","#2a4a2a"],["cal","Календарь","События и награды","#3a2a4a"],...(S.proj>=10?[["mall","Торговый центр","−5% на одежду","#3a2a5a"]]:[])].map(b=>`<button class="tile" style="--c:${b[3]}" onclick="go('${b[0]}')"><span class="tic">${TI[b[0]]||""}</span><b>${b[1]}</b><div class="sm">${b[2]}</div></button>`).join("")}</div>`;
 
 /* =========================================================
    ШАХТА (С КАРТИНКАМИ ЖИЛ И ДИНАМИЧЕСКИМ ФОНОМ ЗОНЫ)
@@ -257,7 +267,7 @@ R.mine=()=>{
 <div class="card row"><div><b>${lastMsg||"Нажми на светящуюся жилу"}</b><div class="sm">Энергия за добычу: ${z.en}</div></div><button class="btn" onclick="rest()">Отдых +30 · 20 🪙</button></div>`;
 };
 
-setInterval(()=>{if(S.energy<100){S.energy=Math.min(100,S.energy+(S.pass>Date.now()?2:1)*(curEv().e||1));document.getElementById("be").textContent=S.energy+"/100";save()}},8000);
+setInterval(()=>{if(S.energy<100){S.energy=Math.min(100,S.energy+(S.pass>Date.now()?2:1)*(curEv().e||1)+(Math.random()<regB()?1:0));document.getElementById("be").textContent=S.energy+"/100";save()}},8000);
 
 /* =========================================================
    ПРОФЕССИИ И ЗАДАНИЯ
@@ -305,7 +315,7 @@ R.ward=()=>{
 /* =========================================================
    БИЗНЕС
    ========================================================= */
-const rate=()=>BIZ.reduce((s,b)=>s+(S.biz[b.id]||0)*b.i,0)+PROP.reduce((s,b)=>s+(S.props[b.id]?b.i:0),0);
+const rate=()=>Math.round(BIZ.reduce((s,b)=>s+bnet(b),0)+PROP.reduce((s,b)=>s+(S.props[b.id]?b.i*(S.tn&&S.tn[b.id]?1.3:1):0),0));
 const pend=()=>Math.floor(rate()*Math.min(Date.now()-S.bizT,43200000)/3600000);
 function collect(){S.coins+=pend();S.bizT=Date.now()}
 function bizBuy(id){
@@ -667,6 +677,69 @@ R.tasks=()=>`<h2>Ежедневные задания</h2>`+dqs().map((q,n)=>{con
 Object.assign(TI,{fish:"🎣",wood:"🪓"});
 Object.assign(TT,{fish:"Рыбалка",wood:"Лесопилка"});
 Object.assign(LOC,{fish:"work",wood:"work"});
+
+/* =========================================================
+   НЕДВИЖИМОСТЬ 2.0
+   Комнаты, квартиры, дома, особняки, коммерческие помещения и склады.
+   Бонус восстановления энергии действует постоянно, пока игрок
+   владеет объектом, и исчезает после продажи. Суммарный бонус
+   ограничен 40%. Подселённый жилец повышает аренду на 30%.
+   ========================================================= */
+PROP.length=0;
+PROP.push(
+ {id:"room",n:"Комната",p:4000,i:25,reg:.03,d:"Тесная, но своя"},
+ {id:"flat",n:"Квартира",p:15000,i:60,reg:.06,d:"Удобный отдых"},
+ {id:"house",n:"Дом",p:60000,i:280,reg:.1,d:"Больше места и покоя"},
+ {id:"villa",n:"Особняк",p:250000,i:1300,reg:.15,d:"Престиж и быстрое восстановление"},
+ {id:"office",n:"Коммерческое помещение",p:120000,i:700,reg:0,d:"Только аренда, без бонуса энергии"},
+ {id:"store",n:"Склад",p:90000,i:450,reg:0,d:"Хранение товаров и аренда"});
+const regB=()=>Math.min(.4,PROP.reduce((s,b)=>s+(S.props[b.id]?b.reg:0),0));
+function propSell(id){const p=PROP.find(x=>x.id===id),g=Math.round(p.p*.7);collect();delete S.props[id];if(S.tn)delete S.tn[id];S.coins+=g;toast("Продано: "+p.n+" за "+num(g)+" 🪙");save();draw()}
+function tenant(id){S.tn=S.tn||{};collect();if(S.tn[id])delete S.tn[id];else S.tn[id]=1;save();draw()}
+R.estate=()=>`<div class="card sm">Бонусы действуют постоянно, пока вы владеете объектом. Сейчас восстановление энергии: +${Math.round(regB()*100)}% (максимум 40%). При продаже возвращается 70% цены, бонус пропадает.</div>`+PROP.map(p=>{const own=S.props[p.id],tn=S.tn&&S.tn[p.id];return `<div class="card"><div class="row"><div><b>${p.n}</b><div class="sm">${p.d} · аренда ${num(Math.round(p.i*(tn?1.3:1)))} 🪙/ч${p.reg?" · энергия +"+Math.round(p.reg*100)+"%":""}</div></div>${own?`<span class="sm">Ваше</span>`:`<button class="btn" onclick="propBuy('${p.id}')">${num(p.p)} 🪙</button>`}</div>${own?`<div class="chips" style="margin:8px 0 0"><button class="chip${tn?" on":""}" onclick="tenant('${p.id}')">${tn?"Жилец живёт (+30% аренды)":"Подселить жильца"}</button><button class="chip" onclick="propSell('${p.id}')">Продать за ${num(Math.round(p.p*.7))}</button></div>`:""}</div>`}).join("");
+
+/* =========================================================
+   БИЗНЕС 2.0: СОТРУДНИКИ, ЗАРПЛАТЫ, ОБСЛУЖИВАНИЕ
+   Сотрудник увеличивает выручку на 20%, но зарплата — 12% базового
+   дохода. Обслуживание оборудования — 10% дохода в час. Доход
+   считается чистым: деньги из воздуха не печатаются.
+   ========================================================= */
+const bnet=b=>{const lv=S.biz[b.id]||0,n=(S.bw||{})[b.id]||0;return lv?lv*b.i*(1+.2*n)-n*b.i*lv*.12-b.i*.1:0};
+function hire(id){const b=BIZ.find(x=>x.id===id);S.bw=S.bw||{};if(!S.biz[id])return toast("Сначала купите бизнес");if((S.bw[id]||0)>=3)return toast("Максимум 3 сотрудника");collect();const c=Math.round(b.p*.25);if(S.coins<c)return toast("Недостаточно монет");S.coins-=c;S.bw[id]=(S.bw[id]||0)+1;toast("Нанят сотрудник: "+b.n);save();draw()}
+const _biz=R.biz;
+R.biz=()=>_biz()+`<h2>Расходы и персонал</h2>`+BIZ.map(b=>{const n=(S.bw||{})[b.id]||0;return `<div class="card row"><div><b>${b.n}</b><div class="sm">Сотрудников ${n}/3 · зарплаты и обслуживание учтены · чистый доход ${num(Math.round(bnet(b)))} 🪙/ч</div></div><button class="btn" ${S.biz[b.id]&&n<3?"":"disabled"} onclick="hire('${b.id}')">Нанять · ${num(Math.round(b.p*.25))}</button></div>`}).join("");
+
+/* =========================================================
+   БОЛЬШОЙ СОВМЕСТНЫЙ ЗАКАЗ И ПОИСК СОКРОВИЩ
+   Для заказа нужны товары разных профессий (металлург, фермер,
+   лесоруб, механик). Сокровища: раз в сутки можно проверить одно
+   из трёх мест. Пропуск события ничем не наказывается.
+   ========================================================= */
+const BO={iron_bar:5,wheat:5,board:3,part:1};
+const bo=()=>S.bo||(S.bo={});
+function boGive(k){const b=bo();if((b[k]||0)>=BO[k])return;if((S.mats[k]||0)<1)return toast("Нет: "+nm(k));S.mats[k]--;b[k]=(b[k]||0)+1;
+  if(Object.keys(BO).every(x=>(b[x]||0)>=BO[x])){S.bo={};S.coins+=1500;S.frag+=10;toast("Большой заказ выполнен: +1500 🪙 и 10 фрагментов")}else toast("Вклад принят: "+nm(k));save();draw()}
+const spot=()=>day()%3;
+function dig(i){if(S.tr===day())return;S.tr=day();if(i===spot()){const c=500+Math.floor(Math.random()*500);S.coins+=c;S.frag+=3;toast("Сокровище найдено: +"+c+" 🪙 и 3 фрагмента")}else toast("Здесь пусто. Попробуй завтра");save();draw()}
+const _ev4=R.events;
+R.events=()=>_ev4()+`<h2>Большой совместный заказ</h2><div class="card"><div class="sm">Нужны товары разных профессий. Награда: 1500 🪙 и 10 фрагментов.</div>${Object.keys(BO).map(k=>`<div class="row" style="margin-top:8px"><span>${nm(k)} ${bo()[k]||0}/${BO[k]}</span><button class="chip" ${(bo()[k]||0)>=BO[k]?"disabled":""} onclick="boGive('${k}')">Сдать 1</button></div>`).join("")}</div><h2>Поиск сокровищ</h2><div class="card"><div class="sm">Раз в сутки проверь одно из трёх мест.</div><div class="chips" style="margin:8px 0 0">${["Старая шахта","Берег озера","Лесная поляна"].map((n,i)=>`<button class="chip" ${S.tr===day()?"disabled":""} onclick="dig(${i})">${n}</button>`).join("")}</div></div>`;
+
+/* =========================================================
+   КАЛЕНДАРЬ СОБЫТИЙ
+   Активные, сегодняшние, завтрашние, выходные и завершённые
+   события с условиями, временем и наградами.
+   ========================================================= */
+const SEAS=()=>{const m=new Date().getMonth();return m===11||m<1?["Новый год","Праздничные ярмарки и подарки"]:m<5?["Весна","Пора посадок и ярмарок"]:m<8?["Лето","Сезон рыбалки и фестивалей"]:["Осень","Время урожая и осенних лотов"]};
+const hm=ms=>new Date(ms).toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});
+const evRow=(t,n,s)=>`<div class="card"><div class="row"><b>${n}</b><span class="sm">${t}</span></div><div class="sm">${s}</div></div>`;
+R.cal=()=>{
+  const sl=Math.floor(Date.now()/6e5),e=EV[sl%EV.length],pv=EV[(sl+EV.length-1)%EV.length],we=[0,6].includes(new Date().getDay()),se=SEAS();
+  return `<h2>Активные сейчас</h2>`+evRow(hm(sl*6e5)+"–"+hm((sl+1)*6e5),e.n,"Участие автоматическое, бонус действует на ваши действия")+(we?evRow("Сб–Вс","Ярмарка","+10% к продаже руды и изделий"):"")+evRow("Сезон",se[0],se[1])
+  +`<h2>Сегодня</h2>`+evRow("до 24:00","Ежедневный бонус и рулетка","Награда: монеты, серия дней")+evRow("до 24:00","Суточные заказы и аукцион","Лоты и заказы обновятся в полночь")+evRow("до 24:00","Поиск сокровищ","Одна попытка в сутки")
+  +`<h2>Завтра</h2>`+evRow("с 00:00","Новые ежедневные задания","Обновятся расходники и лоты")
+  +`<h2>Выходные</h2>`+evRow("Сб–Вс","Ярмарка","Условий нет. Пропуск события не штрафуется")
+  +`<h2>Завершённые</h2>`+evRow(hm((sl-1)*6e5)+"–"+hm(sl*6e5),pv.n,"Завершено")};
+Object.assign(TI,{cal:"📅"});Object.assign(TT,{cal:"Календарь"});Object.assign(LOC,{cal:"city"});
 
 /* =========================================================
    ЗАПУСК
