@@ -1333,6 +1333,7 @@ function scanCharacters() {
   document.querySelectorAll('[data-player-model="1"]').forEach(mountCharacter);
 }
 new MutationObserver(scanCharacters).observe(document.getElementById('v'), { childList: true, subtree: true });
+scanCharacters(); // Загрузить персонажа, если главный экран уже был отрисован до запуска модуля
 scanCharacters();
 window.addEventListener('resize', () => {
   document.querySelectorAll('[data-player-model="1"] canvas').forEach(canvas => {
