@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b1118">
-<title>BLACK BUSINESS</title>
+<title>BLACK BUSINESS 5.2</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -327,6 +327,7 @@ Object.keys(STUB).forEach(k=>{TT[k]=STUB[k][0];LOC[k]="city";R[k]=()=>`<div clas
    ГЛАВНЫЙ ЭКРАН И ПЕРСОНАЖ
    ========================================================= */
 const LEFT=[["inv","🎒","Инвентарь"],["ward","👕","Гардероб"],["ach","🏆","Достижения"],["col","💎","Коллекции"],["log","📜","Журнал"]];
+LEFT.push(["profile","🪪","Профиль"]);
 const RIGHT=[["city","🏙","Город"],["work","⛏","Профессии"],["tasks","📋","Задания"],["biz","💼","Бизнес"],["shop","🛍","Магазин"],["estate","🏠","Недвижимость"]];
 const rail=a=>a.map(b=>`<button onclick="go('${b[0]}')"><b>${b[1]}</b>${b[2]}</button>`).join("");
 function hero(){
@@ -1268,6 +1269,71 @@ R.farm=()=>`<div class="card row"><div><b>Фермерское хозяйств�
 /* Кейс-центр: наглядное описание и предпросмотр содержимого; цена и шансы не меняются. */
 const _cases51=R.cases;
 R.cases=()=>`<div class="work-scene" style="background:radial-gradient(60% 80% at 50% 45%,#8b7bd855,transparent),linear-gradient(145deg,#20243a,#0b1118)"><div class="work-object">📦</div><div class="work-step">BLACK BUSINESS · LOOT & COLLECTION</div></div>`+_cases51();
+
+/* =========================================================
+   BLACK BUSINESS 5.2 — ПРОФИЛЬ, ПРОГРЕСС И РЕЗЕРВНОЕ СОХРАНЕНИЕ
+   Дополнительные инструменты не меняют цены, шансы, награды,
+   требования профессий или баланс существующих игровых циклов.
+   ========================================================= */
+const BB_VERSION="5.2";
+TT.profile="Профиль игрока"; LOC.profile="home";
+function bbStats(){
+  const st=S.st||{},px=S.px||{},skills=Object.keys(px).filter(k=>px[k]>0).length;
+  return {skills,ore:st.mined||0,sold:st.sold||0,crafted:st.crafted||0,harvested:st.harvested||0,
+    fished:st.fished||0,chopped:st.chopped||0,photos:st.photos||0,delivered:st.delivered||0,
+    jobs:S.jobs||0,businesses:Object.values(S.biz||{}).filter(x=>x>0).length,
+    estate:Object.values(S.props||{}).filter(Boolean).length,items:(S.own||[]).length,
+    artifacts:Object.keys(S.coll||{}).length};
+}
+R.profile=()=>{
+  const a=bbStats(),xp=Math.max(0,Math.min(100,S.xp/xpNeed()*100));
+  const professions=PROF.map((p,i)=>({name:p[0],key:PK2[i],level:plv(PK2[i]),progress:plvp(PK2[i])}));
+  return `<div class="profile-head"><div class="profile-avatar">${hero()}</div><div><div class="sm">BLACK BUSINESS · ИГРОВОЙ ПРОФИЛЬ</div><h2>${esc(pname)}</h2><b>Уровень ${S.lv}</b><div class="sm">${num(S.xp)} / ${num(xpNeed())} опыта</div><div class="bar"><i style="width:${xp}%"></i></div><div class="sm" style="margin-top:7px">Локальная версия ${BB_VERSION}</div></div></div>
+  <div class="profile-grid"><div class="card"><b>${num(S.coins)} 🪙</b><div class="sm">Баланс</div></div><div class="card"><b>${S.energy}/100 ⚡</b><div class="sm">Энергия</div></div><div class="card"><b>${a.items}</b><div class="sm">Предметов</div></div><div class="card"><b>${a.businesses+a.estate}</b><div class="sm">Активов</div></div></div>
+  <h2>Статистика карьеры</h2><div class="profile-grid">${[[a.ore,"Добыто руды"],[a.crafted,"Создано изделий"],[a.harvested,"Собрано урожая"],[a.fished,"Поймано рыбы"],[a.chopped,"Добыто брёвен"],[a.photos,"Фотозаказов"],[a.delivered,"Доставок"],[a.jobs,"Заказов фотографа"],[a.artifacts,"Артефактов"],[a.skills,"Развитых профессий"]].map(x=>`<div class="card"><b>${num(x[0])}</b><div class="sm">${x[1]}</div></div>`).join("")}</div>
+  <h2>Развитие профессий</h2>${professions.map(x=>`<div class="card"><div class="row"><b>${x.name}</b><span class="sm">Ур. ${x.level}</span></div><div class="bar"><i style="width:${x.progress}%"></i></div></div>`).join("")}
+  <h2>Сохранение прогресса</h2><div class="card"><p class="sm">Создай резервную копию локального прогресса перед обновлением игры или переносом на другое устройство. Файл содержит только данные сохранения этого прототипа.</p><div class="work-actions"><button class="btn" onclick="bbExport()">Скачать резервную копию</button><label class="btn" style="display:inline-block">Восстановить копию<input type="file" accept="application/json,.json" hidden onchange="bbImport(this)"></label></div><p class="sm" style="margin-top:8px">Важно: это локальное сохранение браузера. Оно не синхронизирует аккаунт между игроками и устройствами.</p></div>`;
+};
+function bbExport(){
+  try{
+    const payload={app:"BLACK_BUSINESS",version:BB_VERSION,exportedAt:new Date().toISOString(),state:S};
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+    const url=URL.createObjectURL(blob),a=document.createElement("a");
+    a.href=url;a.download="black-business-backup-"+new Date().toISOString().slice(0,10)+".json";
+    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    toast("Резервная копия подготовлена");
+  }catch(e){console.error(e);toast("Не удалось создать копию")}
+}
+function bbNormalize(raw){
+  const d=def(),v=raw&&raw.state?raw.state:raw;
+  if(!v||typeof v!=="object"||Array.isArray(v))throw new Error("Некорректный файл сохранения");
+  const out=Object.assign(d,v);
+  ["ore","found","eq","biz","st","mats","props","dl","dur","px","bs","bw","coll"].forEach(k=>{if(!out[k]||typeof out[k]!=="object"||Array.isArray(out[k]))out[k]=d[k]||{};});
+  ["own","claimed","log","farm"].forEach(k=>{if(!Array.isArray(out[k]))out[k]=d[k]||[];});
+  ["coins","energy","xp","lv","jobs","frag"].forEach(k=>{out[k]=Number.isFinite(Number(out[k]))?Math.max(0,Number(out[k])):d[k];});
+  out.energy=Math.min(100,out.energy);out.lv=Math.max(1,Math.floor(out.lv));
+  return out;
+}
+function bbImport(input){
+  const file=input&&input.files&&input.files[0];if(!file)return;
+  if(file.size>2*1024*1024){toast("Файл слишком большой");input.value="";return}
+  const reader=new FileReader();
+  reader.onload=()=>{try{
+    const data=JSON.parse(String(reader.result||""));
+    if(data.app!=="BLACK_BUSINESS")throw new Error("Это не резервная копия BLACK BUSINESS");
+    if(!confirm("Восстановить сохранение из файла? Текущий локальный прогресс будет заменён."))return;
+    S=bbNormalize(data);save();toast("Сохранение восстановлено");go("profile");
+  }catch(e){console.error(e);toast(e.message||"Не удалось прочитать сохранение")}
+  finally{input.value=""}};
+  reader.onerror=()=>{toast("Ошибка чтения файла");input.value=""};reader.readAsText(file);
+}
+
+/* Доступность: корректное описание текущего раздела и поддержка узких экранов. */
+(function bbA11y(){
+  const style=document.createElement("style");
+  style.textContent=`.profile-head{display:grid;grid-template-columns:108px 1fr;gap:14px;align-items:center;background:linear-gradient(135deg,#27364a,#111a26);border:1px solid var(--l);border-radius:16px;padding:12px;margin-bottom:12px}.profile-avatar{width:108px;height:150px;overflow:hidden}.profile-avatar svg{width:100%;height:100%}.profile-head h2{margin:3px 0}.profile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.profile-grid .card{margin:0}.profile-grid b{font-size:17px}.work-actions{display:flex;gap:8px;flex-wrap:wrap}.work-actions>*{flex:1;text-align:center}@media(max-width:380px){.profile-head{grid-template-columns:78px 1fr}.profile-avatar{width:78px;height:120px}.profile-grid b{font-size:15px}}`;
+  document.head.appendChild(style);
+})();
 
 /* =========================================================
    ЗАПУСК
