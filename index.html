@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b1118">
-<title>BLACK BUSINESS 5.2</title>
+<title>BLACK BUSINESS 6.1</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -512,6 +512,7 @@ R.events=()=>{const t=800+S.proj;return `<div class="card row"><div><b>Ежед�
 /* =========================================================
    КЕЙСЫ И ФРАГМЕНТЫ
    ========================================================= */
+function bbCompleteCase(){const loot=S.loot||bbEnsureLoot(),r=loot.pending||bbCaseResult;if(!loot.opening||!r)return;if(r.type==="coins")S.coins+=r.amount;else if(r.type==="ore"){S.ore[r.key]=(S.ore[r.key]||0)+r.amount;S.found[r.key]=1}else{const g=bbGrantItem(r.id);if(g==="duplicate")r.desc+=" · повтор: +5 фрагментов"}loot.opening=false;loot.openingAt=0;loot.pending=null;loot.opened=(loot.opened||0)+1;loot.last={...r,at:Date.now()};S.st=S.st||{};S.st.cases=(S.st.cases||0)+1;save();draw();toast("Кейс открыт: "+r.title)}
 function openCase(){
   if(S.coins<300)return toast("Недостаточно монет");
   S.coins-=300;const r=Math.random();let m;
@@ -1275,7 +1276,7 @@ R.cases=()=>`<div class="work-scene" style="background:radial-gradient(60% 80% a
    Дополнительные инструменты не меняют цены, шансы, награды,
    требования профессий или баланс существующих игровых циклов.
    ========================================================= */
-const BB_VERSION="5.2";
+const BB_VERSION="6.1";
 TT.profile="Профиль игрока"; LOC.profile="home";
 function bbStats(){
   const st=S.st||{},px=S.px||{},skills=Object.keys(px).filter(k=>px[k]>0).length;
@@ -1336,31 +1337,51 @@ function bbImport(input){
 })();
 
 /* =========================================================
-   ЗАПУСК
+   BLACK BUSINESS 6.1 — FRONTEND GAMEPLAY REBUILD
+   Реальные состояния и действия для Loot & Collection и Game Pass.
+   Существующие таблицы цен, базовые вероятности кейса, цена кейса,
+   цена Pass и бесплатная ежедневная попытка рулетки сохранены.
    ========================================================= */
-async function startGame(){
-  tg?.ready();tg?.expand();
-  draw();
-  const st=document.getElementById("st"),initData=tg?.initData;
-  if(!initData){st.textContent="Вне Telegram";return}
-  try{
-    st.textContent="Вход…";
-    const a=await sbClient.functions.invoke("telegram-auth",{body:{initData}});
-    if(a.error)throw a.error;
-    if(a.data?.error)throw new Error(a.data.error);
-    const g=await sbClient.functions.invoke("game-state",{body:{initData}});
-    if(g.error)throw g.error;
-    if(g.data?.error)throw new Error(g.data.error);
-    pname=g.data?.player?.display_name||tg?.initDataUnsafe?.user?.first_name||"Игрок";
-    st.textContent="Сервер подключён";
-  }catch(e){
-    console.error(e);
-    pname=tg?.initDataUnsafe?.user?.first_name||"Игрок";
-    st.textContent="Сервер недоступен";
-  }
-  draw();
+/* Персонаж: вращается только SVG-модель, ник и опыт остаются неподвижными. */
+R.home=()=>`<div class="stage"><div class="rail">${rail(LEFT)}</div><div class="hero"><div class="avatar-spin">${hero()}</div><div class="hero-meta"><b>${esc(pname)}</b><div class="sm">Уровень ${S.lv} · Опыт ${num(S.xp)} / ${num(xpNeed())}</div><div class="bar"><i style="width:${Math.min(100,S.xp/xpNeed()*100)}%"></i></div><div class="sm" style="margin-top:8px">Проведи по персонажу, чтобы повернуть модель</div></div></div><div class="rail">${rail(RIGHT)}</div></div>`;
+
+/* Общие утилиты сохранения и безопасного начисления предметов. */
+const bbEnsureLoot=()=>{S.loot=S.loot||{tab:"cases",last:null};S.loot.claimed=S.loot.claimed||{};S.loot.opened=S.loot.opened||0;if(S.loot.opening&&S.loot.pending&&!bbCaseTimer){bbCaseResult=S.loot.pending;const remain=Math.max(0,2850-(Date.now()-(S.loot.openingAt||Date.now())));bbCaseTimer=setTimeout(()=>{bbCaseTimer=null;bbCompleteCase()},remain)}if(S.loot.spinPending&&!bbSpinResult&&!bbSpinTimer){bbSpinResult={...S.loot.spinPending,done:false,from:S.loot.spinPending.from??(S.loot.spinPending.rotation-1440)};const remain=Math.max(0,3700-(Date.now()-(S.loot.spinPending.at||Date.now())));bbSpinTimer=setTimeout(()=>{bbSpinTimer=null;bbCompleteSpin()},remain)}return S.loot};
+const BB_CASES=[
+ {id:"standard",n:"Обычный кейс",e:"📦",theme:"standard",desc:"Базовая коллекция одежды, аксессуаров, инструментов и транспорта.",pool:()=>ITEMS.slice()},
+ {id:"pro",n:"Профессиональный кейс",e:"🧰",theme:"professional",desc:"Рабочие инструменты, камеры и транспорт для развития профессий.",pool:()=>ITEMS.filter(i=>["tool","veh","cam"].includes(i.s))},
+ {id:"rare",n:"Редкий кейс",e:"💎",theme:"rare",desc:"Предметы редкой, эпической и легендарной категорий.",pool:()=>ITEMS.filter(i=>RAR.indexOf(i.r)>=2)},
+ {id:"theme",n:"Тематический кейс",e:"🎭",theme:"theme",desc:"Косметическая коллекция одежды и аксессуаров с единым стилем.",pool:()=>ITEMS.filter(i=>["head","body","acc","back"].includes(i.s)&&!i.se)},
+ {id:"season",n:"Сезонный кейс",e:"❄️",theme:"season",desc:"Предметы сезонных коллекций, доступные в каталоге игры.",pool:()=>ITEMS.filter(i=>!!i.se)},
+ {id:"elite",n:"Эксклюзивный кейс",e:"👑",theme:"elite",desc:"Самые редкие предметы существующей коллекции.",pool:()=>ITEMS.filter(i=>i.r==="Легендарный")}
+];
+const bbCaseById=id=>BB_CASES.find(c=>c.id===id)||BB_CASES[0];
+const bbCasePool=id=>{
+  const themed=bbCaseById(id).pool();
+  /* В каждом кейсе сохраняется исходное распределение редкостей каталога.
+     Если в тематике нет предмета нужной редкости, используется общий пул этой редкости. */
+  return RAR.flatMap(r=>{const all=ITEMS.filter(i=>i.r===r),match=themed.filter(i=>i.r===r);return match.length?match:all});
+};
+function bbSelectCaseType(id){if(bbEnsureLoot().opening||!BB_CASES.some(c=>c.id===id))return;S.loot.caseType=id;bbCaseResult=null;save();draw()}
+const bbGrantItem=id=>{const it=item(id);if(!it)return false;if(S.own.includes(id)){S.frag=(S.frag||0)+5;return "duplicate"}S.own.push(id);return "item"};
+const bbRarityColor=r=>RC[r]||"#8fa1b5";
+const bbItemCard=(it,owned)=>`<div class="loot-item" style="--rarity:${bbRarityColor(it.r)}"><div class="loot-item-art">${ico(it)}</div><div class="loot-item-info"><b>${esc(it.n)}</b><span>${esc(it.r||"Обычный")} · ${esc(SL[it.s]||"Предмет")}</span><small>${owned?"В коллекции":"Ещё не найден"}</small></div></div>`;
+
+/* Кейсы: выбор результата сохраняет исходное распределение 55/30/15.
+   Награда начисляется только после завершения анимации; повторный клик блокируется. */
+let bbCaseTimer=null,bbCaseResult=null,bbSpinTimer=null,bbSpinResult=null;
+function bbRollCase(){
+  const caseDef=bbCaseById(bbEnsureLoot().caseType||"standard"),pool=bbCasePool(caseDef.id);
+  const r=Math.random();
+  /* Базовое распределение сохранено без изменений: 55/30/15. */
+  if(r<.55){const c=100+Math.floor(Math.random()*301);return {type:"coins",caseId:caseDef.id,title:"Монеты",desc:`+${c} 🪙`,amount:c,rarity:"Обычный",icon:"🪙"}}
+  if(r<.85){const o=pick(ZONES[1].w);return {type:"ore",caseId:caseDef.id,key:o,title:ORE[o][0],desc:"×4",amount:4,rarity:"Необычный",icon:"⛏"}}
+  /* Сначала выбирается исходная редкость равномерно по старому каталогу,
+     затем — тематический предмет той же редкости. Это сохраняет частоты редкостей. */
+  const raritySample=ITEMS[Math.floor(Math.random()*ITEMS.length)],rarityPool=pool.filter(i=>i.r===raritySample.r),it=rarityPool[Math.floor(Math.random()*rarityPool.length)]||raritySample;
+  return {type:"item",caseId:caseDef.id,id:it.id,title:it.n,desc:it.r,rarity:it.r,icon:"🎁"};
 }
-startGame();
-</script>
-</body>
-</html>
+function openCase(){
+  const loot=bbEnsureLoot();if(loot.opening||bbSpinResult)return;
+  if(S.coins<300)return toast("Недостаточно монет");
+  S.coins-=30
