@@ -209,6 +209,14 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;background:rad
 #dzg,#dzp{transition:none;box-shadow:0 0 14px rgba(63,209,176,.45)}
 #dzp{box-shadow:0 0 16px rgba(224,164,88,.7)}
 .chip{transition:border-color .2s,color .2s,transform .15s}.chip:active{transform:scale(.94)}
+
+.player-3d{position:relative;width:100%;height:280px;max-width:280px;margin:0 auto;display:grid;place-items:center;overflow:hidden;touch-action:pan-y}
+.player-3d canvas{position:absolute;inset:0;width:100%!important;height:100%!important;display:block;z-index:2}
+.player-fallback{position:absolute;inset:0;display:grid;place-items:center;z-index:1}
+.player-fallback svg{height:100%;width:auto;max-width:100%;filter:drop-shadow(0 14px 16px #000a)}
+.player-3d.is-ready .player-fallback{display:none}
+.player-3d .model-error{position:absolute;bottom:4px;left:0;right:0;text-align:center;font-size:10px;color:var(--m);z-index:3;pointer-events:none}
+
 </style>
 </head>
 <body data-loc="home">
@@ -316,7 +324,7 @@ const rail=a=>a.map(b=>`<button onclick="go('${b[0]}')"><b>${b[1]}</b>${b[2]}</b
 function hero(){
   const c=k=>{const i=item(S.eq[k]);return i&&i.c};
   const body=c("body")||"#4a5a70",legs=c("legs")||"#2c3a52",feet=c("feet")||"#1b1f27",head=c("head"),back=c("back"),acc=c("acc");
-  return `<svg viewBox="0 0 120 230" role="img" aria-label="Персонаж">
+  const fallback=`<svg viewBox="0 0 120 230" role="img" aria-label="Персонаж">
   <defs><linearGradient id="sh" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".2"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".4"/></linearGradient></defs><ellipse cx="60" cy="222" rx="46" ry="6" fill="#0009"/>
   ${back?`<rect x="30" y="62" width="60" height="70" rx="12" fill="${back}"/>`:""}
   <rect x="38" y="120" width="19" height="86" rx="8" fill="${legs}"/><rect x="63" y="120" width="19" height="86" rx="8" fill="${legs}"/>
@@ -328,7 +336,8 @@ function hero(){
   ${acc?`<rect x="45" y="38" width="14" height="9" rx="3" fill="none" stroke="#111" stroke-width="2"/><rect x="61" y="38" width="14" height="9" rx="3" fill="none" stroke="#111" stroke-width="2"/>`:""}
   ${head?`<path d="M36 32a24 24 0 0148 0z" fill="${head}"/><rect x="32" y="30" width="56" height="5" rx="2" fill="${head}"/>`:""}
   ${S.eq.head==="helmet"?`<circle cx="60" cy="14" r="4" fill="#fff6c8"/>`:""}
-  </svg>`;
+  </svg>`;;
+  return `<div class="player-3d" data-player-model><div class="player-fallback">${fallback}</div></div>`;
 }
 R.home=()=>`<div class="stage"><div class="rail">${rail(LEFT)}</div><div class="hero" style="transform:perspective(700px) rotateY(${ry}deg)">${hero()}<div><b>${esc(pname)}</b></div><div class="sm">Опыт ${S.xp}/${xpNeed()}</div><div class="bar"><i style="width:${Math.min(100,S.xp/xpNeed()*100)}%"></i></div></div><div class="rail">${rail(RIGHT)}</div></div>`;
 
@@ -1273,5 +1282,67 @@ startGame();
   })();
 })();
 </script>
+
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js"}}
+</script>
+<script type="module">
+import * as THREE from "three";
+import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/loaders/GLTFLoader.js";
+
+const started = new WeakSet();
+function startModel(host){
+  if(!host || started.has(host)) return;
+  started.add(host);
+  const fallback=host.querySelector('.player-fallback');
+  try {
+    const scene=new THREE.Scene();
+    const camera=new THREE.PerspectiveCamera(32,1,0.1,100);
+    camera.position.set(0,1.15,4.4);
+    const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+    renderer.outputColorSpace=THREE.SRGBColorSpace;
+    renderer.setClearColor(0x000000,0);
+    host.appendChild(renderer.domElement);
+    scene.add(new THREE.HemisphereLight(0xffffff,0x38445a,2.0));
+    const key=new THREE.DirectionalLight(0xffffff,2.2);key.position.set(3,5,4);scene.add(key);
+    const fill=new THREE.DirectionalLight(0x8b7bd8,1.0);fill.position.set(-4,2,-3);scene.add(fill);
+    const resize=()=>{const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()};
+    const ro=new ResizeObserver(resize);ro.observe(host);resize();
+    const loader=new GLTFLoader();
+    loader.load('./player.glb',gltf=>{
+      const model=gltf.scene;
+      const box=new THREE.Box3().setFromObject(model);
+      const size=box.getSize(new THREE.Vector3());
+      const center=box.getCenter(new THREE.Vector3());
+      const scale=2.55/Math.max(size.y,size.x,size.z,0.001);
+      model.scale.setScalar(scale);
+      model.position.set(-center.x*scale,-box.min.y*scale,-center.z*scale);
+      scene.add(model);
+      const scaledHeight=size.y*scale;
+      camera.position.set(0,scaledHeight*0.52,Math.max(3.6,scaledHeight*2.05));
+      camera.lookAt(0,scaledHeight*0.48,0);
+      const mixer=gltf.animations.length?new THREE.AnimationMixer(model):null;
+      if(mixer){const clip=gltf.animations.find(a=>/idle/i.test(a.name))||gltf.animations[0];mixer.clipAction(clip).play()}
+      host.classList.add('is-ready');
+      const clock=new THREE.Clock();
+      let raf=0;
+      const render=()=>{if(!host.isConnected){cancelAnimationFrame(raf);ro.disconnect();renderer.dispose();return}const dt=clock.getDelta();if(mixer)mixer.update(dt);renderer.render(scene,camera);raf=requestAnimationFrame(render)};
+      render();
+    },undefined,err=>{
+      console.error('Не удалось загрузить player.glb:',err);
+      const note=document.createElement('div');note.className='model-error';note.textContent='3D-модель не загрузилась — показан запасной персонаж';host.appendChild(note);
+    });
+  } catch(err) {
+    console.error('Ошибка 3D-персонажа:',err);
+    const note=document.createElement('div');note.className='model-error';note.textContent='3D недоступно — показан запасной персонаж';host.appendChild(note);
+  }
+}
+function scan(){document.querySelectorAll('[data-player-model]').forEach(startModel)}
+scan();
+const root=document.getElementById('v');
+if(root)new MutationObserver(scan).observe(root,{childList:true,subtree:true});
+</script>
+
 </body>
 </html>
