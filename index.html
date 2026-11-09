@@ -68,6 +68,21 @@ h2{font-size:15px;margin:14px 0 8px}
 button:focus-visible{outline:2px solid var(--a);outline-offset:2px}
 #bar{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:space-around;align-items:center;gap:6px;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));background:rgba(11,17,24,.92);backdrop-filter:blur(10px);border-top:1px solid var(--l);font-size:14px;z-index:6}
 #toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:#000d;border:1px solid var(--l);padding:8px 14px;border-radius:20px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:9;font-size:13px;text-align:center}
+
+/* Текстуры и глубина: зерно фона, рельефные карточки, узор плиток города */
+body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+main{position:relative;z-index:1}
+.card{background:linear-gradient(180deg,#1b2938,var(--p));box-shadow:inset 0 1px 0 #ffffff14,0 4px 14px #0006}
+.btn{box-shadow:0 2px 8px #0006,inset 0 1px 0 #ffffff55}
+.tile{position:relative;overflow:hidden;box-shadow:inset 0 1px 0 #ffffff22,0 6px 16px #0007}
+.tile::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,#ffffff0d 0 2px,#0000 2px 9px);pointer-events:none}
+.tile b,.tile div{position:relative;z-index:1}
+.tic{position:absolute;right:8px;bottom:0;font-size:46px;opacity:.3}
+.ban{border-color:var(--a);text-align:center}
+.ir{display:flex;align-items:center;gap:12px}
+.hero svg{animation:br 4s ease-in-out infinite;touch-action:pan-y}
+@keyframes br{50%{transform:translateY(-4px)}}
+@media (prefers-reduced-motion:reduce){.hero svg{animation:none}}
 </style>
 </head>
 <body data-loc="home">
@@ -104,7 +119,7 @@ const ZONES=[
  {id:"z2",n:"Глубокий забой",lv:3,en:4,bg:"img/ore/bg_z2.png",w:{iron:25,copper:30,silver:30,gold:15}},
  {id:"z3",n:"Кристальная пещера",lv:5,en:6,bg:"img/ore/bg_z3.png",w:{silver:30,gold:35,crystal:35}}];
 
-const SL={head:"Голова",body:"Торс",legs:"Ноги",feet:"Обувь",acc:"Аксессуар",back:"Спина",tool:"Инструмент"};
+const SL={head:"Голова",body:"Торс",legs:"Ноги",feet:"Обувь",acc:"Аксессуар",back:"Спина",tool:"Инструмент",veh:"Транспорт"};
 const ITEMS=[
  {id:"cap",n:"Кепка",s:"head",p:150,c:"#e0607e",r:"Обычный"},
  {id:"helmet",n:"Шахтёрская каска",s:"head",p:400,c:"#e0a458",r:"Необычный"},
@@ -115,7 +130,7 @@ const ITEMS=[
  {id:"glasses",n:"Очки",s:"acc",p:200,c:"#111",r:"Обычный"},
  {id:"bag",n:"Рюкзак",s:"back",p:500,c:"#7a4ad8",r:"Редкий"},
  {id:"pick2",n:"Железная кирка",s:"tool",p:600,b:1,r:"Необычный"},
- {id:"pick3",n:"Серебряная кирка",s:"tool",p:3000,b:2,r:"Редкий"}];
+ {id:"pick3",n:"Серебряная кирка",s:"tool",p:3000,b:2,r:"Редкий"},{id:"bike",n:"Велосипед",s:"veh",p:1500,v:.1,r:"Обычный"},{id:"van",n:"Фургон",s:"veh",p:9000,v:.3,r:"Необычный"},{id:"truck",n:"Грузовик",s:"veh",p:30000,v:.6,r:"Редкий"}];
 
 const BIZ=[{id:"kiosk",n:"Киоск",p:2000,i:20},{id:"work",n:"Мастерская",p:8000,i:90},{id:"depot",n:"Склад",p:25000,i:300}];
 
@@ -124,7 +139,7 @@ const TASKS=[
  {id:"t2",n:"Добыть 50 единиц руды",k:"mined",need:50,r:900},
  {id:"t3",n:"Купить любую вещь",k:"bought",need:1,r:150},
  {id:"t4",n:"Продать руды на 200 монет",k:"sold",need:200,r:300},
- {id:"t5",n:"Дорасти до 3 уровня",k:"lv",need:3,r:500}];
+ {id:"t5",n:"Дорасти до 3 уровня",k:"lv",need:3,r:500},{id:"t6",n:"Создать 3 изделия",k:"crafted",need:3,r:400},{id:"t7",n:"Собрать 6 единиц урожая",k:"harvested",need:6,r:350},{id:"t8",n:"Выполнить 2 заказа доставки или ремонта",k:"delivered",need:2,r:600}];
 
 const PROF=[
  ["Шахтёр","Добывает руду для металлургов",1],["Фотограф","Заказы на фото через Mini App",3],
@@ -137,7 +152,7 @@ const STUB={farm:["Ферма","Фермеры выращивают продук
    СОСТОЯНИЕ ПРОТОТИПА
    ========================================================= */
 const KEY="bb_proto_v1";
-const def=()=>({coins:1000,energy:100,xp:0,lv:1,ore:{},found:{},own:[],eq:{},biz:{},bizT:Date.now(),zone:"z1",st:{mined:0,bought:0,sold:0},claimed:[],mats:{},log:[],pass:0,daily:0,streak:0,proj:0,props:{},frag:0,jobs:0});
+const def=()=>({coins:1000,energy:100,xp:0,lv:1,ore:{},found:{},own:[],eq:{},biz:{},bizT:Date.now(),zone:"z1",st:{mined:0,bought:0,sold:0},claimed:[],mats:{},log:[],pass:0,daily:0,streak:0,proj:0,props:{},frag:0,jobs:0,farm:[null,null,null],dl:{}});
 function load(){try{return Object.assign(def(),JSON.parse(localStorage.getItem(KEY)||"{}"))}catch(e){return def()}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 let S=load(),cur="home",pname="Игрок",veins=[],lastMsg="";
@@ -146,7 +161,7 @@ const num=n=>Number(n).toLocaleString("ru-RU");
 const item=id=>ITEMS.find(x=>x.id===id);
 let tmr;function toast(m){S.log.unshift(new Date().toLocaleTimeString("ru-RU").slice(0,5)+" "+m);S.log.length=Math.min(S.log.length,40);const t=document.getElementById("toast");t.textContent=m;t.style.opacity=1;clearTimeout(tmr);tmr=setTimeout(()=>t.style.opacity=0,2200)}
 const xpNeed=()=>80+40*S.lv;
-function gain(x){S.xp+=x;while(S.xp>=xpNeed()){S.xp-=xpNeed();S.lv++;toast("Новый уровень: "+S.lv)}}
+function gain(x){S.xp+=x*(curEv().x||1);while(S.xp>=xpNeed()){S.xp-=xpNeed();S.lv++;toast("Новый уровень: "+S.lv)}}
 
 /* =========================================================
    НАВИГАЦИЯ И ОТРИСОВКА
@@ -171,30 +186,30 @@ Object.keys(STUB).forEach(k=>{TT[k]=STUB[k][0];LOC[k]="city";R[k]=()=>`<div clas
    ========================================================= */
 const LEFT=[["inv","🎒","Инвентарь"],["ward","👕","Гардероб"],["ach","🏆","Достижения"],["col","💎","Коллекции"],["log","📜","Журнал"]];
 const RIGHT=[["city","🏙","Город"],["work","⛏","Профессии"],["tasks","📋","Задания"],["biz","💼","Бизнес"],["shop","🛍","Магазин"],["estate","🏠","Недвижимость"]];
-const rail=a=>a.map(b=>`<button onclick="go('${b[0]}')"><b>${b[1]}</b>${b[2]}</button>`).join("");
+const rail=a=>a.map(b=>`<button onclick="go('${b[0]}')"><span class="tic">${TI[b[0]]||""}</span><b>${b[1]}</b>${b[2]}</button>`).join("");
 function hero(){
   const c=k=>{const i=item(S.eq[k]);return i&&i.c};
   const body=c("body")||"#4a5a70",legs=c("legs")||"#2c3a52",feet=c("feet")||"#1b1f27",head=c("head"),back=c("back"),acc=c("acc");
   return `<svg viewBox="0 0 120 230" role="img" aria-label="Персонаж">
-  <ellipse cx="60" cy="222" rx="46" ry="6" fill="#0009"/>
+  <defs><linearGradient id="sh" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".2"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".4"/></linearGradient></defs><ellipse cx="60" cy="222" rx="46" ry="6" fill="#0009"/>
   ${back?`<rect x="30" y="62" width="60" height="70" rx="12" fill="${back}"/>`:""}
   <rect x="38" y="120" width="19" height="86" rx="8" fill="${legs}"/><rect x="63" y="120" width="19" height="86" rx="8" fill="${legs}"/>
   <rect x="34" y="204" width="26" height="14" rx="6" fill="${feet}"/><rect x="60" y="204" width="26" height="14" rx="6" fill="${feet}"/>
   <rect x="18" y="66" width="16" height="58" rx="8" fill="${body}"/><rect x="86" y="66" width="16" height="58" rx="8" fill="${body}"/>
-  <rect x="32" y="62" width="56" height="64" rx="16" fill="${body}"/>
-  <circle cx="60" cy="38" r="22" fill="#e0b48f"/><path d="M38 34a22 22 0 0144 0c-8-8-36-8-44 0z" fill="#2a1f1a"/>
+  <rect x="32" y="62" width="56" height="64" rx="16" fill="${body}"/><rect x="32" y="62" width="56" height="64" rx="16" fill="url(#sh)"/>
+  <circle cx="60" cy="38" r="22" fill="#e0b48f"/><circle cx="60" cy="38" r="22" fill="url(#sh)"/><path d="M38 34a22 22 0 0144 0c-8-8-36-8-44 0z" fill="#2a1f1a"/>
   <circle cx="53" cy="43" r="2" fill="#2a1f1a"/><circle cx="67" cy="43" r="2" fill="#2a1f1a"/>
   ${acc?`<rect x="45" y="38" width="14" height="9" rx="3" fill="none" stroke="#111" stroke-width="2"/><rect x="61" y="38" width="14" height="9" rx="3" fill="none" stroke="#111" stroke-width="2"/>`:""}
   ${head?`<path d="M36 32a24 24 0 0148 0z" fill="${head}"/><rect x="32" y="30" width="56" height="5" rx="2" fill="${head}"/>`:""}
   ${S.eq.head==="helmet"?`<circle cx="60" cy="14" r="4" fill="#fff6c8"/>`:""}
   </svg>`;
 }
-R.home=()=>`<div class="stage"><div class="rail">${rail(LEFT)}</div><div class="hero">${hero()}<div><b>${esc(pname)}</b></div><div class="sm">Опыт ${S.xp}/${xpNeed()}</div><div class="bar"><i style="width:${Math.min(100,S.xp/xpNeed()*100)}%"></i></div></div><div class="rail">${rail(RIGHT)}</div></div>`;
+R.home=()=>`<div class="stage"><div class="rail">${rail(LEFT)}</div><div class="hero" style="transform:perspective(700px) rotateY(${ry}deg)">${hero()}<div><b>${esc(pname)}</b></div><div class="sm">Опыт ${S.xp}/${xpNeed()}</div><div class="bar"><i style="width:${Math.min(100,S.xp/xpNeed()*100)}%"></i></div></div><div class="rail">${rail(RIGHT)}</div></div>`;
 
 /* =========================================================
    ГОРОД
    ========================================================= */
-R.city=()=>`<div class="grid">${[["mine","Шахта","Руда и минералы","#0f4a47"],["shop","Магазин","Одежда и инструменты","#5a1d36"],["biz","Бизнес","Пассивный доход","#5a4018"],["work","Профессии","Работа и развитие","#17406a"],["factory","Завод","Плавка и детали","#33295f"],["farm","Ферма","Скоро","#2f4a24"],["market","Торговая площадка","Цены руды","#4a3a2a"],["estate","Недвижимость","Аренда и доход","#2d3a52"],["events","События","Бонусы и проекты","#4a2a5a"],["pass","Game Pass","Месяц бонусов","#2a3a5a"],["cases","Кейсы","Редкие предметы","#5a2a2a"]].map(b=>`<button class="tile" style="--c:${b[3]}" onclick="go('${b[0]}')"><b>${b[1]}</b><div class="sm">${b[2]}</div></button>`).join("")}</div>`;
+R.city=()=>banner()+`<div class="grid">${[["mine","Шахта","Руда и минералы","#0f4a47"],["shop","Магазин","Одежда и инструменты","#5a1d36"],["biz","Бизнес","Пассивный доход","#5a4018"],["work","Профессии","Работа и развитие","#17406a"],["factory","Завод","Плавка и детали","#33295f"],["farm","Ферма","Урожай и доставка","#2f4a24"],["market","Торговая площадка","Цены руды","#4a3a2a"],["estate","Недвижимость","Аренда и доход","#2d3a52"],["events","События","Бонусы и проекты","#4a2a5a"],["pass","Game Pass","Месяц бонусов","#2a3a5a"],["cases","Кейсы","Рулетка и редкости","#5a2a2a"],["auction","Аукцион","Лоты и продажа","#4a2a2a"]].map(b=>`<button class="tile" style="--c:${b[3]}" onclick="go('${b[0]}')"><b>${b[1]}</b><div class="sm">${b[2]}</div></button>`).join("")}</div>`;
 
 /* =========================================================
    ШАХТА (С КАРТИНКАМИ ЖИЛ И ДИНАМИЧЕСКИМ ФОНОМ ЗОНЫ)
@@ -206,10 +221,10 @@ function newVeins(){veins=[0,1,2,3,4].map(newVein)}
 function setZone(id){S.zone=id;newVeins();save();draw()}
 function mineVein(i){
   const z=zone();
-  if(S.energy<z.en)return toast("Недостаточно энергии. Отдохни.");
-  S.energy-=z.en;
+  if(S.energy<ec(z))return toast("Недостаточно энергии. Отдохни.");
+  S.energy-=ec(z);
   const o=veins[i].o,t=item(S.eq.tool),b=t?t.b:0;
-  const n=1+(Math.random()<.2+.1*b?1:0);
+  const n=1+(Math.random()<.2+.1*b+(S.eq.back?.1:0)?1:0);
   S.ore[o]=(S.ore[o]||0)+n;S.found[o]=1;S.st.mined+=n;gain(2+z.lv);
   lastMsg=`+${n} ${ORE[o][0]}`;
   if(Math.random()<.03+.02*b){S.ore.crystal=(S.ore.crystal||0)+1;S.found.crystal=1;S.st.mined++;lastMsg+=" · редкая находка: кристалл!"}
@@ -225,13 +240,13 @@ R.mine=()=>{
 <div class="card row"><div><b>${lastMsg||"Нажми на светящуюся жилу"}</b><div class="sm">Энергия за добычу: ${z.en}</div></div><button class="btn" onclick="rest()">Отдых +30 · 20 🪙</button></div>`;
 };
 
-setInterval(()=>{if(S.energy<100){S.energy=Math.min(100,S.energy+(S.pass>Date.now()?2:1));document.getElementById("be").textContent=S.energy+"/100";save()}},8000);
+setInterval(()=>{if(S.energy<100){S.energy=Math.min(100,S.energy+(S.pass>Date.now()?2:1)*(curEv().e||1));document.getElementById("be").textContent=S.energy+"/100";save()}},8000);
 
 /* =========================================================
    ПРОФЕССИИ И ЗАДАНИЯ
    ========================================================= */
-R.work=()=>PROF.map((p,i)=>`<div class="card row"><div><b>${p[0]}</b><div class="sm">${p[1]}</div></div>${i<3?`<button class="btn" onclick="go('${["mine","photo","factory"][i]}')">Открыть</button>`:`<span class="sm">Ур. ${p[2]} · скоро</span>`}</div>`).join("");
-const prog=t=>t.k==="lv"?S.lv:S.st[t.k];
+R.work=()=>PROF.map((p,i)=>`<div class="card row"><div><b>${p[0]}</b><div class="sm">${p[1]}</div></div>${i<6?`<button class="btn" onclick="go('${["mine","photo","factory","farm","mech","drive"][i]}')">Открыть</button>`:`<span class="sm">Ур. ${p[2]} · скоро</span>`}</div>`).join("");
+const prog=t=>t.k==="lv"?S.lv:(S.st[t.k]||0);
 function claim(id){const t=TASKS.find(x=>x.id===id);if(S.claimed.includes(id)||prog(t)<t.need)return;S.claimed.push(id);S.coins+=t.r;toast("Награда: +"+t.r+" 🪙");save();draw()}
 R.tasks=()=>TASKS.map(t=>{const p=Math.min(prog(t),t.need),d=S.claimed.includes(t.id);return `<div class="card"><div class="row"><div><b>${t.n}</b><div class="sm">${p}/${t.need} · награда ${t.r} 🪙</div></div><button class="btn" ${d||p<t.need?"disabled":""} onclick="claim('${t.id}')">${d?"Получено":"Забрать"}</button></div><div class="bar"><i style="width:${p/t.need*100}%"></i></div></div>`}).join("");
 
@@ -250,7 +265,7 @@ function sellOre(o){const n=S.ore[o]||0;if(!n)return;const s=Math.round(n*ORE[o]
 R.shop=()=>{
   const ores=Object.keys(ORE).filter(o=>S.ore[o]>0);
   return `<h2>Скупка руды</h2>${ores.length?ores.map(o=>`<div class="card row"><div style="display:flex;align-items:center;gap:12px"><img class="ore-ico" src="${ORE[o][3]}" alt=""><div><b>${ORE[o][0]} × ${S.ore[o]}</b><div class="sm">${Math.round(ORE[o][1]*mk(o)*pm())} 🪙 за штуку</div></div></div><button class="btn" onclick="sellOre('${o}')">+${Math.round(S.ore[o]*ORE[o][1]*mk(o)*pm())} 🪙</button></div>`).join(""):`<div class="card sm">Руды нет. Добудь её в шахте.</div>`}
-  <h2>Одежда и инструменты</h2>${ITEMS.map(i=>`<div class="card row"><div><b>${i.n}</b><div class="sm">${i.r} · ${SL[i.s]}</div></div>${S.own.includes(i.id)?`<span class="sm">Куплено</span>`:`<button class="btn" onclick="buy('${i.id}')">${i.p} 🪙</button>`}</div>`).join("")}`;
+  <h2>Одежда и инструменты</h2>${ITEMS.map(i=>`<div class="card row"><div class="ir">${ico(i)}<div><b>${i.n}</b><div class="sm">${i.r} · ${SL[i.s]}</div></div></div>${S.own.includes(i.id)?`<span class="sm">Куплено</span>`:`<button class="btn" onclick="buy('${i.id}')">${i.p} 🪙</button>`}</div>`).join("")}`;
 };
 
 /* =========================================================
@@ -267,7 +282,7 @@ R.inv=()=>{
 };
 R.ward=()=>{
   const own=ITEMS.filter(i=>i.s!=="tool"&&S.own.includes(i.id));
-  return `<div class="hero" style="margin-bottom:10px">${hero()}</div>${own.length?own.map(i=>`<div class="card row"><div><b>${i.n}</b><div class="sm">${SL[i.s]} · ${i.r}</div></div><button class="btn" onclick="equip('${i.id}')">${S.eq[i.s]===i.id?"Снять":"Надеть"}</button></div>`).join(""):`<div class="card sm">Гардероб пуст. Загляни в магазин.</div>`}`;
+  return `<div class="hero" style="margin-bottom:10px">${hero()}</div>${own.length?own.map(i=>`<div class="card row"><div class="ir">${ico(i)}<div><b>${i.n}</b><div class="sm">${SL[i.s]} · ${i.r}</div></div></div><button class="btn" onclick="equip('${i.id}')">${S.eq[i.s]===i.id?"Снять":"Надеть"}</button></div>`).join(""):`<div class="card sm">Гардероб пуст. Загляни в магазин.</div>`}`;
 };
 
 /* =========================================================
@@ -290,14 +305,14 @@ ${BIZ.map(b=>{const lv=S.biz[b.id]||0,cost=lv?Math.round(b.p*lv*.75):b.p;return 
 /* =========================================================
    ДОСТИЖЕНИЯ И КОЛЛЕКЦИИ
    ========================================================= */
-R.ach=()=>[["Первая руда",S.st.mined>=1],["Добыто 50 единиц руды",S.st.mined>=50],["Первая покупка",S.st.bought>=1],["Третий уровень",S.lv>=3],["Владелец бизнеса",Object.keys(S.biz).length>0],["Владелец недвижимости",Object.keys(S.props).length>0],["Фотограф-новичок",S.jobs>0],["Участник проекта",S.proj>0]].map(a=>`<div class="card row"><b>${a[0]}</b><span class="sm">${a[1]?"Получено":"Не получено"}</span></div>`).join("");
+R.ach=()=>[["Первая руда",S.st.mined>=1],["Добыто 50 единиц руды",S.st.mined>=50],["Первая покупка",S.st.bought>=1],["Третий уровень",S.lv>=3],["Владелец бизнеса",Object.keys(S.biz).length>0],["Владелец недвижимости",Object.keys(S.props).length>0],["Фотограф-новичок",S.jobs>0],["Участник проекта",S.proj>0],["Фермер",(S.st.harvested||0)>0],["Первый заказ доставки",(S.st.delivered||0)>0]].map(a=>`<div class="card row"><b>${a[0]}</b><span class="sm">${a[1]?"Получено":"Не получено"}</span></div>`).join("");
 R.col=()=>`<h2>Найденные руды</h2>${Object.keys(ORE).map(o=>`<div class="card row"><b>${S.found[o]?ORE[o][0]:"???"}</b><span class="sm">${S.found[o]?"Найдено":"Не найдено"}</span></div>`).join("")}<h2>Одежда</h2><div class="card">Собрано предметов: ${S.own.length} из ${ITEMS.length}</div>`;
 
 /* =========================================================
    ТОРГОВАЯ ПЛОЩАДКА (С ИКОНКАМИ РУДЫ)
    ========================================================= */
 const MKT={};Object.keys(ORE).forEach(o=>MKT[o]=1);
-const mk=o=>MKT[o]||1,pm=()=>S.pass>Date.now()?1.1:1;
+const mk=o=>MKT[o]||1,pm=()=>(S.pass>Date.now()?1.1:1)*([0,6].includes(new Date().getDay())?1.1:1)*(curEv().s||1);
 setInterval(()=>{Object.keys(MKT).forEach(o=>MKT[o]=Math.min(1.5,Math.max(.6,MKT[o]+(Math.random()-.5)*.2)));if(cur==="market")draw()},30000);
 R.market=()=>`<div class="card sm">Продажа — в магазине по этим ценам.${S.pass>Date.now()?" Game Pass: +10%.":""}</div>`+Object.keys(ORE).map(o=>{const m=mk(o);return `<div class="card row"><div style="display:flex;align-items:center;gap:12px"><img class="ore-ico" src="${ORE[o][3]}" alt=""><b>${ORE[o][0]}</b></div><span>${Math.round(ORE[o][1]*m*pm())} 🪙 <span class="sm">${m>1.05?"▲":m<.95?"▼":"•"}</span></span></div>`;}).join("");
 
@@ -318,7 +333,7 @@ function craft(i){
   if(S.energy<r.en)return toast("Недостаточно энергии");
   if(!Object.keys(r.i).every(k=>have(k)>=r.i[k]))return toast("Не хватает материалов");
   Object.keys(r.i).forEach(k=>{if(ORE[k])S.ore[k]-=r.i[k];else S.mats[k]-=r.i[k]});
-  S.energy-=r.en;S.mats[r.o]=(S.mats[r.o]||0)+1;gain(5);toast("Создано: "+r.n);save();draw();
+  S.energy-=r.en;S.mats[r.o]=(S.mats[r.o]||0)+1;gain(5);inc("crafted");toast("Создано: "+r.n);save();draw();
 }
 function sellMat(k){const n=S.mats[k]||0;if(!n)return;const s=Math.round(n*MAT[k][1]*pm());S.coins+=s;S.st.sold+=s;S.mats[k]=0;toast("Продано: +"+s+" 🪙");save();draw()}
 R.factory=()=>`<h2>Плавильня и завод</h2>`+REC.map((r,i)=>`<div class="card row"><div><b>${r.n}</b><div class="sm">${Object.keys(r.i).map(k=>nm(k)+" "+have(k)+"/"+r.i[k]).join(" · ")} · ⚡${r.en}</div></div><button class="btn" onclick="craft(${i})">Создать</button></div>`).join("")+`<h2>Склад изделий</h2>`+(Object.keys(MAT).filter(k=>S.mats[k]>0).map(k=>`<div class="card row"><b>${MAT[k][0]} × ${S.mats[k]}</b><button class="btn" onclick="sellMat('${k}')">Продать</button></div>`).join("")||`<div class="card sm">Склад пуст.</div>`);
@@ -371,6 +386,135 @@ R.cases=()=>`<div class="card"><b>Кейс</b><p class="sm">Монеты, руд
 R.log=()=>S.log.length?S.log.map(l=>`<div class="card sm">${esc(l)}</div>`).join(""):`<div class="card sm">Операций пока нет.</div>`;
 Object.assign(TT,{factory:"Завод",market:"Торговая площадка",photo:"Фотограф",estate:"Недвижимость",pass:"Game Pass",events:"События",cases:"Кейсы",log:"Журнал"});
 Object.assign(LOC,{factory:"work",market:"city",photo:"work",estate:"city",pass:"biz",events:"city",cases:"shop",log:"home"});
+
+/* =========================================================
+   ФЕРМА
+   Грядки растут по реальному времени. Урожай идёт на склад
+   изделий и используется в заказах водителя.
+   ========================================================= */
+Object.assign(MAT,{wheat:["Пшеница",20],veg:["Овощи",35]});
+const CROPS=[{id:"wheat",n:"Пшеница",t:60,c:30},{id:"veg",n:"Овощи",t:120,c:60}];
+const gate=l=>S.lv<l?`<div class="card sm">Профессия открывается на ${l} уровне.</div>`:"";
+function inc(k,n=1){S.st[k]=(S.st[k]||0)+n}
+function plant(i,id){const c=CROPS.find(x=>x.id===id);if(S.farm[i]||S.coins<c.c)return toast("Недостаточно монет");S.coins-=c.c;S.farm[i]={c:id,at:Date.now()};toast("Посажено: "+c.n);save();draw()}
+function harvest(i){const f=S.farm[i],c=f&&CROPS.find(x=>x.id===f.c);if(!f||Date.now()-f.at<c.t*1000)return toast("Ещё растёт");S.mats[c.id]=(S.mats[c.id]||0)+3;inc("harvested",3);S.farm[i]=null;gain(4);toast("Собрано: "+c.n+" ×3");save();draw()}
+setInterval(()=>{if(cur==="farm")draw()},5000);
+R.farm=()=>gate(5)||S.farm.map((f,i)=>{const c=f&&CROPS.find(x=>x.id===f.c),left=f?Math.max(0,Math.ceil(c.t-(Date.now()-f.at)/1000)):0;return `<div class="card"><b>Грядка ${i+1}</b>${f?`<div class="row"><span class="sm">${c.n}: ${left?"осталось "+left+" с":"готово"}</span><button class="btn" ${left?"disabled":""} onclick="harvest(${i})">Собрать</button></div>`:`<div class="chips" style="margin:8px 0 0">${CROPS.map(c=>`<button class="chip" onclick="plant(${i},'${c.id}')">${c.n} · ${c.c} 🪙 · ${c.t} с</button>`).join("")}</div>`}</div>`}).join("");
+
+/* =========================================================
+   ВОДИТЕЛЬ И МЕХАНИК
+   Заказы раз в сутки: доставка товаров и ремонт деталями завода.
+   Так профессии зависят друг от друга.
+   ========================================================= */
+const JOBS=[
+ {p:"drive",n:"Хлеб в магазин",i:{wheat:5},r:300},
+ {p:"drive",n:"Овощи на рынок",i:{veg:5},r:420},
+ {p:"drive",n:"Слитки на завод",i:{iron_bar:3},r:150},
+ {p:"mech",n:"Ремонт грузовика",i:{part:1,iron_bar:1},r:420},
+ {p:"mech",n:"Замена двигателя",i:{part:3,copper_bar:2},r:1300}];
+function job(i){
+  const j=JOBS[i];
+  if(S.dl[i]===day())return toast("Заказ уже выполнен сегодня");
+  if(!Object.keys(j.i).every(k=>have(k)>=j.i[k]))return toast("Не хватает товаров");
+  Object.keys(j.i).forEach(k=>S.mats[k]-=j.i[k]);
+  S.dl[i]=day();S.coins+=Math.round(j.r*(1+(item(S.eq.veh)?.v||0)));inc("delivered");gain(10);toast(j.n+": +"+j.r+" 🪙");save();draw();
+}
+const jobList=p=>JOBS.map((j,i)=>[j,i]).filter(x=>x[0].p===p).map(([j,i])=>`<div class="card row"><div><b>${j.n}</b><div class="sm">${Object.keys(j.i).map(k=>nm(k)+" "+have(k)+"/"+j.i[k]).join(" · ")} · ${j.r} 🪙</div></div><button class="btn" ${S.dl[i]===day()?"disabled":""} onclick="job(${i})">${S.dl[i]===day()?"Сделано":"Выполнить"}</button></div>`).join("");
+R.drive=()=>gate(7)||jobList("drive");
+R.mech=()=>gate(6)||jobList("mech");
+
+/* =========================================================
+   АУКЦИОН
+   Лоты меняются каждые сутки (цена +20%). Свои предметы
+   продаются за 60% цены. Торговля между игроками — на сервере.
+   ========================================================= */
+function lotBuy(id){const i=item(id),c=Math.round(i.p*1.2);if(S.coins<c)return toast("Недостаточно монет");S.coins-=c;S.own.push(id);inc("bought");toast("Куплено на аукционе: "+i.n);save();draw()}
+function sellItem(id){const i=item(id),g=Math.round(i.p*.6);S.own=S.own.filter(x=>x!==id);if(S.eq[i.s]===id)delete S.eq[i.s];S.coins+=g;toast("Продано: "+i.n+" +"+g+" 🪙");save();draw()}
+R.auction=()=>{
+  const k=day()%3,lots=ITEMS.filter(i=>!S.own.includes(i.id)).slice(k,k+4);
+  return `<h2>Лоты дня</h2>${lots.length?lots.map(i=>`<div class="card row"><div><b>${i.n}</b><div class="sm">${i.r} · ${SL[i.s]}</div></div><button class="btn" onclick="lotBuy('${i.id}')">${Math.round(i.p*1.2)} 🪙</button></div>`).join(""):`<div class="card sm">Лотов нет.</div>`}
+  <h2>Ваши предметы</h2>${S.own.length?S.own.map(id=>{const i=item(id);return `<div class="card row"><div><b>${i.n}</b><div class="sm">${i.r}</div></div><button class="btn" onclick="sellItem('${id}')">Продать ${Math.round(i.p*.6)} 🪙</button></div>`}).join(""):`<div class="card sm">Предметов нет.</div>`}`;
+};
+
+/* =========================================================
+   ОБЪЕДИНЕНИЕ ПРЕДМЕТОВ И ПОВЫШЕНИЕ РЕДКОСТИ
+   3 неэкипированных предмета одной редкости → случайный новый
+   предмет следующей редкости.
+   ========================================================= */
+const RAR=["Обычный","Необычный","Редкий"];
+function merge(r){
+  const k=RAR.indexOf(r),h=ITEMS.filter(i=>i.r===r&&S.own.includes(i.id)&&S.eq[i.s]!==i.id);
+  if(h.length<3)return toast("Нужно 3 неэкипированных предмета");
+  const pool=ITEMS.filter(i=>i.r===RAR[k+1]&&!S.own.includes(i.id));
+  if(!pool.length)return toast("Нет новых предметов выше редкостью");
+  const out=h.slice(0,3).map(i=>i.id);S.own=S.own.filter(x=>!out.includes(x));
+  const n=pool[Math.floor(Math.random()*pool.length)];S.own.push(n.id);toast("Объединение: получен "+n.n);save();draw();
+}
+const _cases=R.cases;
+R.cases=()=>_cases()+`<h2>Объединение предметов</h2>`+RAR.slice(0,2).map(r=>`<div class="card row"><div><b>3 × ${r}</b><div class="sm">→ предмет редкостью выше</div></div><button class="btn" onclick="merge('${r}')">Объединить</button></div>`).join("");
+
+/* =========================================================
+   КАЛЕНДАРЬ СОБЫТИЙ
+   Сб–Вс: ярмарка, +10% к продаже руды и изделий.
+   ========================================================= */
+const _ev=R.events;
+R.events=()=>_ev()+`<div class="card"><b>Календарь</b><div class="sm">Сб–Вс: ярмарка, +10% к продаже. ${[0,6].includes(new Date().getDay())?"Сегодня ярмарка!":"Ярмарка в выходные."}</div></div>`;
+Object.assign(TT,{farm:"Ферма",mech:"Механик",drive:"Водитель",auction:"Аукцион"});
+Object.assign(LOC,{farm:"work",mech:"work",drive:"work",auction:"shop"});
+
+/* =========================================================
+   ТРАНСПОРТ И ХАРАКТЕРИСТИКИ ПРЕДМЕТОВ
+   Транспорт увеличивает оплату заказов водителя и механика.
+   Каска: −1 энергия за добычу. Рюкзак: +10% к шансу двойной добычи.
+   ========================================================= */
+const ec=z=>Math.max(1,z.en-(S.eq.head==="helmet"?1:0));
+const _ward=R.ward;
+R.ward=()=>_ward()+`<div class="card sm">Бонусы: ${[S.eq.head==="helmet"&&"−1 энергия за добычу",S.eq.back&&"+10% двойная добыча",S.eq.veh&&"+"+Math.round(item(S.eq.veh).v*100)+"% к заказам"].filter(Boolean).join(" · ")||"нет"}</div>`;
+
+/* =========================================================
+   ЖИВОЙ ГОРОД: СЛУЧАЙНЫЕ СОБЫТИЯ
+   Каждые 10 минут действует событие: дождь (энергия ×2),
+   ярмарка (+15% к продаже), праздник (двойной опыт).
+   ========================================================= */
+const EV=[{n:"Ливень: энергия восстанавливается вдвое быстрее",e:2},{n:"Ярмарка на площади: +15% к продаже",s:1.15},{n:"Праздник в городе: двойной опыт",x:2},{n:"Спокойный день"}];
+const curEv=()=>EV[Math.floor(Date.now()/6e5)%EV.length];
+const banner=()=>{const e=curEv();return e.e||e.s||e.x?`<div class="card ban">🎉 ${e.n}</div>`:""};
+const _ev2=R.events;R.events=()=>banner()+_ev2();
+
+/* =========================================================
+   РУЛЕТКА
+   Первое вращение в сутки бесплатно, затем 100 монет.
+   ========================================================= */
+const WH=[["+50 🪙",()=>S.coins+=50],["+150 🪙",()=>S.coins+=150],["+500 🪙",()=>S.coins+=500],["Железная руда ×3",()=>S.ore.iron=(S.ore.iron||0)+3],["Энергия +50",()=>S.energy=Math.min(100,S.energy+50)],["Фрагменты +5",()=>S.frag+=5],["Пусто",()=>0],["Пусто",()=>0]];
+function spin(){const fr=S.spin!==day();if(!fr&&S.coins<100)return toast("Нужно 100 🪙");if(!fr)S.coins-=100;S.spin=day();const w=WH[Math.floor(Math.random()*WH.length)];w[1]();toast("Рулетка: "+w[0]);save();draw()}
+const _c2=R.cases;
+R.cases=()=>_c2()+`<h2>Рулетка</h2><div class="card row"><div><b>Колесо удачи</b><div class="sm">${S.spin!==day()?"Первое вращение сегодня бесплатно":"Следующее вращение — 100 🪙"}</div></div><button class="btn" onclick="spin()">Крутить</button></div>`;
+
+/* =========================================================
+   ТЕКСТУРЫ И ИКОНКИ
+   Векторные иконки предметов со свечением цвета редкости,
+   значки зданий города, вращение персонажа перетаскиванием.
+   ========================================================= */
+const TI={mine:"⛏",shop:"🛍",biz:"💼",work:"🧰",factory:"🏭",farm:"🌾",market:"📈",estate:"🏠",events:"🎉",pass:"🎫",cases:"🎁",auction:"🔨"};
+const RC={"Обычный":"#8fa1b5","Необычный":"#3fd1b0","Редкий":"#b07bff"};
+function ico(i){const c=i.c||"#9aa7b5",g={
+ head:`<path d="M6 24a14 14 0 0128 0z" fill="${c}"/><rect x="3" y="23" width="34" height="5" rx="2" fill="${c}"/>`,
+ body:`<path d="M12 6l-8 8 5 5 3-3v20h16V16l3 3 5-5-8-8-6 4z" fill="${c}"/>`,
+ legs:`<rect x="9" y="4" width="10" height="32" rx="3" fill="${c}"/><rect x="21" y="4" width="10" height="32" rx="3" fill="${c}"/>`,
+ feet:`<path d="M6 12h12v12h16a4 4 0 014 4v4H6z" fill="${c}"/>`,
+ acc:`<rect x="3" y="14" width="14" height="10" rx="3" fill="none" stroke="#ccd" stroke-width="3"/><rect x="23" y="14" width="14" height="10" rx="3" fill="none" stroke="#ccd" stroke-width="3"/><path d="M17 18h6" stroke="#ccd" stroke-width="3"/>`,
+ back:`<rect x="8" y="5" width="24" height="30" rx="8" fill="${c}"/><rect x="13" y="20" width="14" height="9" rx="3" fill="#0004"/>`,
+ tool:`<path d="M6 10a18 18 0 0128 0l-3 3a14 14 0 00-22 0z" fill="#aab"/><rect x="18" y="12" width="4" height="26" fill="#8a5a2b"/>`,
+ veh:`<rect x="3" y="14" width="34" height="12" rx="4" fill="${i.v>.4?"#c0562b":"#3b6fb6"}"/><circle cx="12" cy="29" r="5" fill="#222"/><circle cx="28" cy="29" r="5" fill="#222"/>`}[i.s]||"";
+ return `<svg width="42" height="42" viewBox="0 0 40 40" style="flex:none;filter:drop-shadow(0 0 6px ${RC[i.r]})">${g}</svg>`}
+let ry=0;
+document.addEventListener("pointerdown",e=>{
+  const h=e.target.closest&&e.target.closest(".hero svg");if(!h)return;
+  const w=h.parentNode;let x=e.clientX;w.style.transition="none";
+  const mv=ev=>{ry+=(ev.clientX-x)*.8;x=ev.clientX;w.style.transform=`perspective(700px) rotateY(${ry}deg)`};
+  const up=()=>{removeEventListener("pointermove",mv);removeEventListener("pointerup",up);ry=Math.round(ry/180)*180;w.style.transition="transform .3s";w.style.transform=`perspective(700px) rotateY(${ry}deg)`};
+  addEventListener("pointermove",mv);addEventListener("pointerup",up);
+});
 
 /* =========================================================
    ЗАПУСК
