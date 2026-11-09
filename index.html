@@ -83,6 +83,23 @@ main{position:relative;z-index:1}
 .hero svg{animation:br 4s ease-in-out infinite;touch-action:pan-y}
 @keyframes br{50%{transform:translateY(-4px)}}
 @media (prefers-reduced-motion:reduce){.hero svg{animation:none}}
+
+/* Красота: плавное появление экранов, полоса опыта, живая вода, кнопки с откликом */
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.pg>*{animation:up .32s ease both}.pg>*:nth-child(2){animation-delay:.04s}.pg>*:nth-child(3){animation-delay:.08s}.pg>*:nth-child(4){animation-delay:.12s}.pg>*:nth-child(n+5){animation-delay:.16s}
+header h1{background:linear-gradient(90deg,var(--a),#fff 60%,var(--a));-webkit-background-clip:text;background-clip:text;color:transparent}
+header::after{content:"";position:absolute;left:0;bottom:-1px;height:2px;width:var(--xp,0%);background:var(--a);box-shadow:0 0 10px var(--a);transition:width .4s}
+.btn:active,.tile:active,.rail button:active{transform:scale(.97)}
+.bar i{background:linear-gradient(90deg,var(--a),#fff8);transition:width .4s}
+#toast{border-color:var(--a);backdrop-filter:blur(8px)}
+.pi{font-size:26px;width:42px;text-align:center;flex:none}
+.water{position:relative;height:190px;border-radius:16px;border:1px solid var(--l);overflow:hidden;margin-bottom:10px;background:linear-gradient(#5aa7e8,#123a63 55%,#08213b)}
+.water::after{content:"";position:absolute;inset:0;background:repeating-radial-gradient(ellipse at 50% 120%,#ffffff18 0 6px,#0000 6px 22px)}
+.bob{position:absolute;left:50%;top:48%;font-size:34px;transform:translateX(-50%);z-index:1}
+.bob.w{animation:bb 2s ease-in-out infinite}.bob.b{animation:bb .25s linear infinite;filter:drop-shadow(0 0 10px #ffd35a)}
+@keyframes bb{50%{transform:translate(-50%,6px)}}
+@media (prefers-reduced-motion:reduce){.pg>*,.bob{animation:none!important}}
+.tree{font-size:56px;background:none;border:0;padding:0 6px;filter:drop-shadow(0 6px 6px #0008)}
 </style>
 </head>
 <body data-loc="home">
@@ -161,7 +178,7 @@ const num=n=>Number(n).toLocaleString("ru-RU");
 const item=id=>ITEMS.find(x=>x.id===id);
 let tmr;function toast(m){S.log.unshift(new Date().toLocaleTimeString("ru-RU").slice(0,5)+" "+m);S.log.length=Math.min(S.log.length,40);const t=document.getElementById("toast");t.textContent=m;t.style.opacity=1;clearTimeout(tmr);tmr=setTimeout(()=>t.style.opacity=0,2200)}
 const xpNeed=()=>80+40*S.lv;
-function gain(x){S.xp+=x*(curEv().x||1);while(S.xp>=xpNeed()){S.xp-=xpNeed();S.lv++;toast("Новый уровень: "+S.lv)}}
+function gain(x){S.xp+=x*(curEv().x||1);S.px=S.px||{};S.px[cur]=(S.px[cur]||0)+x;while(S.xp>=xpNeed()){S.xp-=xpNeed();S.lv++;toast("Новый уровень: "+S.lv)}}
 
 /* =========================================================
    НАВИГАЦИЯ И ОТРИСОВКА
@@ -169,7 +186,7 @@ function gain(x){S.xp+=x*(curEv().x||1);while(S.xp>=xpNeed()){S.xp-=xpNeed();S.l
 const R={};
 const TT={home:"Персонаж",city:"Город",mine:"Шахта",work:"Профессии",tasks:"Задания",shop:"Магазин",inv:"Инвентарь",ward:"Гардероб",biz:"Бизнес",ach:"Достижения",col:"Коллекции"};
 const LOC={home:"home",city:"city",mine:"mine",work:"work",tasks:"work",shop:"shop",biz:"biz",inv:"home",ward:"home",ach:"home",col:"home"};
-function go(p){cur=p;if(p==="mine")newVeins();draw();scrollTo(0,0)}
+function go(p){const v=document.getElementById("v");v.classList.remove("pg");void v.offsetWidth;v.classList.add("pg");cur=p;if(p==="mine")newVeins();draw();scrollTo(0,0)}
 function draw(){
   document.body.dataset.loc=LOC[cur]||"home";
   document.getElementById("ttl").textContent=TT[cur]||"BLACK BUSINESS";
@@ -177,7 +194,7 @@ function draw(){
   document.getElementById("v").innerHTML=(R[cur]||R.home)();
   document.getElementById("bc").textContent=num(S.coins);
   document.getElementById("be").textContent=S.energy+"/100";
-  document.getElementById("bl").textContent=S.lv;
+  document.getElementById("bl").textContent=S.lv;document.body.style.setProperty("--xp",Math.min(100,S.xp/xpNeed()*100)+"%");
 }
 Object.keys(STUB).forEach(k=>{TT[k]=STUB[k][0];LOC[k]="city";R[k]=()=>`<div class="card"><b>${STUB[k][0]}</b><p class="sm">${STUB[k][1]}</p><p class="sm">Раздел в разработке.</p></div>`});
 
@@ -209,7 +226,7 @@ R.home=()=>`<div class="stage"><div class="rail">${rail(LEFT)}</div><div class="
 /* =========================================================
    ГОРОД
    ========================================================= */
-R.city=()=>banner()+`<div class="grid">${[["mine","Шахта","Руда и минералы","#0f4a47"],["shop","Магазин","Одежда и инструменты","#5a1d36"],["biz","Бизнес","Пассивный доход","#5a4018"],["work","Профессии","Работа и развитие","#17406a"],["factory","Завод","Плавка и детали","#33295f"],["farm","Ферма","Урожай и доставка","#2f4a24"],["market","Торговая площадка","Цены руды","#4a3a2a"],["estate","Недвижимость","Аренда и доход","#2d3a52"],["events","События","Бонусы и проекты","#4a2a5a"],["pass","Game Pass","Месяц бонусов","#2a3a5a"],["cases","Кейсы","Рулетка и редкости","#5a2a2a"],["auction","Аукцион","Лоты и продажа","#4a2a2a"]].map(b=>`<button class="tile" style="--c:${b[3]}" onclick="go('${b[0]}')"><span class="tic">${TI[b[0]]||""}</span><b>${b[1]}</b><div class="sm">${b[2]}</div></button>`).join("")}</div>`;
+R.city=()=>banner()+`<div class="grid">${[["mine","Шахта","Руда и минералы","#0f4a47"],["shop","Магазин","Одежда и инструменты","#5a1d36"],["biz","Бизнес","Пассивный доход","#5a4018"],["work","Профессии","Работа и развитие","#17406a"],["factory","Завод","Плавка и детали","#33295f"],["farm","Ферма","Урожай и доставка","#2f4a24"],["market","Торговая площадка","Цены руды","#4a3a2a"],["estate","Недвижимость","Аренда и доход","#2d3a52"],["events","События","Бонусы и проекты","#4a2a5a"],["pass","Game Pass","Месяц бонусов","#2a3a5a"],["cases","Кейсы","Рулетка и редкости","#5a2a2a"],["auction","Аукцион","Лоты и продажа","#4a2a2a"],["gov","Городская артель","Работа для новичков","#2a4a4a"],["trade","Торговля","Рынок игроков и обмен","#4a4a2a"],["fish","Озеро","Рыбалка","#1b4a7a"],["wood","Лесопилка","Древесина","#2a4a2a"],...(S.proj>=10?[["mall","Торговый центр","−5% на одежду","#3a2a5a"]]:[])].map(b=>`<button class="tile" style="--c:${b[3]}" onclick="go('${b[0]}')"><span class="tic">${TI[b[0]]||""}</span><b>${b[1]}</b><div class="sm">${b[2]}</div></button>`).join("")}</div>`;
 
 /* =========================================================
    ШАХТА (С КАРТИНКАМИ ЖИЛ И ДИНАМИЧЕСКИМ ФОНОМ ЗОНЫ)
@@ -227,7 +244,7 @@ function mineVein(i){
   const n=1+(Math.random()<.2+.1*b+(S.eq.back?.1:0)?1:0);
   S.ore[o]=(S.ore[o]||0)+n;S.found[o]=1;S.st.mined+=n;gain(2+z.lv);
   lastMsg=`+${n} ${ORE[o][0]}`;
-  if(Math.random()<.03+.02*b){S.ore.crystal=(S.ore.crystal||0)+1;S.found.crystal=1;S.st.mined++;lastMsg+=" · редкая находка: кристалл!"}
+  if(Math.random()<.03+.02*b+Math.min(.04,.01*(plv("mine")-1))){S.ore.crystal=(S.ore.crystal||0)+1;S.found.crystal=1;S.st.mined++;lastMsg+=" · редкая находка: кристалл!"}
   veins[i]=newVein();save();draw();
 }
 function rest(){if(S.coins<20)return toast("Недостаточно монет");S.coins-=20;S.energy=Math.min(100,S.energy+30);save();draw()}
@@ -245,7 +262,7 @@ setInterval(()=>{if(S.energy<100){S.energy=Math.min(100,S.energy+(S.pass>Date.no
 /* =========================================================
    ПРОФЕССИИ И ЗАДАНИЯ
    ========================================================= */
-R.work=()=>PROF.map((p,i)=>`<div class="card row"><div><b>${p[0]}</b><div class="sm">${p[1]}</div></div>${i<6?`<button class="btn" onclick="go('${["mine","photo","factory","farm","mech","drive"][i]}')">Открыть</button>`:`<span class="sm">Ур. ${p[2]} · скоро</span>`}</div>`).join("");
+R.work=()=>PROF.map((p,i)=>`<div class="card row"><div><b>${p[0]}</b><div class="sm">${p[1]} · проф. ур. ${plv(PK[i])}</div></div>${i<6?`<button class="btn" onclick="go('${["mine","photo","factory","farm","mech","drive"][i]}')">Открыть</button>`:`<span class="sm">Ур. ${p[2]} · скоро</span>`}</div>`).join("");
 const prog=t=>t.k==="lv"?S.lv:(S.st[t.k]||0);
 function claim(id){const t=TASKS.find(x=>x.id===id);if(S.claimed.includes(id)||prog(t)<t.need)return;S.claimed.push(id);S.coins+=t.r;toast("Награда: +"+t.r+" 🪙");save();draw()}
 R.tasks=()=>TASKS.map(t=>{const p=Math.min(prog(t),t.need),d=S.claimed.includes(t.id);return `<div class="card"><div class="row"><div><b>${t.n}</b><div class="sm">${p}/${t.need} · награда ${t.r} 🪙</div></div><button class="btn" ${d||p<t.need?"disabled":""} onclick="claim('${t.id}')">${d?"Получено":"Забрать"}</button></div><div class="bar"><i style="width:${p/t.need*100}%"></i></div></div>`}).join("");
@@ -256,8 +273,8 @@ R.tasks=()=>TASKS.map(t=>{const p=Math.min(prog(t),t.need),d=S.claimed.includes(
 function buy(id){
   const i=item(id);
   if(S.own.includes(id))return;
-  if(S.coins<i.p)return toast("Недостаточно монет");
-  S.coins-=i.p;S.own.push(id);S.st.bought++;
+  if(S.coins<pr(i))return toast("Недостаточно монет");
+  S.coins-=pr(i);S.own.push(id);S.st.bought++;
   if(!S.eq[i.s])S.eq[i.s]=id;
   toast("Куплено: "+i.n);save();draw();
 }
@@ -265,7 +282,7 @@ function sellOre(o){const n=S.ore[o]||0;if(!n)return;const s=Math.round(n*ORE[o]
 R.shop=()=>{
   const ores=Object.keys(ORE).filter(o=>S.ore[o]>0);
   return `<h2>Скупка руды</h2>${ores.length?ores.map(o=>`<div class="card row"><div style="display:flex;align-items:center;gap:12px"><img class="ore-ico" src="${ORE[o][3]}" alt=""><div><b>${ORE[o][0]} × ${S.ore[o]}</b><div class="sm">${Math.round(ORE[o][1]*mk(o)*pm())} 🪙 за штуку</div></div></div><button class="btn" onclick="sellOre('${o}')">+${Math.round(S.ore[o]*ORE[o][1]*mk(o)*pm())} 🪙</button></div>`).join(""):`<div class="card sm">Руды нет. Добудь её в шахте.</div>`}
-  <h2>Одежда и инструменты</h2>${ITEMS.map(i=>`<div class="card row"><div class="ir">${ico(i)}<div><b>${i.n}</b><div class="sm">${i.r} · ${SL[i.s]}</div></div></div>${S.own.includes(i.id)?`<span class="sm">Куплено</span>`:`<button class="btn" onclick="buy('${i.id}')">${i.p} 🪙</button>`}</div>`).join("")}`;
+  <h2>Одежда и инструменты</h2>${ITEMS.filter(i=>!i.co).map(i=>`<div class="card row"><div class="ir">${ico(i)}<div><b>${i.n}</b><div class="sm">${i.r} · ${SL[i.s]}</div></div></div>${S.own.includes(i.id)?`<span class="sm">Куплено</span>`:`<button class="btn" onclick="buy('${i.id}')">${pr(i)} 🪙</button>`}</div>`).join("")}`;
 };
 
 /* =========================================================
@@ -312,7 +329,7 @@ R.col=()=>`<h2>Найденные руды</h2>${Object.keys(ORE).map(o=>`<div c
    ТОРГОВАЯ ПЛОЩАДКА (С ИКОНКАМИ РУДЫ)
    ========================================================= */
 const MKT={};Object.keys(ORE).forEach(o=>MKT[o]=1);
-const mk=o=>MKT[o]||1,pm=()=>(S.pass>Date.now()?1.1:1)*([0,6].includes(new Date().getDay())?1.1:1)*(curEv().s||1);
+const mk=o=>MKT[o]||1,pm=()=>Math.min(1.25,(S.pass>Date.now()?1.1:1)*([0,6].includes(new Date().getDay())?1.1:1)*(curEv().s||1));
 setInterval(()=>{Object.keys(MKT).forEach(o=>MKT[o]=Math.min(1.5,Math.max(.6,MKT[o]+(Math.random()-.5)*.2)));if(cur==="market")draw()},30000);
 R.market=()=>`<div class="card sm">Продажа — в магазине по этим ценам.${S.pass>Date.now()?" Game Pass: +10%.":""}</div>`+Object.keys(ORE).map(o=>{const m=mk(o);return `<div class="card row"><div style="display:flex;align-items:center;gap:12px"><img class="ore-ico" src="${ORE[o][3]}" alt=""><b>${ORE[o][0]}</b></div><span>${Math.round(ORE[o][1]*m*pm())} 🪙 <span class="sm">${m>1.05?"▲":m<.95?"▼":"•"}</span></span></div>`;}).join("");
 
@@ -333,7 +350,7 @@ function craft(i){
   if(S.energy<r.en)return toast("Недостаточно энергии");
   if(!Object.keys(r.i).every(k=>have(k)>=r.i[k]))return toast("Не хватает материалов");
   Object.keys(r.i).forEach(k=>{if(ORE[k])S.ore[k]-=r.i[k];else S.mats[k]-=r.i[k]});
-  S.energy-=r.en;S.mats[r.o]=(S.mats[r.o]||0)+1;gain(5);inc("crafted");toast("Создано: "+r.n);save();draw();
+  S.energy-=r.en;if(r.it){if(S.own.includes(r.it))S.frag+=5;else S.own.push(r.it)}else S.mats[r.o]=(S.mats[r.o]||0)+1;gain(5);inc("crafted");toast("Создано: "+r.n);save();draw();
 }
 function sellMat(k){const n=S.mats[k]||0;if(!n)return;const s=Math.round(n*MAT[k][1]*pm());S.coins+=s;S.st.sold+=s;S.mats[k]=0;toast("Продано: +"+s+" 🪙");save();draw()}
 R.factory=()=>`<h2>Плавильня и завод</h2>`+REC.map((r,i)=>`<div class="card row"><div><b>${r.n}</b><div class="sm">${Object.keys(r.i).map(k=>nm(k)+" "+have(k)+"/"+r.i[k]).join(" · ")} · ⚡${r.en}</div></div><button class="btn" onclick="craft(${i})">Создать</button></div>`).join("")+`<h2>Склад изделий</h2>`+(Object.keys(MAT).filter(k=>S.mats[k]>0).map(k=>`<div class="card row"><b>${MAT[k][0]} × ${S.mats[k]}</b><button class="btn" onclick="sellMat('${k}')">Продать</button></div>`).join("")||`<div class="card sm">Склад пуст.</div>`);
@@ -431,9 +448,9 @@ R.mech=()=>gate(6)||jobList("mech");
 function lotBuy(id){const i=item(id),c=Math.round(i.p*1.2);if(S.coins<c)return toast("Недостаточно монет");S.coins-=c;S.own.push(id);inc("bought");toast("Куплено на аукционе: "+i.n);save();draw()}
 function sellItem(id){const i=item(id),g=Math.round(i.p*.6);S.own=S.own.filter(x=>x!==id);if(S.eq[i.s]===id)delete S.eq[i.s];S.coins+=g;toast("Продано: "+i.n+" +"+g+" 🪙");save();draw()}
 R.auction=()=>{
-  const k=day()%3,lots=ITEMS.filter(i=>!S.own.includes(i.id)).slice(k,k+4);
+  const k=day()%3,lots=ITEMS.filter(i=>!S.own.includes(i.id)&&!i.co).slice(k,k+4);
   return `<h2>Лоты дня</h2>${lots.length?lots.map(i=>`<div class="card row"><div><b>${i.n}</b><div class="sm">${i.r} · ${SL[i.s]}</div></div><button class="btn" onclick="lotBuy('${i.id}')">${Math.round(i.p*1.2)} 🪙</button></div>`).join(""):`<div class="card sm">Лотов нет.</div>`}
-  <h2>Ваши предметы</h2>${S.own.length?S.own.map(id=>{const i=item(id);return `<div class="card row"><div><b>${i.n}</b><div class="sm">${i.r}</div></div><button class="btn" onclick="sellItem('${id}')">Продать ${Math.round(i.p*.6)} 🪙</button></div>`}).join(""):`<div class="card sm">Предметов нет.</div>`}`;
+  <h2>Ваши предметы</h2>${S.own.length?S.own.map(id=>{const i=item(id);return `<div class="card row"><div><b>${i.n}</b><div class="sm">${i.r}</div></div><button class="chip" onclick="dis('${id}')">Разобрать</button><button class="btn" onclick="sellItem('${id}')">Продать ${Math.round(i.p*.6)} 🪙</button></div>`}).join(""):`<div class="card sm">Предметов нет.</div>`}`;
 };
 
 /* =========================================================
@@ -515,6 +532,141 @@ document.addEventListener("pointerdown",e=>{
   const up=()=>{removeEventListener("pointermove",mv);removeEventListener("pointerup",up);ry=Math.round(ry/180)*180;w.style.transition="transform .3s";w.style.transform=`perspective(700px) rotateY(${ry}deg)`};
   addEventListener("pointermove",mv);addEventListener("pointerup",up);
 });
+
+/* =========================================================
+   КРАФТ ОДЕЖДЫ
+   Лён с фермы → ткань; ткань + медный слиток (застёжки) → куртка.
+   Создаваемые предметы нельзя купить в магазине.
+   ========================================================= */
+Object.assign(MAT,{flax:["Лён",25],cloth:["Ткань",70]});
+CROPS.push({id:"flax",n:"Лён",t:90,c:40});
+REC.push({n:"Ткань",i:{flax:3},o:"cloth",en:2},{n:"Куртка Мастера (предмет)",i:{cloth:2,copper_bar:1},it:"jacket_c",en:5});
+ITEMS.push({id:"jacket_c",n:"Куртка Мастера",s:"body",p:700,c:"#2f9e8f",r:"Необычный",co:1});
+
+/* =========================================================
+   ДУБЛИКАТЫ И ПРОФЕССИОНАЛЬНЫЙ ОПЫТ
+   Разбор предмета даёт фрагменты по редкости (3/6/12).
+   Опыт профессии копится в разделе, где игрок работает;
+   высокий уровень шахтёра повышает шанс редкой находки.
+   ========================================================= */
+function dis(id){const i=item(id),f={"Обычный":3,"Необычный":6,"Редкий":12}[i.r];S.own=S.own.filter(x=>x!==id);if(S.eq[i.s]===id)delete S.eq[i.s];S.frag+=f;toast("Разобрано: "+i.n+" → +"+f+" фрагментов");save();draw()}
+const PK=["mine","photo","factory","farm","mech","drive"];
+const plv=k=>Math.floor(Math.sqrt(((S.px||{})[k]||0)/20))+1;
+
+/* =========================================================
+   МАГАЗИНЫ: РАСХОДНИКИ С ОГРАНИЧЕННЫМ ЗАПАСОМ
+   Количество товара ограничено на сутки и обновляется завтра.
+   ========================================================= */
+const CONS=[{id:"drink",n:"Энергетик",p:60,e:25,q:5},{id:"pie",n:"Пирожок",p:25,e:10,q:10}];
+const cs=()=>{if(!S.cs||S.cs.d!==day())S.cs={d:day(),u:{}};return S.cs};
+function useCons(id){const c=CONS.find(x=>x.id===id),u=cs().u;if((u[id]||0)>=c.q)return toast("Товар закончился до завтра");if(S.coins<c.p)return toast("Недостаточно монет");S.coins-=c.p;u[id]=(u[id]||0)+1;S.energy=Math.min(100,S.energy+c.e);toast(c.n+": +"+c.e+" ⚡");save();draw()}
+const _shop=R.shop;
+R.shop=()=>_shop()+`<h2>Расходники</h2>`+CONS.map(c=>`<div class="card row"><div><b>${c.n}</b><div class="sm">+${c.e} ⚡ · осталось ${c.q-(cs().u[c.id]||0)} из ${c.q} на сегодня</div></div><button class="btn" onclick="useCons('${c.id}')">${c.p} 🪙</button></div>`).join("");
+
+/* =========================================================
+   ТОРГОВЛЯ МЕЖДУ ИГРОКАМИ
+   Лоты с выбором цены (быстро / по рынку / дорого), комиссия 5%,
+   история сделок и прямой обмен с торговцем раз в сутки.
+   Реальные покупатели и проверка — на стороне сервера.
+   ========================================================= */
+const FEE=.05,L=()=>S.lst||(S.lst=[]);
+function list(o,m){const n=S.ore[o]||0;if(!n)return;S.ore[o]=0;L().push({o,n,m,at:Date.now(),t:m<1?8e3:m>1?3e4:15e3});toast("Лот выставлен: "+ORE[o][0]+" ×"+n);save();draw()}
+function settle(){let c=0;S.lst=L().filter(x=>{if(Date.now()-x.at<x.t)return true;const g=Math.round(x.n*ORE[x.o][1]*x.m*mk(x.o)*(1-FEE));S.coins+=g;inc("sold",g);toast(`Сделка: ${ORE[x.o][0]} ×${x.n} → +${g} 🪙 (комиссия 5%)`);c++;return false});if(c){save();draw()}}
+setInterval(()=>{if(L().length)settle()},3000);
+const DEALS=[{g:{iron:5},r:{copper:3}},{g:{copper:4},r:{silver:1}},{g:{silver:3},r:{gold:1}},{g:{coal:8},r:{iron:3}}];
+function deal(i){const d=DEALS[i],k="d"+i;if(S.dl[k]===day())return toast("Сделка на сегодня выполнена");if(!Object.keys(d.g).every(o=>have(o)>=d.g[o]))return toast("Не хватает руды");Object.keys(d.g).forEach(o=>S.ore[o]-=d.g[o]);Object.keys(d.r).forEach(o=>{S.ore[o]=(S.ore[o]||0)+d.r[o];S.found[o]=1});S.dl[k]=day();toast("Обмен выполнен: "+Object.keys(d.g).map(o=>nm(o)+" ×"+d.g[o]).join(", ")+" → "+Object.keys(d.r).map(o=>nm(o)+" ×"+d.r[o]).join(", "));save();draw()}
+const ds=x=>Object.keys(x).map(o=>nm(o)+" ×"+x[o]).join(", ");
+R.trade=()=>`<h2>Мои лоты</h2>${L().length?L().map(x=>`<div class="card sm">${ORE[x.o][0]} ×${x.n} · цена ×${x.m} · продаётся…</div>`).join(""):`<div class="card sm">Лотов нет.</div>`}
+<h2>Выставить на рынок (комиссия 5%)</h2>${Object.keys(ORE).filter(o=>S.ore[o]>0).map(o=>`<div class="card"><b>${ORE[o][0]} × ${S.ore[o]}</b><div class="chips" style="margin:8px 0 0"><button class="chip" onclick="list('${o}',.9)">Быстро −10%</button><button class="chip" onclick="list('${o}',1)">По рынку</button><button class="chip" onclick="list('${o}',1.1)">Дорого +10%</button></div></div>`).join("")||`<div class="card sm">Нет руды для продажи.</div>`}
+<h2>Обмен с торговцем</h2>${DEALS.map((d,i)=>`<div class="card row"><div><b>${ds(d.g)} → ${ds(d.r)}</b></div><button class="btn" ${S.dl["d"+i]===day()?"disabled":""} onclick="deal(${i})">${S.dl["d"+i]===day()?"Сделано":"Обменять"}</button></div>`).join("")}
+<h2>История сделок</h2>${S.log.filter(l=>/Сделка|Обмен/.test(l)).slice(0,6).map(l=>`<div class="card sm">${esc(l)}</div>`).join("")||`<div class="card sm">Сделок пока нет.</div>`}`;
+
+/* =========================================================
+   СЕРВЕРНОЕ ПРЕДПРИЯТИЕ: ГОРОДСКАЯ АРТЕЛЬ
+   Работа для новичков при низком онлайне. Общий бюджет
+   ограничен (1200 монет в сутки), деньги не создаются бесконечно.
+   ========================================================= */
+const gv=()=>{if(!S.gv||S.gv.d!==day())S.gv={d:day(),u:0};return S.gv};
+function shift(){const g=gv();if(g.u>=1200)return toast("Бюджет артели на сегодня исчерпан");if(S.energy<5)return toast("Недостаточно энергии");S.energy-=5;g.u+=60;S.coins+=60;gain(3);toast("Смена в артели: +60 🪙");save();draw()}
+R.gov=()=>`<div class="card"><b>Городская артель</b><p class="sm">Работа для новичков. Бюджет общий и ограничен: осталось ${1200-gv().u} из 1200 🪙 на сегодня. Накопите капитал и откройте собственный бизнес.</p><div class="bar"><i style="width:${(1200-gv().u)/12}%"></i></div><button class="btn" style="margin-top:10px" onclick="shift()">Выйти на смену · ⚡5 · +60 🪙</button></div>`;
+
+/* =========================================================
+   ТОРГОВЫЙ ЦЕНТР — ГОРОД ОТРАЖАЕТ ДЕЙСТВИЯ ИГРОКОВ
+   Появляется после вклада 10 слитков в проект сервера
+   и даёт скидку 5% на одежду.
+   ========================================================= */
+const pr=i=>Math.round(i.p*(S.proj>=10?.95:1));
+R.mall=()=>`<div class="card"><b>Торговый центр</b><p class="sm">Построен вашим вкладом в проект «Мост». Скидка 5% на одежду и инструменты в магазине.</p></div>`;
+
+/* =========================================================
+   ЗАЩИТА ОТ ПОВТОРНЫХ ЗАПРОСОВ
+   Быстрые повторные нажатия кнопок игнорируются (250 мс).
+   Настоящая проверка операций — только на сервере.
+   ========================================================= */
+let lastC=0;
+document.addEventListener("click",e=>{if(!e.target.closest||!e.target.closest(".btn,.chip"))return;const n=Date.now();if(n-lastC<250){e.stopPropagation();e.preventDefault();return}lastC=n},true);
+Object.assign(TI,{gov:"🏗",trade:"🤝",mall:"🏬"});
+Object.assign(TT,{gov:"Городская артель",trade:"Торговля",mall:"Торговый центр"});
+Object.assign(LOC,{gov:"work",trade:"city",mall:"shop"});
+
+/* =========================================================
+   ПРОФЕССИЯ РЫБАКА
+   Заброс (⚡2) → ожидание поклёвки → вовремя подсечь (1,2 с).
+   Слишком раннее подсекание пугает рыбу. Улов идёт на склад
+   изделий (раздел «Завод») и в продажу.
+   ========================================================= */
+Object.assign(MAT,{carp:["Карась",20],pike:["Щука",55],gcarp:["Золотой карп",200]});
+const fs={st:0,tm:0};
+function fishAct(){
+  if(fs.st===0){
+    if(S.energy<2)return toast("Недостаточно энергии");
+    S.energy-=2;fs.st=1;
+    fs.tm=setTimeout(()=>{fs.st=2;if(cur==="fish")draw();fs.tm=setTimeout(()=>{if(fs.st===2){fs.st=0;toast("Рыба сорвалась");if(cur==="fish")draw()}},1200)},1200+Math.random()*2500);
+  }else if(fs.st===1){clearTimeout(fs.tm);fs.st=0;toast("Слишком рано — рыба ушла")}
+  else{clearTimeout(fs.tm);fs.st=0;const f=pick({carp:60,pike:30,gcarp:10});S.mats[f]=(S.mats[f]||0)+1;inc("fished");gain(4);toast("Поймано: "+MAT[f][0]);save()}
+  draw();
+}
+R.fish=()=>gate(2)||`<div class="water"><div class="bob ${fs.st===1?"w":fs.st===2?"b":""}">🎣</div></div><div class="card row"><div><b>${["Забрось удочку","Ждём поклёвку…","Клюёт! Подсекай!"][fs.st]}</b><div class="sm">Улов: ${S.st.fished||0} · карась, щука, редкий золотой карп</div></div><button class="btn" onclick="fishAct()">${["Забросить · ⚡2","Подсечь","Подсечь!"][fs.st]}</button></div>`;
+
+/* =========================================================
+   ПРОФЕССИЯ ЛЕСОРУБА
+   Каждое дерево рубится за три удара (⚡2 за удар).
+   Доски нужны для крафта рюкзака Следопыта.
+   ========================================================= */
+Object.assign(MAT,{wood:["Бревно",15],board:["Доска",40]});
+REC.push({n:"Доска",i:{wood:2},o:"board",en:2},{n:"Рюкзак Следопыта (предмет)",i:{board:2,cloth:2},it:"bag_c",en:6});
+ITEMS.push({id:"bag_c",n:"Рюкзак Следопыта",s:"back",p:1200,c:"#2f7a4a",r:"Редкий",co:1});
+const trees=[3,3,3,3];
+function chop(i){
+  if(S.energy<2)return toast("Недостаточно энергии");
+  S.energy-=2;trees[i]--;
+  if(trees[i]<=0){trees[i]=3;S.mats.wood=(S.mats.wood||0)+2;inc("chopped",2);gain(4);toast("Срублено дерево: +2 бревна")}else gain(1);
+  save();draw();
+}
+R.wood=()=>gate(3)||`<div class="card sm">Три удара — одно дерево. Бревна: ${S.mats.wood||0}, доски: ${S.mats.board||0}. Доски создаются на заводе.</div><div class="card" style="text-align:center">${trees.map((h,i)=>`<button class="tree" style="font-size:${34+h*10}px" aria-label="Дерево" onclick="chop(${i})">🌲</button>`).join("")}</div>`;
+
+/* =========================================================
+   СПИСОК ПРОФЕССИЙ С УРОВНЯМИ РАЗВИТИЯ
+   Для каждой профессии показан уровень и прогресс до следующего.
+   ========================================================= */
+PROF.push(["Рыбак","Ловит рыбу для рынка и крафта",2],["Лесоруб","Добывает древесину для досок и крафта",3]);
+const PK2=["mine","photo","factory","farm","mech","drive","fish","wood"],PI=["⛏","📷","🏭","🌾","🔧","🚚","🎣","🪓"];
+const plvp=k=>{const x=(S.px||{})[k]||0,l=Math.floor(Math.sqrt(x/20));return Math.round((x-l*l*20)/(((l+1)**2-l*l)*20)*100)};
+R.work=()=>PROF.map((p,i)=>`<div class="card row"><div class="ir" style="flex:1"><span class="pi">${PI[i]}</span><div style="flex:1"><b>${p[0]}</b><div class="sm">${p[1]} · проф. ур. ${plv(PK2[i])}</div><div class="bar"><i style="width:${plvp(PK2[i])}%"></i></div></div></div><button class="btn" onclick="go('${PK2[i]}')">Открыть</button></div>`).join("");
+
+/* =========================================================
+   ЕЖЕДНЕВНЫЕ ЗАДАНИЯ
+   Три задания в сутки из набора; прогресс считается с начала дня.
+   ========================================================= */
+const DQ=[{n:"Добыть 15 единиц руды",k:"mined",need:15,r:150},{n:"Создать 2 изделия",k:"crafted",need:2,r:200},{n:"Собрать 6 единиц урожая",k:"harvested",need:6,r:180},{n:"Поймать 5 рыб",k:"fished",need:5,r:200},{n:"Срубить 6 брёвен",k:"chopped",need:6,r:200},{n:"Выполнить заказ доставки или ремонта",k:"delivered",need:1,r:220}];
+const dq=()=>{if(!S.dq||S.dq.d!==day())S.dq={d:day(),b:Object.assign({},S.st),c:[]};return S.dq};
+const dqs=()=>[0,1,2].map(i=>DQ[(day()+i*2)%DQ.length]);
+function dqClaim(n){const q=dqs()[n],d=dq();if(d.c.includes(n)||(S.st[q.k]||0)-(d.b[q.k]||0)<q.need)return;d.c.push(n);S.coins+=q.r;toast("Награда: +"+q.r+" 🪙");save();draw()}
+const _tasks=R.tasks;
+R.tasks=()=>`<h2>Ежедневные задания</h2>`+dqs().map((q,n)=>{const d=dq(),p=Math.min(q.need,(S.st[q.k]||0)-(d.b[q.k]||0)),ok=d.c.includes(n);return `<div class="card"><div class="row"><div><b>${q.n}</b><div class="sm">${p}/${q.need} · награда ${q.r} 🪙</div></div><button class="btn" ${ok||p<q.need?"disabled":""} onclick="dqClaim(${n})">${ok?"Получено":"Забрать"}</button></div><div class="bar"><i style="width:${p/q.need*100}%"></i></div></div>`}).join("")+`<h2>Постоянные задания</h2>`+_tasks();
+Object.assign(TI,{fish:"🎣",wood:"🪓"});
+Object.assign(TT,{fish:"Рыбалка",wood:"Лесопилка"});
+Object.assign(LOC,{fish:"work",wood:"work"});
 
 /* =========================================================
    ЗАПУСК
