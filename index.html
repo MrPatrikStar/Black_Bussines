@@ -189,8 +189,8 @@ const ORE={
 /* Участки шахты со своими фонами */
 const ZONES=[
  {id:"z1",n:"Штольня",lv:1,en:2,bg:"img/ore/bg_z1.png",w:{coal:50,iron:30,copper:20}},
- {id:"z2",n:"Глубокий забой",lv:3,en:4,bg:"img/ore/bg_z2.png",w:{iron:25,copper:30,silver:30,gold:15}},
- {id:"z3",n:"Кристальная пещера",lv:5,en:6,bg:"img/ore/bg_z3.png",w:{silver:30,gold:35,crystal:35}}];
+ {id:"z2",n:"Глубокий забой",lv:10,en:4,bg:"img/ore/bg_z2.png",w:{iron:25,copper:30,silver:30,gold:15}},
+ {id:"z3",n:"Кристальная пещера",lv:25,en:6,bg:"img/ore/bg_z3.png",w:{silver:30,gold:35,crystal:35}}];
 
 const SL={head:"Голова",body:"Торс",legs:"Ноги",feet:"Обувь",acc:"Аксессуар",back:"Спина",tool:"Инструмент",veh:"Транспорт"};
 const ITEMS=[
@@ -215,9 +215,15 @@ const TASKS=[
  {id:"t5",n:"Дорасти до 3 уровня",k:"lv",need:3,r:500},{id:"t6",n:"Создать 3 изделия",k:"crafted",need:3,r:400},{id:"t7",n:"Собрать 6 единиц урожая",k:"harvested",need:6,r:350},{id:"t8",n:"Выполнить 2 заказа доставки или ремонта",k:"delivered",need:2,r:600}];
 
 const PROF=[
- ["Шахтёр","Добывает руду для металлургов",1],["Фотограф","Заказы на фото через Mini App",3],
- ["Фермер","Выращивает продукцию для магазинов",5],
- ["Механик","Чинит транспорт деталями завода",6],["Водитель","Доставляет товары между игроками",7]];
+ ["Шахтёр","Добывает руду для металлургов",1],
+ ["Фотограф","Выполняет городские фотозаказы",5],
+ ["Фермер","Выращивает продукцию для магазинов",10],
+ ["Рыбак","Ловит рыбу для рынка и производства",15],
+ ["Лесоруб","Добывает древесину для строительства",20],
+ ["Механик","Ремонтирует транспорт и оборудование",30],
+ ["Водитель","Доставляет товары и грузы",35],
+ ["Металлург","Перерабатывает руду и создаёт детали",40]
+];
 
 const STUB={farm:["Ферма","Фермеры выращивают продукцию для магазинов и водителей."]};
 
@@ -233,8 +239,24 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 const num=n=>Number(n).toLocaleString("ru-RU");
 const item=id=>ITEMS.find(x=>x.id===id);
 let tmr;function toast(m){S.log.unshift(new Date().toLocaleTimeString("ru-RU").slice(0,5)+" "+m);S.log.length=Math.min(S.log.length,40);const t=document.getElementById("toast");t.textContent=m;t.style.opacity=1;clearTimeout(tmr);tmr=setTimeout(()=>t.style.opacity=0,2200)}
-const xpNeed=()=>80+40*S.lv;
-function gain(x){S.xp+=x*(curEv().x||1);S.px=S.px||{};S.px[cur]=(S.px[cur]||0)+x;while(S.xp>=xpNeed()){S.xp-=xpNeed();S.lv++;toast("Новый уровень: "+S.lv);flash()}}
+/* Долгосрочная прогрессия: максимум 100 уровня. Порог растёт
+   нелинейно, поэтому поздние уровни требуют заметно больше игры. */
+const MAX_LEVEL=100;
+const xpNeed=()=>S.lv>=MAX_LEVEL?0:120+35*S.lv+3*S.lv*S.lv;
+function gain(x){
+  x=Math.max(0,Math.floor(Number(x)||0));
+  if(!x)return;
+  S.px=S.px||{};
+  if(PK2.includes(cur))S.px[cur]=(S.px[cur]||0)+x;
+  if(S.lv>=MAX_LEVEL){S.xp=0;return}
+  S.xp+=x*(curEv().x||1);
+  while(S.lv<MAX_LEVEL&&S.xp>=xpNeed()){
+    S.xp-=xpNeed();S.lv++;
+    toast(S.lv===MAX_LEVEL?"Достигнут максимальный уровень!":"Новый уровень: "+S.lv);
+    flash();
+  }
+  if(S.lv>=MAX_LEVEL)S.xp=0;
+}
 
 /* =========================================================
    НАВИГАЦИЯ И ОТРИСОВКА
@@ -250,7 +272,7 @@ function draw(){
   document.getElementById("v").innerHTML=(R[cur]||R.home)();
   document.getElementById("bc").textContent=num(S.coins);
   document.getElementById("be").textContent=S.energy+"/100";
-  document.getElementById("bl").textContent=S.lv;document.body.style.setProperty("--xp",Math.min(100,S.xp/xpNeed()*100)+"%");bump();
+  document.getElementById("bl").textContent=S.lv;document.body.style.setProperty("--xp",(S.lv>=MAX_LEVEL?100:Math.min(100,S.xp/xpNeed()*100))+"%");bump();
 }
 Object.keys(STUB).forEach(k=>{TT[k]=STUB[k][0];LOC[k]="city";R[k]=()=>`<div class="card"><b>${STUB[k][0]}</b><p class="sm">${STUB[k][1]}</p><p class="sm">Раздел в разработке.</p></div>`});
 
@@ -277,7 +299,7 @@ function hero(){
   ${S.eq.head==="helmet"?`<circle cx="60" cy="14" r="4" fill="#fff6c8"/>`:""}
   </svg>`;
 }
-R.home=()=>`<div class="stage"><div class="rail">${rail(LEFT)}</div><div class="hero" style="transform:perspective(700px) rotateY(${ry}deg)">${hero()}<div><b>${esc(pname)}</b></div><div class="sm">Опыт ${S.xp}/${xpNeed()}</div><div class="bar"><i style="width:${Math.min(100,S.xp/xpNeed()*100)}%"></i></div></div><div class="rail">${rail(RIGHT)}</div></div>`;
+R.home=()=>`<div class="stage"><div class="rail">${rail(LEFT)}</div><div class="hero" style="transform:perspective(700px) rotateY(${ry}deg)">${hero()}<div><b>${esc(pname)}</b></div><div class="sm">Уровень ${S.lv}/${MAX_LEVEL} · Опыт ${S.lv>=MAX_LEVEL?"MAX":num(S.xp)+"/"+num(xpNeed())}</div><div class="bar"><i style="width:${S.lv>=MAX_LEVEL?100:Math.min(100,S.xp/xpNeed()*100)}%"></i></div></div><div class="rail">${rail(RIGHT)}</div></div>`;
 
 /* =========================================================
    ГОРОД
@@ -409,14 +431,15 @@ function craft(i){
   S.energy-=r.en;if(r.it){if(S.own.includes(r.it))S.frag+=5;else S.own.push(r.it)}else S.mats[r.o]=(S.mats[r.o]||0)+1;gain(5);inc("crafted");toast("Создано: "+r.n);save();draw();
 }
 function sellMat(k){const n=S.mats[k]||0;if(!n)return;const s=Math.round(n*MAT[k][1]*pm());S.coins+=s;S.st.sold+=s;S.mats[k]=0;toast("Продано: +"+s+" 🪙");save();draw()}
-R.factory=()=>`<h2>Плавильня и завод</h2>`+REC.map((r,i)=>`<div class="card row"><div><b>${r.n}</b><div class="sm">${Object.keys(r.i).map(k=>nm(k)+" "+have(k)+"/"+r.i[k]).join(" · ")} · ⚡${r.en}</div></div><button class="btn" onclick="craft(${i})">Создать</button></div>`).join("")+`<h2>Склад изделий</h2>`+(Object.keys(MAT).filter(k=>S.mats[k]>0).map(k=>`<div class="card row"><b>${MAT[k][0]} × ${S.mats[k]}</b><button class="btn" onclick="sellMat('${k}')">Продать</button></div>`).join("")||`<div class="card sm">Склад пуст.</div>`);
+const factoryScreen=()=>`<h2>Плавильня и завод</h2>`+REC.map((r,i)=>`<div class="card row"><div><b>${r.n}</b><div class="sm">${Object.keys(r.i).map(k=>nm(k)+" "+have(k)+"/"+r.i[k]).join(" · ")} · ⚡${r.en}</div></div><button class="btn" onclick="craft(${i})">Создать</button></div>`).join("")+`<h2>Склад изделий</h2>`+(Object.keys(MAT).filter(k=>S.mats[k]>0).map(k=>`<div class="card row"><b>${MAT[k][0]} × ${S.mats[k]}</b><button class="btn" onclick="sellMat('${k}')">Продать</button></div>`).join("")||`<div class="card sm">Склад пуст.</div>`);
+R.factory=()=>S.lv<40?gate(40):factoryScreen();
 
 /* =========================================================
    ПРОФЕССИЯ ФОТОГРАФА
    ========================================================= */
 const ORD=["Фасад магазина","Закат над городом","Уличная еда","Старый мост","Портрет прохожего"];
 function photo(inp){if(!inp.files[0])return;const r=120+S.jobs*10;S.coins+=r;S.jobs++;gain(8);toast("Заказ принят: +"+r+" 🪙");save();draw()}
-R.photo=()=>S.lv<3?`<div class="card sm">Профессия открывается на 3 уровне.</div>`:`<div class="card"><b>Заказ: ${ORD[S.jobs%ORD.length]}</b><p class="sm">Сфотографируй объект и отправь снимок. Оплата ${120+S.jobs*10} 🪙. Выполнено заказов: ${S.jobs}.</p><label class="btn" style="display:inline-block">Сделать фото<input type="file" accept="image/*" capture="environment" hidden onchange="photo(this)"></label></div>`;
+R.photo=()=>S.lv<5?`<div class="card sm">Профессия открывается на 5 уровне.</div>`:`<div class="card"><b>Заказ: ${ORD[S.jobs%ORD.length]}</b><p class="sm">Сфотографируй объект и отправь снимок. Оплата ${120+S.jobs*10} 🪙. Выполнено заказов: ${S.jobs}.</p><label class="btn" style="display:inline-block">Сделать фото<input type="file" accept="image/*" capture="environment" hidden onchange="photo(this)"></label></div>`;
 
 /* =========================================================
    НЕДВИЖИМОСТЬ
@@ -472,7 +495,7 @@ function inc(k,n=1){S.st[k]=(S.st[k]||0)+n}
 function plant(i,id){const c=CROPS.find(x=>x.id===id);if(S.farm[i]||S.coins<c.c)return toast("Недостаточно монет");S.coins-=c.c;S.farm[i]={c:id,at:Date.now()};toast("Посажено: "+c.n);save();draw()}
 function harvest(i){const f=S.farm[i],c=f&&CROPS.find(x=>x.id===f.c);if(!f||Date.now()-f.at<c.t*1000)return toast("Ещё растёт");S.mats[c.id]=(S.mats[c.id]||0)+3;inc("harvested",3);S.farm[i]=null;gain(4);toast("Собрано: "+c.n+" ×3");save();draw()}
 setInterval(()=>{if(cur==="farm")draw()},5000);
-R.farm=()=>gate(5)||S.farm.map((f,i)=>{const c=f&&CROPS.find(x=>x.id===f.c),left=f?Math.max(0,Math.ceil(c.t-(Date.now()-f.at)/1000)):0;return `<div class="card"><b>Грядка ${i+1}</b>${f?`<div class="row"><span class="sm">${c.n}: ${left?"осталось "+left+" с":"готово"}</span><button class="btn" ${left?"disabled":""} onclick="harvest(${i})">Собрать</button></div>`:`<div class="chips" style="margin:8px 0 0">${CROPS.map(c=>`<button class="chip" onclick="plant(${i},'${c.id}')">${c.n} · ${c.c} 🪙 · ${c.t} с</button>`).join("")}</div>`}</div>`}).join("");
+R.farm=()=>gate(10)||S.farm.map((f,i)=>{const c=f&&CROPS.find(x=>x.id===f.c),left=f?Math.max(0,Math.ceil(c.t-(Date.now()-f.at)/1000)):0;return `<div class="card"><b>Грядка ${i+1}</b>${f?`<div class="row"><span class="sm">${c.n}: ${left?"осталось "+left+" с":"готово"}</span><button class="btn" ${left?"disabled":""} onclick="harvest(${i})">Собрать</button></div>`:`<div class="chips" style="margin:8px 0 0">${CROPS.map(c=>`<button class="chip" onclick="plant(${i},'${c.id}')">${c.n} · ${c.c} 🪙 · ${c.t} с</button>`).join("")}</div>`}</div>`}).join("");
 
 /* =========================================================
    ВОДИТЕЛЬ И МЕХАНИК
@@ -493,8 +516,8 @@ function job(i){
   S.dl[i]=day();S.coins+=Math.round(j.r*(1+(item(S.eq.veh)?.v||0)));inc("delivered");gain(10);toast(j.n+": +"+j.r+" 🪙");save();draw();
 }
 const jobList=p=>JOBS.map((j,i)=>[j,i]).filter(x=>x[0].p===p).map(([j,i])=>`<div class="card row"><div><b>${j.n}</b><div class="sm">${Object.keys(j.i).map(k=>nm(k)+" "+have(k)+"/"+j.i[k]).join(" · ")} · ${j.r} 🪙</div></div><button class="btn" ${S.dl[i]===day()?"disabled":""} onclick="job(${i})">${S.dl[i]===day()?"Сделано":"Выполнить"}</button></div>`).join("");
-R.drive=()=>gate(7)||jobList("drive");
-R.mech=()=>gate(6)||jobList("mech");
+R.drive=()=>gate(35)||jobList("drive");
+R.mech=()=>gate(30)||jobList("mech");
 
 /* =========================================================
    АУКЦИОН
@@ -607,7 +630,6 @@ ITEMS.push({id:"jacket_c",n:"Куртка Мастера",s:"body",p:700,c:"#2f9
    ========================================================= */
 function dis(id){const i=item(id),f={"Обычный":3,"Необычный":6,"Редкий":12}[i.r];S.own=S.own.filter(x=>x!==id);if(S.eq[i.s]===id)delete S.eq[i.s];S.frag+=f;toast("Разобрано: "+i.n+" → +"+f+" фрагментов");save();draw()}
 const PK=["mine","photo","factory","farm","mech","drive"];
-const plv=k=>Math.floor(Math.sqrt(((S.px||{})[k]||0)/20))+1;
 
 /* =========================================================
    МАГАЗИНЫ: РАСХОДНИКИ С ОГРАНИЧЕННЫМ ЗАПАСОМ
@@ -682,7 +704,7 @@ function fishAct(){
   else{clearTimeout(fs.tm);fs.st=0;const f=pick({carp:60,pike:30,gcarp:10});S.mats[f]=(S.mats[f]||0)+1;inc("fished");gain(4);toast("Поймано: "+MAT[f][0]);save()}
   draw();
 }
-R.fish=()=>gate(2)||`<div class="water"><div class="bob ${fs.st===1?"w":fs.st===2?"b":""}">🎣</div></div><div class="card row"><div><b>${["Забрось удочку","Ждём поклёвку…","Клюёт! Подсекай!"][fs.st]}</b><div class="sm">Улов: ${S.st.fished||0} · карась, щука, редкий золотой карп</div></div><button class="btn" onclick="fishAct()">${["Забросить · ⚡2","Подсечь","Подсечь!"][fs.st]}</button></div>`;
+R.fish=()=>gate(15)||`<div class="water"><div class="bob ${fs.st===1?"w":fs.st===2?"b":""}">🎣</div></div><div class="card row"><div><b>${["Забрось удочку","Ждём поклёвку…","Клюёт! Подсекай!"][fs.st]}</b><div class="sm">Улов: ${S.st.fished||0} · карась, щука, редкий золотой карп</div></div><button class="btn" onclick="fishAct()">${["Забросить · ⚡2","Подсечь","Подсечь!"][fs.st]}</button></div>`;
 
 /* =========================================================
    ПРОФЕССИЯ ЛЕСОРУБА
@@ -699,16 +721,27 @@ function chop(i){
   if(trees[i]<=0){trees[i]=3;S.mats.wood=(S.mats.wood||0)+2;inc("chopped",2);gain(4);toast("Срублено дерево: +2 бревна")}else gain(1);
   save();draw();
 }
-R.wood=()=>gate(3)||`<div class="card sm">Три удара — одно дерево. Бревна: ${S.mats.wood||0}, доски: ${S.mats.board||0}. Доски создаются на заводе.</div><div class="card" style="text-align:center">${trees.map((h,i)=>`<button class="tree" style="font-size:${34+h*10}px" aria-label="Дерево" onclick="chop(${i})">🌲</button>`).join("")}</div>`;
+R.wood=()=>gate(20)||`<div class="card sm">Три удара — одно дерево. Бревна: ${S.mats.wood||0}, доски: ${S.mats.board||0}. Доски создаются на заводе.</div><div class="card" style="text-align:center">${trees.map((h,i)=>`<button class="tree" style="font-size:${34+h*10}px" aria-label="Дерево" onclick="chop(${i})">🌲</button>`).join("")}</div>`;
 
 /* =========================================================
    СПИСОК ПРОФЕССИЙ С УРОВНЯМИ РАЗВИТИЯ
    Для каждой профессии показан уровень и прогресс до следующего.
    ========================================================= */
-PROF.push(["Рыбак","Ловит рыбу для рынка и крафта",2],["Лесоруб","Добывает древесину для досок и крафта",3]);
-const PK2=["mine","photo","farm","mech","drive","fish","wood"],PI=["⛏","📷","🌾","🔧","🚚","🎣","🪓"];
-const plvp=k=>{const x=(S.px||{})[k]||0,l=Math.floor(Math.sqrt(x/20));return Math.round((x-l*l*20)/(((l+1)**2-l*l)*20)*100)};
-R.work=()=>PROF.map((p,i)=>`<div class="card row"><div class="ir" style="flex:1"><span class="pi">${PI[i]}</span><div style="flex:1"><b>${p[0]}</b><div class="sm">${p[1]} · проф. ур. ${plv(PK2[i])}</div><div class="bar"><i style="width:${plvp(PK2[i])}%"></i></div></div></div><button class="btn" onclick="go('${PK2[i]}')">Открыть</button></div>`).join("");
+const PK2=["mine","photo","farm","fish","wood","mech","drive","factory"],PI=["⛏","📷","🌾","🎣","🪓","🔧","🚚","🔥"];
+/* Профессиональный опыт имеет собственную прогрессию и не заменяет
+   общий уровень персонажа. Старые значения S.px сохраняются. */
+const profNeed=l=>100+25*l+2*l*l;
+const profState=k=>{
+  let xp=Math.max(0,(S.px||{})[k]||0),lv=1,need=profNeed(lv);
+  while(lv<50&&xp>=need){xp-=need;lv++;need=profNeed(lv)}
+  return lv>=50?{lv,xp:0,need:0,pct:100}:{lv,xp,need,pct:Math.min(100,Math.floor(xp/need*100))};
+};
+const plv=k=>profState(k).lv;
+const plvp=k=>profState(k).pct;
+R.work=()=>PROF.map((p,i)=>{
+  const key=PK2[i],ps=profState(key),open=S.lv>=p[2];
+  return `<div class="card row"><div class="ir" style="flex:1"><span class="pi">${PI[i]}</span><div style="flex:1"><b>${p[0]}</b><div class="sm">${p[1]}</div><div class="sm">${open?`Профессия ур. ${ps.lv} · ${ps.xp}/${ps.need} опыта`:`Откроется на ${p[2]} уровне персонажа`}</div><div class="bar"><i style="width:${open?ps.pct:0}%"></i></div></div></div><button class="btn" ${open?``:`disabled`} onclick="go('${key}')">${open?"Работать":"Закрыто"}</button></div>`;
+}).join("");
 
 /* =========================================================
    ЕЖЕДНЕВНЫЕ ЗАДАНИЯ
@@ -885,7 +918,7 @@ function strike(){
   save();draw();
 }
 R.wood=()=>{
-  if(S.lv<3)return gate(3);
+  if(S.lv<20)return gate(20);
   if(!tr)newTree();
   const t=tr.t,fx=tr.fx,show=fx&&!tr.fall;
   return `<div class="forest"><i class="leaf" style="left:12%"></i><i class="leaf" style="left:45%;animation-delay:1.3s"></i><i class="leaf" style="left:78%;animation-delay:2.4s"></i><div class="sun"></div><div class="gnd"></div>
