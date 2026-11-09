@@ -35,7 +35,7 @@ h2{font-size:15px;margin:14px 0 8px}
 .chip.on{border-color:var(--a);color:var(--a)}.chip:disabled{opacity:.4}
 .stage{display:grid;grid-template-columns:76px 1fr 76px;gap:8px;align-items:center;min-height:calc(100vh - 190px)}
 .rail{display:flex;flex-direction:column;gap:8px}
-.rail button{background:var(--p);border:1px solid var(--l);border-radius:12px;padding:9px 2px;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.rail button{flex:none;min-width:0;overflow:hidden;word-break:break-word;text-align:center;background:var(--p);border:1px solid var(--l);border-radius:12px;padding:9px 2px;font-size:10.5px;display:flex;flex-direction:column;align-items:center;gap:2px}
 .rail b{font-size:20px;font-weight:400}
 .hero{text-align:center}
 .hero svg{width:100%;max-width:240px;filter:drop-shadow(0 14px 16px #000a)}
@@ -186,7 +186,7 @@ Object.keys(STUB).forEach(k=>{TT[k]=STUB[k][0];LOC[k]="city";R[k]=()=>`<div clas
    ========================================================= */
 const LEFT=[["inv","🎒","Инвентарь"],["ward","👕","Гардероб"],["ach","🏆","Достижения"],["col","💎","Коллекции"],["log","📜","Журнал"]];
 const RIGHT=[["city","🏙","Город"],["work","⛏","Профессии"],["tasks","📋","Задания"],["biz","💼","Бизнес"],["shop","🛍","Магазин"],["estate","🏠","Недвижимость"]];
-const rail=a=>a.map(b=>`<button onclick="go('${b[0]}')"><span class="tic">${TI[b[0]]||""}</span><b>${b[1]}</b>${b[2]}</button>`).join("");
+const rail=a=>a.map(b=>`<button onclick="go('${b[0]}')"><b>${b[1]}</b>${b[2]}</button>`).join("");
 function hero(){
   const c=k=>{const i=item(S.eq[k]);return i&&i.c};
   const body=c("body")||"#4a5a70",legs=c("legs")||"#2c3a52",feet=c("feet")||"#1b1f27",head=c("head"),back=c("back"),acc=c("acc");
@@ -209,7 +209,7 @@ R.home=()=>`<div class="stage"><div class="rail">${rail(LEFT)}</div><div class="
 /* =========================================================
    ГОРОД
    ========================================================= */
-R.city=()=>banner()+`<div class="grid">${[["mine","Шахта","Руда и минералы","#0f4a47"],["shop","Магазин","Одежда и инструменты","#5a1d36"],["biz","Бизнес","Пассивный доход","#5a4018"],["work","Профессии","Работа и развитие","#17406a"],["factory","Завод","Плавка и детали","#33295f"],["farm","Ферма","Урожай и доставка","#2f4a24"],["market","Торговая площадка","Цены руды","#4a3a2a"],["estate","Недвижимость","Аренда и доход","#2d3a52"],["events","События","Бонусы и проекты","#4a2a5a"],["pass","Game Pass","Месяц бонусов","#2a3a5a"],["cases","Кейсы","Рулетка и редкости","#5a2a2a"],["auction","Аукцион","Лоты и продажа","#4a2a2a"]].map(b=>`<button class="tile" style="--c:${b[3]}" onclick="go('${b[0]}')"><b>${b[1]}</b><div class="sm">${b[2]}</div></button>`).join("")}</div>`;
+R.city=()=>banner()+`<div class="grid">${[["mine","Шахта","Руда и минералы","#0f4a47"],["shop","Магазин","Одежда и инструменты","#5a1d36"],["biz","Бизнес","Пассивный доход","#5a4018"],["work","Профессии","Работа и развитие","#17406a"],["factory","Завод","Плавка и детали","#33295f"],["farm","Ферма","Урожай и доставка","#2f4a24"],["market","Торговая площадка","Цены руды","#4a3a2a"],["estate","Недвижимость","Аренда и доход","#2d3a52"],["events","События","Бонусы и проекты","#4a2a5a"],["pass","Game Pass","Месяц бонусов","#2a3a5a"],["cases","Кейсы","Рулетка и редкости","#5a2a2a"],["auction","Аукцион","Лоты и продажа","#4a2a2a"]].map(b=>`<button class="tile" style="--c:${b[3]}" onclick="go('${b[0]}')"><span class="tic">${TI[b[0]]||""}</span><b>${b[1]}</b><div class="sm">${b[2]}</div></button>`).join("")}</div>`;
 
 /* =========================================================
    ШАХТА (С КАРТИНКАМИ ЖИЛ И ДИНАМИЧЕСКИМ ФОНОМ ЗОНЫ)
